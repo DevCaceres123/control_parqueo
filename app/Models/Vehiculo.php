@@ -3,42 +3,26 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Persona;
-use App\Models\Color;
-use App\Models\TipoVehiculo;
 
 class Vehiculo extends Model
 {
-    protected $table = "vehiculos";
-    protected $fillable = ["placa", "descripcion","persona_id", "color_id", "tipovehiculo_id"];
+    protected $table = 'vehiculos';
+    protected $primaryKey = 'id_vehiculo';
+    protected $fillable = ['placa', 'tipo_vehiculo_id', 'hora_entrada', 'hora_salida', 'estado'];
 
-
-    /**
-     * Relacion reversa con persona
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function persona(){
-        return $this->belongsTo(Persona::class, 'persona_id', 'id');
+    public function tipo()
+    {
+        return $this->belongsTo(TipoVehiculo::class, 'tipo_vehiculo_id');
     }
 
-    /**
-     * Relacion reversa con color
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function color()
+    public function boletas()
     {
-        return $this->belongsTo(Color::class, 'color_id', 'id');
-    }
-
-    /**
-     * Relacion reversa con tipo vehiculo
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function tipo_vehiculo()
-    {
-        return $this->belongsTo(TipoVehiculo::class, 'tipovehiculo_id', 'id');
+        return $this->hasMany(Boleta::class, 'vehiculo_id');
     }
 }
+
+
+//class Vehiculo extends Model
+//{
+    //
+//}
