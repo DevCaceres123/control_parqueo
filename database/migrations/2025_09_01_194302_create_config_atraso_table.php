@@ -11,10 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('puestos', function (Blueprint $table) {
+        Schema::create('config_atraso', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre',200);
-            $table->enum('estado', ['activo','inactivo']);
+            $table->time('tiempo_extra');
+            $table->integer('monto');
+            $table->enum('estado',['activo','inactivo']);
             $table->timestamps();
         });
     }
@@ -24,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('puestos');
+        Schema::dropIfExists('config_atraso');
     }
 };

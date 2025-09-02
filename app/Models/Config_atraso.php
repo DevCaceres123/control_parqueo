@@ -4,7 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Registro extends Model
+class Config_atraso extends Model
 {
     //
+    protected $table= 'config_atraso';
 }

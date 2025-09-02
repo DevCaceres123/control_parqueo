@@ -77,12 +77,5 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Role::class, 'model_has_roles', 'model_id', 'role_id');
     }
-
-
-    public function puestos()
-    {
-        return $this->belongsToMany('App\Models\Puesto', 'historial_puesto', 'puesto_id', 'usuario_id')
-            ->withPivot('created_at', 'descripcion_edicion')
-            ->withTimestamps();
-    }
+    
 }

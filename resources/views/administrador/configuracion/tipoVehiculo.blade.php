@@ -68,7 +68,7 @@
 @endsection
 
 @section('scripts')
-<script>
+{{-- <script>
     let rutas = {
         listar          : "{{ route('tipoVehiculos.listar') }}",
         crear           : "{{ route('tipoVehiculos.store') }}",
@@ -77,6 +77,6 @@
         eliminar        : "{{ route('tipoVehiculos.destroy', ':id') }}",
         cambiarEstado   : "{{ route('tipoVehiculos.show', ':id') }}"
     };
-</script>
+</script> --}}
 <script src="{{ asset('js/configuracion/tipoVehiculo.js') }}"></script>
 @endsection

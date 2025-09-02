@@ -3,14 +3,14 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Persona;
-use App\Models\Color;
-use App\Models\TipoVehiculo;
+use App\Models\Boleta;
+
+
 
 class Vehiculo extends Model
 {
     protected $table = "vehiculos";
-    protected $fillable = ["placa", "descripcion","persona_id", "color_id", "tipovehiculo_id"];
+    
 
 
     /**
@@ -22,23 +22,10 @@ class Vehiculo extends Model
         return $this->belongsTo(Persona::class, 'persona_id', 'id');
     }
 
-    /**
-     * Relacion reversa con color
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function color()
-    {
-        return $this->belongsTo(Color::class, 'color_id', 'id');
-    }
 
-    /**
-     * Relacion reversa con tipo vehiculo
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function tipo_vehiculo()
+
+    public function boletas()
     {
-        return $this->belongsTo(TipoVehiculo::class, 'tipovehiculo_id', 'id');
+        return $this->hasMany(Boleta::class, 'vehiculo_id', 'id');
     }
 }

@@ -18,7 +18,7 @@ class Controlador_rol extends Controller
      */
     public function index()
     {
-        $roles      = Role::OrderBy('id', 'desc')->get();
+        $roles      = Role::OrderBy('id', 'desc')->where('estado', 'activo')->get();
         $permisos   = Permission::OrderBy('id', 'desc')->get();
         return view('administrador.usuarios.roles', [
             'listar_roles'  => $roles,
@@ -43,6 +43,7 @@ class Controlador_rol extends Controller
         try {
             $rol = new Role();
             $rol->name = $request->rol;
+            $rol->estado = 'activo';
             $rol->save();
 
             if ($rol->id) {
@@ -153,11 +154,12 @@ class Controlador_rol extends Controller
     {
         DB::beginTransaction();
         try {
-            $rol = Role::find($id);
+            $rol = Role::find($id);            
             if (!$rol) {
                 return response()->json(mensaje_mostrar('success', 'Rol no encontrado.'));
             }
-            $rol->delete();
+            $rol->estado= 'inactivo';
+            $rol->save();
             DB::commit();
             return response()->json(mensaje_mostrar('success', 'Se elimino con éxito'));
         } catch (\Throwable $th) {

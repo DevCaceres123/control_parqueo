@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\TipoVehiculo;
+
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -23,10 +23,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UsuarioSeeder::class,
-            ColorSeeder::class,
-            PuestoSeeder::class,
-            TarifaSeeder::class,
-            TipoVehiculoSeeder::class,
+           
         ]);
 
     }

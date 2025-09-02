@@ -13,16 +13,14 @@ return new class extends Migration
     {
         Schema::create('vehiculos', function (Blueprint $table) {
             $table->id();
-            $table->string('placa', 25);
-            $table->string('descripcion');
-            $table->unsignedBigInteger('persona_id');
-            $table->unsignedBigInteger('color_id');
-            $table->unsignedBigInteger('tipovehiculo_id');
+            $table->string('nombre', 25);
+            $table->string('descripcion',100);
+            $table->enum('estado', ['activo', 'inactivo']);
+            $table->integer('tarifa');                
             $table->timestamps();
 
-            $table->foreign('persona_id')->references('id')->on('personas')->onDelete('restrict');
-            $table->foreign('color_id')->references('id')->on('colores')->onDelete('restrict');
-            $table->foreign('tipovehiculo_id')->references('id')->on('tipo_vehiculos')->onDelete('restrict');
+            
+                        
         });
     }
 

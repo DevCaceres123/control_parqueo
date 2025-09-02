@@ -1,9 +1,6 @@
 <?php
 
-use App\Http\Controllers\Configuracion\ColorControlador;
-use App\Http\Controllers\Configuracion\PuestoControlador;
-use App\Http\Controllers\Configuracion\TarifaControlador;
-use App\Http\Controllers\Configuracion\TipoVehiculoControlador;
+use App\Http\Controllers\Configuracion\Controlador_vehiculo;
 use App\Http\Controllers\Usuario\Controlador_login;
 use App\Http\Controllers\Usuario\Controlador_permisos;
 use App\Http\Controllers\Usuario\Controlador_rol;
@@ -53,20 +50,11 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
     Route::post('/user/listar', [Controlador_user::class, 'listar'])->name('user.listar');
 
 
-    //PARA LA ADMINISTRACION DE PUESTO
-    Route::resource('puesto', PuestoControlador::class);
-    Route::post('/puesto/listar', [PuestoControlador::class, 'listar'])->name('puesto.listar');
+    //PARA LA ADMINISTRACION DE VEHICULO
 
+        // CONTROLADOR PARA LAS SEDES
+    Route::controller(Controlador_vehiculo::class)->group(function () {
+        Route::resource('vehiculos', Controlador_vehiculo::class);       
+    });
 
-    //PARA LA ADMINISTRACION DE TARIFAS
-    Route::resource('tarifas', TarifaControlador::class);
-    Route::post('/tarifas/listar', [TarifaControlador::class, 'listar'])->name('tarifas.listar');
-
-    //PARA LA ADMINISTRACION DE TIPOS DE BEHICULOS
-    Route::resource('/tipoVehiculos', TipoVehiculoControlador::class);
-    Route::post('/tipoVehiculos/listar', [TipoVehiculoControlador::class, 'listar'])->name('tipoVehiculos.listar');
-
-    //PARA LA ADMINISTRACION DE LOS COLORES
-    Route::resource('/color', ColorControlador::class);
-    Route::post('/color/listar', [ColorControlador::class, 'listar'])->name('color.listar');
 });
