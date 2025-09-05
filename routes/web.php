@@ -52,9 +52,11 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
 
     //PARA LA ADMINISTRACION DE VEHICULO
 
-        // CONTROLADOR PARA LAS SEDES
+        // CONTROLADOR PARA LOS VEHICULOS
     Route::controller(Controlador_vehiculo::class)->group(function () {
-        Route::resource('vehiculos', Controlador_vehiculo::class);       
+        Route::resource('vehiculos', Controlador_vehiculo::class);  
+        Route::get('listarVehiculos', 'listarVehiculos')->name('vehiculos.listarVehiculos');     
+        Route::put('cambiarEstadoVehiculos/{id_vehiculo}', 'cambiarEstadoVehiculos')->name('vehiculos.cambiarEstadoVehiculos');     
     });
 
 });

@@ -4,13 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Boleta;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 
 class Vehiculo extends Model
 {
     protected $table = "vehiculos";
-    
+    use SoftDeletes;
 
 
     /**

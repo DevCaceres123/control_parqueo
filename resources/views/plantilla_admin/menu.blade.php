@@ -67,7 +67,7 @@
                         <div class="collapse " id="configuracion">
                             <ul class="nav flex-column">
 
-                               
+                                <li class="nav-item">
                                     <a class="nav-link" href="{{ route('vehiculos.index') }}">Tipo Vehiculos</a>
                                 </li>
                              

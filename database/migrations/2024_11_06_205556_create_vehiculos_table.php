@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('nombre', 25);
             $table->string('descripcion',100);
             $table->enum('estado', ['activo', 'inactivo']);
-            $table->integer('tarifa');                
+            $table->integer('tarifa');
+            $table->unsignedBigInteger('usuario_id');
+            $table->timestamp('deleted_at')->nullable();                         
             $table->timestamps();
 
             
