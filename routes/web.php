@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Configuracion\Controlador_vehiculo;
+use App\Http\Controllers\Configuracion\Controlador_config_atraso;
 use App\Http\Controllers\Usuario\Controlador_login;
 use App\Http\Controllers\Usuario\Controlador_permisos;
 use App\Http\Controllers\Usuario\Controlador_rol;
@@ -57,6 +58,14 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
         Route::resource('vehiculos', Controlador_vehiculo::class);  
         Route::get('listarVehiculos', 'listarVehiculos')->name('vehiculos.listarVehiculos');     
         Route::put('cambiarEstadoVehiculos/{id_vehiculo}', 'cambiarEstadoVehiculos')->name('vehiculos.cambiarEstadoVehiculos');     
+    });
+
+
+         // CONTROLADOR PARA LOS VEHICULOS
+    Route::controller(Controlador_config_atraso::class)->group(function () {
+        Route::resource('atraso', Controlador_config_atraso::class);  
+        Route::get('listarConfAtraso', 'listarConfAtraso')->name('atraso.listarConfAtraso');    
+        Route::put('cambiarEstadoConfig/{id_configuracion}', 'cambiarEstadoConfig')->name('atraso.cambiarEstadoConfig');    
     });
 
 });

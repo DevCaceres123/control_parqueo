@@ -125,6 +125,9 @@ class Controlador_vehiculo extends Controller
 
             // Encontrar el usuario por ID
             $vehiculo =Vehiculo::Find($request->vehiculo_id);
+            if (!$vehiculo) {
+                throw new Exception('Vehiculo no encontrado');
+            }
             $vehiculo->nombre = $request->nombre;
             $vehiculo->descripcion = $request->descripcion_vehiculo;                   
             $vehiculo->tarifa = $request->tarifa;            
