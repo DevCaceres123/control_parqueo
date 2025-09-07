@@ -69,7 +69,7 @@
                         <div class="collapse " id="boleta">
                             <ul class="nav flex-column">
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Generar Boletas</a>
+                                    <a class="nav-link" href="{{ route('boletas.index') }}">Generar Boletas</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link" href="">Listar Boletas</a>

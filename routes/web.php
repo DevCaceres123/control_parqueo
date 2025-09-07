@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Configuracion\Controlador_vehiculo;
 use App\Http\Controllers\Configuracion\Controlador_config_atraso;
+use App\Http\Controllers\Boleta\Controlador_boleta;
 use App\Http\Controllers\Usuario\Controlador_login;
 use App\Http\Controllers\Usuario\Controlador_permisos;
 use App\Http\Controllers\Usuario\Controlador_rol;
@@ -67,5 +68,12 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
         Route::get('listarConfAtraso', 'listarConfAtraso')->name('atraso.listarConfAtraso');    
         Route::put('cambiarEstadoConfig/{id_configuracion}', 'cambiarEstadoConfig')->name('atraso.cambiarEstadoConfig');    
     });
+
+    // CONTROLADOR PARA LAS BOLETAS
+    Route::controller(Controlador_boleta::class)->group(function () {
+        Route::resource('boletas', Controlador_boleta::class);
+        
+    });
+
 
 });

@@ -4,6 +4,11 @@ namespace App\Http\Controllers\Boleta;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Boleta;
+use App\Models\Vehiculo;
+use Illuminate\Support\Facades\DB;
+use Exception;
+
 
 class Controlador_boleta extends Controller
 {
@@ -12,7 +17,8 @@ class Controlador_boleta extends Controller
      */
     public function index()
     {
-        //
+        $vehiculos=Vehiculo::select('id','nombre','tarifa')->where('estado','activo')->orderBy('id','desc')->get();
+        return view("administrador.boletas.boletas",compact('vehiculos'));
     }
 
     /**
@@ -28,7 +34,7 @@ class Controlador_boleta extends Controller
      */
     public function store(Request $request)
     {
-        //
+        return $request->all();
     }
 
     /**
