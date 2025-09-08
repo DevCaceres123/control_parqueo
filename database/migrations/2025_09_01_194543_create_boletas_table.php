@@ -13,16 +13,19 @@ return new class extends Migration
     {
         Schema::create('boletas', function (Blueprint $table) {
             $table->id();
-            $table->string('num_boleta')->unique();
+            $table->string('num_boleta')->unique()->nullable()->collation('utf8mb4_bin');            
             $table->string('placa')->nullable();
+            $table->string('ci',20)->nullable();
             $table->string('persona')->nullable();
-            $table->datetime('entrada');
-            $table->datetime('salida');
-            $table->time('retraso');            
+            $table->datetime('entrada_veh');
+            $table->datetime('salida_veh')->nullable();
+            $table->datetime('salidaMax')->nullable();
+            $table->time('retraso')->nullable();            
             $table->enum('estado_parqueo',['ingreso','salida']);
             $table->enum('estado_impresion',['generado','impreso']);            
             $table->integer('total')->nullable();
-            
+            $table->json('reporte_json')->nullable();
+
             $table->unsignedBigInteger('vehiculo_id');
             $table->unsignedBigInteger('usuario_id');
 

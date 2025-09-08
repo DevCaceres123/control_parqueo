@@ -72,7 +72,7 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
     // CONTROLADOR PARA LAS BOLETAS
     Route::controller(Controlador_boleta::class)->group(function () {
         Route::resource('boletas', Controlador_boleta::class);
-        
+        Route::put('marcarBoletaImpresa/{codigo_unico}', 'marcarBoletaImpresa')->name('boleta.marcarBoletaImpresa');         
     });
 
 

@@ -12,33 +12,107 @@ let idVehiculoSeleccionado = null;
 $("#btn-generar").on("click", function () {
     // validamos vehículo
     if (!idVehiculoSeleccionado) {
-        mensajeAlerta("Selecciona una tarifa",'error');
+        mensajeAlerta("Selecciona una tarifa", "error");
         return;
     }
     // 2️⃣ valores de los inputs según lo seleccionado
-    let datos={
-        'modo':$('input[name="modo"]:checked').val(), // "cliente" o "placa"
-        'nombre': $("#nombre_cliente").val().trim(),
-        'ci': $("#ci_cliente").val().trim(),
-        'placa': $("#placa").val().trim(),
-        'id_vehiculo':idVehiculoSeleccionado,
+    let datos = {
+        modo: $('input[name="modo"]:checked').val(), // "cliente" o "placa"
+        nombre: $("#nombre_cliente").val().trim(),
+        ci: $("#ci_cliente").val().trim(),
+        placa: $("#placa").val().trim(),
+        id_vehiculo: idVehiculoSeleccionado,
+        precio: precioSeleccionado,
     };
 
     const btn = $("#btn-generar");
-    btn.prop("disabled", true).html('<i class="ri-loader-4-line spin"></i> Subiendo...');
+    btn.prop("disabled", true).html(
+        '<i class="ri-loader-4-line spin"></i> Subiendo...'
+    );
     crud("admin/boletas", "POST", null, datos, function (error, response) {
-    btn.prop("disabled", false).html('<i class="ri-upload-cloud-line me-1"></i>Generar');
+        btn.prop("disabled", false).html(
+            '<i class="ri-upload-cloud-line me-1"></i>Generar'
+        );
         if (response.tipo != "exito") {
             mensajeAlerta(response.mensaje, response.tipo);
             return;
         }
-        mensajeAlerta(response.mensaje, response.tipo);
+        mensajeAlerta("Boleta Generada Correctamente", response.tipo);
+
+        // generamos un blob url para mostrar la boleta en el iframe
+        let pdfUrl = generarURlBlob(response.mensaje.boleta);
+        $("#nombre_cliente").val("");
+        $("#ci_cliente").val("");
+        $("#placa").val("");
+
+        // deseleccionar tarifa
+        idVehiculoSeleccionado = null;
+        precioSeleccionado = null;
+        $("#tipos-vehiculo .tipo-card").removeClass(
+            "bg-success text-white shadow-lg"
+        );
+
+        
+        const iframe = document.getElementById("iframe-boleta");
+        iframe.src = pdfUrl;
+
+        iframe.onload = () => {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print(); // Disparar impresión automática desde el iframe
+            marcarBoletaImpresa(response.mensaje.codigoUnico);
+        };
     });
+});
 
+function marcarBoletaImpresa(codigo) {
+    fetch("marcarBoletaImpresa/" + codigo, {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-TOKEN": document
+                .querySelector('meta[name="csrf-token"]')
+                .getAttribute("content"),
+        },
+        body: JSON.stringify({}),
+    });
+}
 
+//Cuando vuelve la conexión
+window.addEventListener("online", async () => {
+    let pendientes = JSON.parse(localStorage.getItem("pendientes") || "[]");
+    if (pendientes.length === 0) return;
 
+    console.log("Reintentando boletas pendientes:", pendientes);
 
-    // 4️⃣ aquí podrías hacer el iframe preview o un $.post/AJAX al servidor
+    const reenviados = [];
+    for (const codigo of pendientes) {
+        try {
+            const resp = await fetch(
+                "marcarBoletaImpresa/" + encodeURIComponent(codigo),
+                {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": document
+                            .querySelector('meta[name="csrf-token"]')
+                            .getAttribute("content"),
+                    },
+                    body: JSON.stringify({}),
+                }
+            );
+            if (!resp.ok) throw new Error("Respuesta no OK");
+            console.log(`✅ reenviado ${codigo}`);
+            reenviados.push(codigo);
+        } catch (e) {
+            console.warn(`❌ sigue fallando ${codigo}`);
+        }
+    }
+
+    // eliminar solo los que sí se reenviaron
+    if (reenviados.length > 0) {
+        pendientes = pendientes.filter((c) => !reenviados.includes(c));
+        localStorage.setItem("pendientes", JSON.stringify(pendientes));
+    }
 });
 
 // FUNCION PARA PONER EL VALOR Y MARCAR LA CASILLA DE VEHICULO
@@ -75,15 +149,14 @@ $(function () {
     // });
 });
 
-function  generarVista(){
-    
-        const modo = $('input[name="modo"]:checked').val();
-        const nombre = $("#nombre_cliente").val();
-        const placa = $("#placa").val();
+function generarVista() {
+    const modo = $('input[name="modo"]:checked').val();
+    const nombre = $("#nombre_cliente").val();
+    const placa = $("#placa").val();
 
-        $("#iframe-boleta").attr(
-            "srcdoc",
-            `
+    $("#iframe-boleta").attr(
+        "srcdoc",
+        `
             <html>
             <head>
                 <style>
@@ -104,5 +177,18 @@ function  generarVista(){
             </body>
             </html>
         `
-        );
+    );
+}
+
+// nos servira para crear una url para poder visualizar nuestro pdf
+
+function generarURlBlob(pdfbase64) {
+    // Convertir Base64 a un Blob
+    const byteCharacters = atob(pdfbase64); // Decodifica el Base64
+    const byteNumbers = Array.from(byteCharacters).map((c) => c.charCodeAt(0));
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], { type: "application/pdf" });
+
+    // Crear una URL para el Blob
+    return URL.createObjectURL(blob);
 }
