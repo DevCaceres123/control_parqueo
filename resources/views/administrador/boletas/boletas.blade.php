@@ -84,15 +84,15 @@
                                 <div class="btn-group w-100" role="group" aria-label="Filtro boleta">
                                     <input type="radio" class="btn-check" name="filtro" id="filtro_placa" value="placa"
                                         autocomplete="off" checked>
-                                    <label class="btn btn-outline-primary" for="filtro_placa">Placa</label>
+                                    <label class="btn btn-outline-dark" for="filtro_placa">Placa</label>
 
                                     <input type="radio" class="btn-check" name="filtro" id="filtro_ci" value="ci"
                                         autocomplete="off">
-                                    <label class="btn btn-outline-primary" for="filtro_ci">CI</label>
+                                    <label class="btn btn-outline-dark" for="filtro_ci">CI</label>
 
                                     <input type="radio" class="btn-check" name="filtro" id="filtro_codigo" value="codigo"
                                         autocomplete="off">
-                                    <label class="btn btn-outline-primary" for="filtro_codigo">Código</label>
+                                    <label class="btn btn-outline-dark" for="filtro_codigo">Código</label>
                                 </div>
                             </div>
 
@@ -100,22 +100,92 @@
                             <div class="input-group">
                                 <input type="text" id="filtro_valor" class="form-control shadow-sm"
                                     placeholder="Ingrese valor">
-                                <button id="btn-buscar" class="btn btn-primary shadow-sm">
-                                    <i class="fas fa-search"></i> Buscar
+                                <button id="btn-buscar" class="btn btn-success shadow-sm">
+                                    <i class="fas fa-search me-1"></i> Buscar
                                 </button>
                             </div>
                         </div>
 
-                        {{-- Vista previa del iframe --}}
-                        <div class="card w-100 shadow-sm border rounded mb-2">
+                        {{-- Vista previa en iframe --}}
+                        <div class="card w-100 shadow-sm border rounded mb-2" id="contenedor_boleta">
                             <iframe id="iframe-boleta" class="border-0 rounded" style="width: 100%; height: 300px;"
                                 title="Vista previa de la boleta"></iframe>
                         </div>
 
-                        {{-- Botón imprimir --}}
-                        <button class="btn btn-success shadow-sm mt-2 w-100" id="btn-imprimir">
-                            <i class="fas fa-print"></i> Imprimir
-                        </button>
+                        {{-- Boleta oculta para impresión --}}
+                        <div id="contendor_cobrar" class="d-none col-12">
+                            <div class="p-3 border border-dark rounded fs-15"
+                                style="max-width: 400px; margin:auto; font-family: 'Segoe UI', Arial, sans-serif;">
+                                <h5 class="text-center text-success border-bottom pb-2 mb-3 fw-bold">
+                                    Resumen de Cobro
+                                </h5>
+
+                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
+                                    <span class="fw-semibold">N° Boleta:</span>
+                                    <span id="print-num_boleta"></span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1"
+                                    id="print-vehiculo-container">
+                                    <span class="fw-semibold">Vehiculo:</span>
+                                    <span id="print-vehiculo"></span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
+                                    <span class="fw-semibold">Placa:</span>
+                                    <span id="print-placa"></span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-1 d-none border-bottom pb-1"
+                                    id="print-nombre-container">
+                                    <span class="fw-semibold">Nombre:</span>
+                                    <span id="print-nombre"></span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-1 d-none border-bottom pb-1"
+                                    id="print-ci-container">
+                                    <span class="fw-semibold">CI:</span>
+                                    <span id="print-ci"></span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
+                                    <span class="fw-semibold">Entrada:</span>
+                                    <span id="print-entrada"></span>
+                                </div>
+
+                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
+                                    <span class="fw-semibold">Salida Máx:</span>
+                                    <span id="print-salida"></span>
+                                </div>
+                                <!-- Monto inicial -->
+                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
+                                    <span class="fw-semibold">Monto Inicial:</span>
+                                    <span id="print-monto_inicial"></span>
+                                </div>
+
+                                <!-- Monto por retraso -->
+                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1 text-danger">
+                                    <span class="fw-semibold">Monto por Retraso:</span>
+                                    <span id="print-monto_retraso"></span>
+                                </div>
+                                <div class="bg-light p-1 rounded text-center mt-3 border border-success">
+                                    <p class="mb-1 fw-semibold text-success fs-4">Total: Bs. <span
+                                            class="fw-bold text-success mb-0" id="print-total"></span>
+                                    </p>
+                                </div>
+
+                                <div class="text-center mt-2 text-muted">
+                                    <p class="mb-0 fw-semibold">Salida Vehiculo:</p>
+                                    <h4 class="mb-0" id="print-salida-hora"></h4>
+                                </div>
+                            </div>
+
+                            {{-- Botón imprimir --}}
+                            <button class="btn btn-success shadow-sm mt-1 w-100" id="btn-imprimir_pago">
+                                <i class="fas fa-print"></i> Imprimir Pago
+                            </button>
+                        </div>
+
                     </div>
 
                 </div>

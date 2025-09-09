@@ -73,6 +73,9 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
     Route::controller(Controlador_boleta::class)->group(function () {
         Route::resource('boletas', Controlador_boleta::class);
         Route::put('marcarBoletaImpresa/{codigo_unico}', 'marcarBoletaImpresa')->name('boleta.marcarBoletaImpresa');         
+        Route::post('buscarBoleta', 'buscarBoleta')->name('boleta.buscarBoleta');  
+        Route::post('boletaPagada', 'boletaPagada')->name('boleta.boletaPagada');  
+           
     });
 
 

@@ -25,6 +25,7 @@ return new class extends Migration
             $table->enum('estado_impresion',['generado','impreso']);            
             $table->integer('total')->nullable();
             $table->json('reporte_json')->nullable();
+            $table->json('reporteSalida_json')->nullable();
 
             $table->unsignedBigInteger('vehiculo_id');
             $table->unsignedBigInteger('usuario_id');

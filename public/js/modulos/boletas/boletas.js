@@ -37,6 +37,8 @@ $("#btn-generar").on("click", function () {
             mensajeAlerta(response.mensaje, response.tipo);
             return;
         }
+        document.getElementById("contendor_cobrar").classList.add("d-none");
+        document.getElementById("contenedor_boleta").classList.remove("d-none");
         mensajeAlerta("Boleta Generada Correctamente", response.tipo);
 
         // generamos un blob url para mostrar la boleta en el iframe
@@ -52,7 +54,6 @@ $("#btn-generar").on("click", function () {
             "bg-success text-white shadow-lg"
         );
 
-        
         const iframe = document.getElementById("iframe-boleta");
         iframe.src = pdfUrl;
 
@@ -149,36 +150,145 @@ $(function () {
     // });
 });
 
-function generarVista() {
-    const modo = $('input[name="modo"]:checked').val();
-    const nombre = $("#nombre_cliente").val();
-    const placa = $("#placa").val();
+function llenarBoletaPrint(
+    boleta,
+    total,
+    salida_vehiculo,
+    vehiculo,
+    montoRetraso,
+    montoVehiculo
+) {
+    // Mostrar el div completo de la boleta
+    document.getElementById("contendor_cobrar").classList.remove("d-none");
+    document.getElementById("contenedor_boleta").classList.add("d-none");
 
-    $("#iframe-boleta").attr(
-        "srcdoc",
-        `
-            <html>
-            <head>
-                <style>
-                    body {font-family:sans-serif; padding:15px; font-size:14px;}
-                    h3 {color:#0d6efd; margin-top:0;}
-                    p {margin:3px 0;}
-                </style>
-            </head>
-            <body>
-                <h3>VERIFICAR DATOS....</h3>
-                <p><strong>Vehículo:</strong> ${tipoSeleccionado}</p>
-                <p><strong>Precio:</strong> Bs. ${precioSeleccionado}</p>
-                <p>${
-                    modo === "cliente"
-                        ? "<strong>Cliente:</strong> " + nombre
-                        : "<strong>Placa:</strong> " + placa
-                }</p>
-            </body>
-            </html>
-        `
-    );
+    // Llenar campos obligatorios
+    document.getElementById("print-num_boleta").innerText = boleta.num_boleta;
+    document.getElementById("print-vehiculo").innerText = vehiculo.nombre;
+    document.getElementById("print-placa").innerText = boleta.placa ?? "N/A";
+    document.getElementById("print-entrada").innerText = boleta.entrada_veh;
+    document.getElementById("print-salida").innerText = boleta.salidaMax;
+
+    document.getElementById(
+        "print-monto_inicial"
+    ).innerText = `Bs. ${montoVehiculo}`;
+    document.getElementById(
+        "print-monto_retraso"
+    ).innerText = `Bs. ${montoRetraso}`;
+    document.getElementById("print-total").innerText = `${total}`;
+    document.getElementById(
+        "print-salida-hora"
+    ).innerText = `${salida_vehiculo}`;
+
+    // Mostrar y llenar campos opcionales solo si hay persona
+    if (boleta.ci) {
+        document
+            .getElementById("print-nombre-container")
+            .classList.remove("d-none");
+
+        document
+            .getElementById("print-ci-container")
+            .classList.remove("d-none");
+
+        document.getElementById("print-nombre").innerText = boleta.persona;
+
+        document.getElementById("print-ci").innerText = boleta.ci || "N/A";
+    } else {
+        // Si no hay persona, ocultar los contenedores opcionales
+        document
+            .getElementById("print-nombre-container")
+            .classList.add("d-none");
+        document.getElementById("print-ci-container").classList.add("d-none");
+        document.getElementById("print-ci-container").classList.add("d-none");
+    }
 }
+
+//Buscar Boleta y obtener precio
+
+$("#btn-buscar").on("click", function () {
+    // valor del radio seleccionado
+    const filtro = $('input[name="filtro"]:checked').val();
+    // valor que escribió el usuario
+    const valor = $("#filtro_valor").val().replace(/\s+/g, "");
+
+    if (!valor) {
+        mensajeAlerta("Ingrese un valor para buscar", "warning");
+        return;
+    }
+
+    let datos = {
+        filtro: filtro,
+        valor: valor,
+    };
+
+    const btn = $("#btn-buscar");
+    btn.prop("disabled", true).html('<i class=""></i> Buscando...');
+    crud("admin/buscarBoleta", "POST", null, datos, function (error, response) {
+        btn.prop("disabled", false).html(
+            '<i class="fas fa-search me-1"></i>Buscar'
+        );
+
+        if (response.tipo != "exito") {
+            mensajeAlerta(response.mensaje, response.tipo);
+            return;
+        }
+
+        mensajeAlerta("Generando datos...", response.tipo);
+        let datos_boleta = response.mensaje.datos_boleta;
+        let total = response.mensaje.total;
+        let salida_vehiculo = response.mensaje.salida_vehiculo;
+        let datosVehiculo = response.mensaje.datos_vehiculo;
+        let montoRetraso = response.mensaje.montoRetraso;
+        let montoVehiculo = response.mensaje.montoVehiculo;
+        llenarBoletaPrint(
+            datos_boleta,
+            total,
+            salida_vehiculo,
+            datosVehiculo,
+            montoRetraso,
+            montoVehiculo
+        );
+    });
+});
+
+// boton para imprimir pago
+$("#btn-imprimir_pago").on("click", function () {
+    let datos = {
+        numeroBoleta: $("#print-num_boleta").text(),
+        total: $("#print-total").text(),
+        horaSalida: $("#print-salida-hora").text(),
+    };
+
+    const btn = $("#btn-imprimir_pago");
+    btn.prop("disabled", true).html('<i class=""></i> Imprimiendo...');
+    crud("admin/boletaPagada", "POST", null, datos, function (error, response) {
+        btn.prop("disabled", false).html(
+            '<i class="fas fa-search me-1"></i>Imprimir Pago'
+        );
+
+        if (response.tipo != "exito") {
+            mensajeAlerta(response.mensaje, response.tipo);
+            return;
+        }
+
+        document.getElementById("contendor_cobrar").classList.add("d-none");
+        document.getElementById("contenedor_boleta").classList.remove("d-none");
+
+        mensajeAlerta("Boleta Generada Correctamente", response.tipo);
+
+        // generamos un blob url para mostrar la boleta en el iframe
+        let pdfUrl = generarURlBlob(response.mensaje);
+        
+
+        const iframe = document.getElementById("iframe-boleta");
+        iframe.src = pdfUrl;
+
+        iframe.onload = () => {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print(); // Disparar impresión automática desde el iframe            
+        };
+    });
+});
 
 // nos servira para crear una url para poder visualizar nuestro pdf
 

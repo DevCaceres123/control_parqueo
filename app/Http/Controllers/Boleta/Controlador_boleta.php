@@ -71,8 +71,8 @@ class Controlador_boleta extends Controller
             $data = [
                 'usuario' => auth()->user()->only(['nombres', 'apellidos']),
                 'tarifa_vehiculo' => Vehiculo::select('tarifa', 'nombre')->where('id', $request->id_vehiculo)->first(),
-                'fecha_generada' => $fecha_actual,
-                'fecha_finalizacion' => $fecha_actual->copy()->addDay()->setTime(15, 0, 0),// formatear para fecha final,
+                'fecha_generada' => $fecha_actual->format('Y-m-d H:i:s'),
+                'fecha_finalizacion' => $fecha_actual->copy()->addDay()->setTime(15, 0, 0)->format('Y-m-d H:i:s'),// formatear para fecha final,
                 'placa' => $request->placa ?? null,
                 'nombre' => $request->nombre ?? null,
                 'ci' => $request->ci ?? null,
@@ -86,9 +86,9 @@ class Controlador_boleta extends Controller
             $boletaEdit->save();
 
             // creamos un arrary para enviar los datos de las boletas
-            $repuesta=[
-                'codigoUnico'=>$codigoUnico,
-                'boleta'=>$boleta,
+            $repuesta = [
+                'codigoUnico' => $codigoUnico,
+                'boleta' => $boleta,
             ];
             DB::commit();
 
@@ -244,38 +244,217 @@ class Controlador_boleta extends Controller
 
     }
 
-       public function marcarBoletaImpresa($CodigoQr){
-       
-        
+    public function marcarBoletaImpresa($CodigoQr)
+    {
         try {
-    
-               
+
+
             DB::beginTransaction();
-    
+
             $boleta = Boleta::where('num_boleta', $CodigoQr)->first();
             if (!$boleta) {
 
-                throw new Exception("Error la Boleta no existe");                
+                throw new Exception("Error la Boleta no existe");
             }
-            
-             // Actualizar el estado de impresión
+
+            // Actualizar el estado de impresión
             $boleta->estado_impresion = "impreso";  // Cambia según tu lógica de estados
-            $boleta->save(); // Guardar cambios en la base de datos    
-            DB::commit();            
+            $boleta->save(); // Guardar cambios en la base de datos
+            DB::commit();
             $this->mensaje('exito', "Impreso Correctamente");
 
             return response()->json($this->mensaje, 200);
         } catch (Exception $e) {
-    
+
             DB::rollBack();
             $this->mensaje("error", "Error " . $e->getMessage());
-    
+
             return response()->json($this->mensaje, 200);
         }
-        
+
     }
 
 
+    public function buscarBoleta(Request $request)
+    {
+
+
+        try {
+
+            $validatedData = $request->validate([
+                'valor' => 'required',
+                'filtro'        => 'required|in:codigo,ci,placa',
+            ]);
+
+
+            if ($request->filtro === 'codigo') {
+                $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id')
+                        ->where('num_boleta', $request->valor)
+                        ->where('estado_parqueo', 'ingreso')   // <-- otra condición
+                        ->first();
+
+            }
+
+
+            if ($request->filtro === 'ci') {
+                $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id')
+                        ->where('ci', $request->valor)
+                        ->where('estado_parqueo', 'ingreso')   // <-- otra condición
+                        ->first();
+            }
+
+            if ($request->filtro === 'placa') {
+                $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id')
+                        ->where('placa', $request->valor)
+                        ->where('estado_parqueo', 'ingreso')   // <-- otra condición
+                        ->first();
+            }
+
+            if (!$boleta) {
+                throw new Exception("no se encontro boletas con ese dato");
+            }
+
+            $fecha_actual = Carbon::now();
+            $montoRetraso = $this->calcularTotal($fecha_actual, $boleta->salidaMax, $boleta->entrada_veh);
+            $vehiculo_monto = Vehiculo::select('nombre', 'tarifa')->where('id', $boleta->vehiculo_id)->first();
+            $total = $montoRetraso + $vehiculo_monto->tarifa;
+
+            $data = [
+                'datos_boleta' => $boleta,
+                'total' => $total,
+                'salida_vehiculo' => Carbon::now()->format('Y-m-d H:i:s'),//capturamos la hora actual con la hora de salida
+                'datos_vehiculo' => $vehiculo_monto,
+                'montoRetraso' => $montoRetraso,
+                'montoVehiculo' => $vehiculo_monto->tarifa,
+            ];
+
+
+            $this->mensaje("exito", $data);
+
+            return response()->json($this->mensaje, 200);
+
+
+        } catch (Exception $e) {
+
+
+            $this->mensaje("error", "Error " . $e->getMessage());
+
+            return response()->json($this->mensaje, 200);
+        }
+    }
+
+
+    // Funcion que nos ayudara a calcular el total a cobrar
+    public function calcularTotal($fecha_actual, $salida, $entrada)
+    {
+        
+        
+        // Precio fijo del atraso por cada bloque de 24h
+        $precioAtraso = Config_atraso::where('estado', 'activo')->first()->monto ?? 0;
+        //$fechaActual = Carbon::parse('2025-09-10 15:30:00');
+        $fechaActual = Carbon::parse($fecha_actual);
+        $fechaEntrada = Carbon::parse($entrada);
+        $fechaSalida = Carbon::parse($salida);
+
+        // Si ingresa a este if revisar las fechas
+        if ($fechaActual->lessThan($fechaEntrada)) {
+            throw new Exception("Existe un error en las fechas");
+        }
+        // Si está dentro del tiempo límite
+        if ($fechaActual->lte($fechaSalida)) {
+            return 0;
+        }
+
+        // ¿Cuántos bloques de 24h han pasado DESPUÉS de la hora límite?
+        $diasExtra = ceil($fechaSalida->diffInHours($fechaActual) / 24);
+        // ceil() redondea hacia arriba: si son 2h → se cobra 1 bloque, 25h → se cobra 2 bloques.
+
+        $total = $diasExtra * $precioAtraso;
+
+        return $total;
+    }
+
+    // Se genera una boleta de pago
+    public function boletaPagada(Request $request)
+    {
+        try {
+
+            DB::beginTransaction();
+
+            $boleta = Boleta::where('num_boleta', $request->numeroBoleta)
+                    ->where('estado_parqueo', 'ingreso')
+                    ->first();
+
+            if (!$boleta) {
+                throw new Exception("revise el estado de la boleta");
+            }
+
+
+            $boleta->salida_veh = $request->horaSalida;
+            $boleta->estado_parqueo = 'salida';
+            $boleta->total = $request->total;
+            
+
+            $reporte=$this->generarBoletaPago($boleta->reporte_json, $boleta->entrada_veh, $request->horaSalida, $request->total,
+            $boleta->salidaMax,$boleta->vehiculo_id);
+
+            $boleta->reporteSalida_json=$reporte['datos'];
+
+            $boleta->save(); // Guardar cambios en la base de datos
+            DB::commit();
+            $this->mensaje('exito',$reporte['pdf']);
+
+            return response()->json($this->mensaje, 200);
+        } catch (Exception $e) {
+
+            DB::rollBack();
+            $this->mensaje("error", "Error " . $e->getMessage());
+
+            return response()->json($this->mensaje, 200);
+        }
+
+
+    }
+
+
+    public function generarBoletaPago($datos, $entradaVehi, $salidaVeh, $total,$saliMaxVechiulo,$vehiculo_id)
+    {
+        $fecha_hoy=Carbon::now();
+        // Decodificar a array asociativo
+        $datos = json_decode($datos, true);
+        
+        // Agregar los otros valores al array
+        $datos['entrada_vehiculo'] = $entradaVehi;
+        $datos['salida_vehiculo']  = $salidaVeh;
+        $datos['total']            = $total;        
+        $datos['fecha_hoy']=$fecha_hoy;
+
+        $vehiculo_monto = Vehiculo::select('tarifa')->where('id',$vehiculo_id)->first();            
+        $totalRetraso=$this->calcularTotal($salidaVeh,$saliMaxVechiulo,$entradaVehi);
+
+        
+        $totalBoleta=$vehiculo_monto->tarifa+$totalRetraso;
+        if ($totalBoleta != $total) {            
+            throw new Exception("los montos no coinciden");
+        }
+
+        $datos['monto_extra']=$totalRetraso;
+        $datos['monto_vehiculo_boleta']=$vehiculo_monto->tarifa;
+
+
+        // Pasar todo el array a la vista
+        $pdf = Pdf::loadView('administrador/boletas/boletaPagada', $datos)
+            ->setPaper([0, 0, 226.77, 841.89]); // 80 mm tamaño de papel
+
+        // Obtener el contenido binario del PDF
+        $pdfContent = $pdf->output();
+
+        // Convertir a Base64
+        return [
+            'pdf' => base64_encode($pdfContent),
+            'datos' =>  json_encode($datos),              
+            ];
+    }
     /**
      * Display the specified resource.
      */
