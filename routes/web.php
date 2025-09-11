@@ -3,6 +3,8 @@
 use App\Http\Controllers\Configuracion\Controlador_vehiculo;
 use App\Http\Controllers\Configuracion\Controlador_config_atraso;
 use App\Http\Controllers\Boleta\Controlador_boleta;
+use App\Http\Controllers\Boleta\Controlador_listarBoletas;
+use App\Http\Controllers\Reporte\Controlador_reporte;
 use App\Http\Controllers\Usuario\Controlador_login;
 use App\Http\Controllers\Usuario\Controlador_permisos;
 use App\Http\Controllers\Usuario\Controlador_rol;
@@ -77,6 +79,24 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
         Route::post('boletaPagada', 'boletaPagada')->name('boleta.boletaPagada');  
            
     });
+
+     // CONTROLADOR PARA LAS LISTAR BOLETAS
+    Route::controller(Controlador_listarBoletas::class)->group(function () {
+        Route::resource('listarBoletas', Controlador_listarBoletas::class);
+        Route::get('listarTodasBoletas', 'listarTodasBoletas')->name('listar.listarTodasBoletas');    
+        
+           
+    });
+
+
+      // CONTROLADOR PARA LOS REPORTES
+    Route::controller(Controlador_reporte::class)->group(function () {
+        Route::resource('reportes', Controlador_reporte::class);
+         
+        
+           
+    });
+
 
 
 });

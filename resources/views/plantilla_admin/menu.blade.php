@@ -72,9 +72,36 @@
                                     <a class="nav-link" href="{{ route('boletas.index') }}">Generar Boletas</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link" href="">Listar Boletas</a>
+                                    <a class="nav-link" href="{{ route('listarBoletas.index') }}">Listar Boletas</a>
                                 </li>
 
+                            </ul>
+                        </div>
+                    </li>
+
+
+
+                     <li class="menu-label mt-2">
+                        <small class="label-border">
+                            <div class="border_left hidden-xs"></div>
+                            <div class="border_right"></div>
+                        </small>
+                        <span>REPORTES</span>
+                    </li>
+
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reporte" data-bs-toggle="collapse" role="button"
+                            aria-expanded="false" aria-controls="reporte">
+                            <i class="iconoir-compact-disc menu-icon"></i>
+                            <span>REPORTES</span>
+                        </a>
+                        <div class="collapse " id="reporte">
+                            <ul class="nav flex-column">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('reportes.index') }}">Reportes</a>
+                                </li>
+                              
                             </ul>
                         </div>
                     </li>

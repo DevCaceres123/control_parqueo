@@ -29,7 +29,7 @@ return new class extends Migration
 
             $table->unsignedBigInteger('vehiculo_id');
             $table->unsignedBigInteger('usuario_id');
-
+            $table->timestamp('deleted_at')->nullable();
 
             $table->foreign('vehiculo_id')
                 ->references('id')
