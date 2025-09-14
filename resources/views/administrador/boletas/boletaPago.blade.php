@@ -6,10 +6,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BOLETA DE PAGO</title>
     <style>
-        /* Estilos optimizados */
-
         :root {
-            --temaño_letra: 10px;
+            --font-size-base: 11px;
+            --font-size-large: 14px;
+            --font-size-small: 9px;
         }
 
         * {
@@ -20,237 +20,188 @@
 
         body {
             font-family: Arial, sans-serif;
-            padding: 10px;
+            padding: 8px;
             color: #333;
         }
 
-        .container_boleta {
-            padding: 9px;
-            border: 2px dashed #8b5050;
-            border-radius: 8px;
-            position: relative;
+        .tiket {
+            text-align: center;
+            font-size: var(--font-size-large);
+            margin: 10px 0 0 0;
+            padding: 0;
+            letter-spacing: 1px;
         }
 
+        .container_boleta {
+            padding: 10px;
+            border: 2px dashed #8b5050;
+            border-radius: 8px;
+        }
+
+        /* Encabezado */
         .info_empresa {
             text-align: center;
-            margin-bottom: 10px;
-            position: relative;
+            margin-bottom: 6px;
         }
 
         .info_empresa h2 {
-            font-size: var(--temaño_letra);
-            margin-bottom: 5px;
-            font-weight: 100;
-            letter-spacing: 2px;
-        }
-
-        .info_empresa .datos_us_pu {
-            position: relative;
-            width: 100%;
-            height: 20px;
-            text-transform: capitalize;
-        }
-
-        .info_empresa span {
-            font-size: var(--temaño_letra);
-            margin: 4px 0;
-            font-weight: bold;
-
-        }
-
-        .info_empresa .usuario {
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-
-        .info_empresa .puesto {
-
-            position: absolute;
-            right: 0;
-            top: 0;
-        }
-
-
-        .cod_precio {
-            width: 100%;
-            position: relative;
-            width: 100%;
-            height: 80px;
-            font-size: 13px;
-            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-            font-weight: 900px;
-        }
-
-        .cod_precio .codigo {
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-
-        .info_empresa .precio {
-            position: absolute;
-            right: 0;
-            top: 0;
-        }
-
-        .qr_code {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-
-            width: 80px;
-            margin: auto;
-            height: 80px;
-            box-sizing: border-box;
-        }
-
-        .qr_code img {
-            display: inline-block;
-            margin: auto;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .vehiculo {
-            width: 100%;
-            text-align: center;
-            font-size: var(--temaño_letra);
-            margin-top: 3px;
-            padding: 5px 0px;
-            border-top: 1px solid #333;
+            font-size: var(--font-size-base);
+            font-weight: normal;
+            letter-spacing: 1px;
             border-bottom: 1px solid #333;
+            margin-bottom: 2px;
+        }
+
+        /* Secciones */
+        .section {
+            border-top: 1px dashed #aaa;
+            margin: 6px 0;
+            padding: 4px 0;
+            font-size: var(--font-size-base);
+        }
+
+        /* Usuario + Precio */
+        .usuario {
+            float: left;
+            font-weight: bold;
+        }
+
+        .precio {
+            float: right;
+            font-weight: bold;
+        }
+
+        .section::after {
+            content: "";
+            display: block;
+            clear: both;
+        }
+
+        /* Datos del vehículo */
+        .vehiculo {
+            text-align: center;
             text-transform: uppercase;
         }
 
-        .vehiculo .placa {
-            font-size: 16px;
+        .vehiculo .placa,
+        .vehiculo .ci {
+            font-size: var(--font-size-large);
             display: block;
-            margin-bottom: 2px;
             font-weight: bold;
-            letter-spacing: 3px;
-        }
-
-          .vehiculo .ci {
-            font-size: 16px;
-            display: block;
-            margin-bottom: 2px;
-            font-weight: bold;
-            letter-spacing: 3px;
-        }
-
-
-        .fechas {
-            width: 100%;
-            text-align: center;
-            font-size: 13px;
-            letter-spacing: 1px;
-            margin-top: 5px;
-        }
-
-        .fecha_generada {
-            margin: 10px 0px 0px 0px 0px;
-            padding: 0px;
-            text-align: center;
-            font-size: 15px;
-            letter-spacing: 1px;
-        }
-
-        .cod_unico{
-
-            color: #6c757d;
-            font-size: 12px;
-            text-align: center;
-            margin-top: 3px;
             letter-spacing: 2px;
         }
 
-        .ley {
-            margin-top: 5px;
-            font-size: 8px;
-            text-align: justify;
+        /* Código único */
+        .cod_unico {
+            font-size: 14px;
+            text-align: center;
+            font-weight: bold;
+            margin: 6px 0;
+            padding: 4px 0;
+            border: 1px dashed #555;
+            border-radius: 5px;
+            background: #f9f9f9;
+            letter-spacing: 2px;
         }
 
-        ley p {
-            margin-top: 3px;
+        /* Tabla de fechas */
+        .tabla_fechas {
+            width: 100%;
+            font-size: var(--font-size-base);
+            border-bottom: 1px dashed #aaa;
+        }
+
+        .tabla_fechas td:first-child {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .tabla_fechas td:last-child {
+            text-align: right;
+        }
+
+        /* Términos */
+        .ley {
+            margin-top: 6px;
+            font-size: var(--font-size-small);
+            text-align: justify;
+            line-height: 1.2;
         }
 
         .ley .titulo_creacion {
+            font-weight: bold;
+            margin-bottom: 3px;
             text-align: center;
-            font-weight: 900;
-
         }
     </style>
 </head>
 
 <body>
-    <p class="fecha_generada">
-
-        {{ $fecha_generada ?? 'N/A' }}
-    </p>
+    <div class="tiket">
+        <p>TICKET DE INGRESO</p>
+    </div>
     <div class="container_boleta">
-        <!-- Información de la empresa -->
+        <!-- Encabezado -->
         <div class="info_empresa">
             <h2>GOBIERNO AUTONOMO MUNICIPAL DE CARANAVI</h2>
-            <hr>
             <h2>DIRECCION DE RECAUDACIONES</h2>
-            <hr>
-
-            <div class="datos_us_pu">
-                <span class="usuario">
-                    U.s. : {{ $usuario['nombres'][0] ?? 'N' }}. {{ $usuario['apellidos'][0] ?? ' ' }}.
-
-                    {{ isset($usuario['apellidos']) && strpos($usuario['apellidos'], ' ') !== false ? $usuario['apellidos'][strpos($usuario['apellidos'], ' ') + 1] : ' ' }}
-                </span>
-
-                <span class="precio"><b>Bs.- </b>{{ $tarifa_vehiculo->tarifa ?? 'N/A' }}.00</span>
-            </div>
-
-
         </div>
 
-        <div class="vehiculo">
-            @if ($placa != null)
-                <span class="placa">P. {{ strtoupper($placa) }}</span>
-            @endif
+        <!-- Usuario + Precio -->
+        <div class="section">
+            <span class="usuario">
+                U.s.: {{ $usuario['nombres'][0] ?? 'N' }}. {{ $usuario['apellidos'][0] ?? '' }}.
+            </span>
+            <span class="precio">
+                <b>Bs.- </b>{{ $tarifa_vehiculo->tarifa ?? 'N/A' }}.00
+            </span>
+        </div>
 
-            @if ($ci != null)
+        <!-- Datos vehículo -->
+        <div class="vehiculo section">
+            @if ($placa)
+                <span class="placa">{{ strtoupper($placa) }}</span>
+            @endif
+            @if ($ci)
                 <span class="ci">D. {{ $ci }}</span>
             @endif
-
-            @if ($tarifa_vehiculo->nombre != null)
-                <span class=''> {{ $tarifa_vehiculo->nombre }} |</span>
-            @endif    
-
-            @if ($nombre != null)
-                <span> {{ $nombre }} |</span>
+            @if ($tarifa_vehiculo->nombre)
+                <span>{{ $tarifa_vehiculo->nombre }} |</span>
             @endif
-
+            @if ($nombre)
+                <span>{{ $nombre }} |</span>
+            @endif
         </div>
 
-
+        <!-- Código único -->
         <div class="cod_unico">
-            <p class="codigo_unico">{{$codigoUnico}}</p>
+            {{ $codigoUnico }}
         </div>
 
-        <div class="fechas">
+        <!-- Fechas -->
+        <div class="section">
+            <table class="tabla_fechas">
+                <tr>
+                    <td>H. Entrada</td>
+                    <td>{{ $fecha_generada ?? 'N/A' }}</td>
+                </tr>
+                <tr>
+                    <td>H. Recoger antes de:</td>
+                    <td>{{ $fecha_finalizacion ?? 'N/A' }}</td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Términos y condiciones -->
+        <div class="ley">
+            <p class="titulo_creacion">TÉRMINOS Y CONDICIONES</p>
             <p>
-                Expira el:
-                {{ $fecha_finalizacion ?? 'N/A' }}
+                El vehículo será entregado únicamente al portador de esta boleta.
+                Se recomienda cerrar bien puertas y ventanas y conservar la llave.
+                La administración no se responsabiliza por robos o daños en el interior del vehículo.
+                La pérdida de la boleta tendrá un costo adicional.
             </p>
         </div>
-
-
-
-        <div class="ley">
-            <p class="titulo_creacion">LEY AUTÓNOMA MUNICIPAL N.º 61/2024</p>
-            <P>LEY MUNICIPAL DE CREACION DE LA TASA DE RODAJE-PEAJE DEL GOBIERNO AUTÓNOMO
-                MUNICIPAL DE CARANAVI</P>
-        </div>
-
-
     </div>
 </body>
 

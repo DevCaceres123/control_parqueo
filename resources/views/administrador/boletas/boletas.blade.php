@@ -113,78 +113,67 @@
                         </div>
 
                         {{-- Boleta oculta para impresión --}}
+                        
                         <div id="contendor_cobrar" class="d-none col-12">
-                            <div class="p-3 border border-dark rounded fs-15"
-                                style="max-width: 400px; margin:auto; font-family: 'Segoe UI', Arial, sans-serif;">
-                                <h5 class="text-center text-success border-bottom pb-2 mb-3 fw-bold">
+                            <div class="p-2 border border-dark rounded fs-14"
+                                style="max-width: 360px; margin:auto; font-family: 'Courier New', monospace;">
+
+                                {{-- Encabezado --}}
+                                <h5 class="text-center fw-bold mb-3 text-uppercase">
                                     Resumen de Cobro
                                 </h5>
 
-                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
-                                    <span class="fw-semibold">N° Boleta:</span>
-                                    <span id="print-num_boleta"></span>
+                                {{-- Datos principales --}}
+                                <p class="mb-1"><b>N° Boleta:</b> <span id="print-num_boleta"></span></p>
+                                <p class="mb-1"><b>Vehículo:</b> <span id="print-vehiculo"></span></p>
+                                <p class="mb-1"><b>Placa:</b> <span id="print-placa"></span></p>
+
+                                <p class="mb-1 d-none" id="print-nombre-container"><b>Nombre:</b> <span
+                                        id="print-nombre"></span></p>
+                                <p class="mb-1 d-none" id="print-ci-container"><b>CI:</b> <span id="print-ci"></span>
+                                </p>
+
+                                <hr class="my-2">
+
+                                {{-- Tiempos --}}
+                                <p class="mb-1"><b>Entrada:</b> <span id="print-entrada"></span></p>
+                                <p class="mb-1"><b>Recoger antes de:</b> <span id="print-salida"></span></p>
+
+                                {{-- Estadía y Retraso en una misma fila --}}
+                                <div class="d-flex justify-content-between text-center mb-2">
+                                    <div style="flex:1; font-size:13px;">
+                                        <span class="text-primary fw-bold">Estadía</span><br>
+                                        <span id="print-tiempo_estadia"></span>
+                                    </div>
+                                    <div style="flex:1; font-size:13px;">
+                                        <span class="text-danger fw-bold">Retraso</span><br>
+                                        <span id="print-tiempo_retraso"></span>
+                                    </div>
                                 </div>
 
-                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1"
-                                    id="print-vehiculo-container">
-                                    <span class="fw-semibold">Vehiculo:</span>
-                                    <span id="print-vehiculo"></span>
+                                <hr class="my-2">
+
+                                {{-- Montos --}}
+                                <p class="mb-1"><b>Monto Inicial:</b> <span id="print-monto_inicial"></span></p>
+                                <p class="mb-1 text-danger"><b>Monto por Retraso:</b> <span
+                                        id="print-monto_retraso"></span></p>
+
+                                <div class="text-center my-2 border-top border-bottom py-2">
+                                    <h4 class="mb-0 text-success">TOTAL: Bs. <span id="print-total"></span></h4>
                                 </div>
 
-                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
-                                    <span class="fw-semibold">Placa:</span>
-                                    <span id="print-placa"></span>
-                                </div>
-
-                                <div class="d-flex justify-content-between mb-1 d-none border-bottom pb-1"
-                                    id="print-nombre-container">
-                                    <span class="fw-semibold">Nombre:</span>
-                                    <span id="print-nombre"></span>
-                                </div>
-
-                                <div class="d-flex justify-content-between mb-1 d-none border-bottom pb-1"
-                                    id="print-ci-container">
-                                    <span class="fw-semibold">CI:</span>
-                                    <span id="print-ci"></span>
-                                </div>
-
-                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
-                                    <span class="fw-semibold">Entrada:</span>
-                                    <span id="print-entrada"></span>
-                                </div>
-
-                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
-                                    <span class="fw-semibold">Salida Máx:</span>
-                                    <span id="print-salida"></span>
-                                </div>
-                                <!-- Monto inicial -->
-                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1">
-                                    <span class="fw-semibold">Monto Inicial:</span>
-                                    <span id="print-monto_inicial"></span>
-                                </div>
-
-                                <!-- Monto por retraso -->
-                                <div class="d-flex justify-content-between mb-1 border-bottom pb-1 text-danger">
-                                    <span class="fw-semibold">Monto por Retraso:</span>
-                                    <span id="print-monto_retraso"></span>
-                                </div>
-                                <div class="bg-light p-1 rounded text-center mt-3 border border-success">
-                                    <p class="mb-1 fw-semibold text-success fs-4">Total: Bs. <span
-                                            class="fw-bold text-success mb-0" id="print-total"></span>
-                                    </p>
-                                </div>
-
-                                <div class="text-center mt-2 text-muted">
-                                    <p class="mb-0 fw-semibold">Salida Vehiculo:</p>
-                                    <h4 class="mb-0" id="print-salida-hora"></h4>
-                                </div>
+                                {{-- Hora de salida --}}
+                                <p class="text-center mb-0">
+                                    <b>Salida:</b> <span id="print-salida-hora"></span>
+                                </p>
                             </div>
 
                             {{-- Botón imprimir --}}
-                            <button class="btn btn-success shadow-sm mt-1 w-100" id="btn-imprimir_pago">
-                                <i class="fas fa-print"></i> Imprimir Pago
+                            <button class="btn btn-dark shadow-sm mt-2 w-100" id="btn-imprimir_pago">
+                                <i class="fas fa-print"></i> Imprimir
                             </button>
                         </div>
+
 
                     </div>
 

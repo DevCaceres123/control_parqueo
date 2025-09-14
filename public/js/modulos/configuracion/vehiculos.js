@@ -177,7 +177,6 @@ $("#vehiculos").on("submit", function (e) {
 });
 
 //Eliminar vehiculo
-// Eliminar imagen de la galeria
 $(document).on("click", ".eliminar_vehiculo", function () {
     const idVehiculo = $(this).data("id");    
     Swal.fire({

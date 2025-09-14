@@ -156,7 +156,9 @@ function llenarBoletaPrint(
     salida_vehiculo,
     vehiculo,
     montoRetraso,
-    montoVehiculo
+    montoVehiculo,
+    tiempoEstadia,
+    tiempoRetraso
 ) {
     // Mostrar el div completo de la boleta
     document.getElementById("contendor_cobrar").classList.remove("d-none");
@@ -168,6 +170,8 @@ function llenarBoletaPrint(
     document.getElementById("print-placa").innerText = boleta.placa ?? "N/A";
     document.getElementById("print-entrada").innerText = boleta.entrada_veh;
     document.getElementById("print-salida").innerText = boleta.salidaMax;
+    document.getElementById("print-tiempo_estadia").innerText = tiempoEstadia;
+    document.getElementById("print-tiempo_retraso").innerText = tiempoRetraso;
 
     document.getElementById(
         "print-monto_inicial"
@@ -240,13 +244,17 @@ $("#btn-buscar").on("click", function () {
         let datosVehiculo = response.mensaje.datos_vehiculo;
         let montoRetraso = response.mensaje.montoRetraso;
         let montoVehiculo = response.mensaje.montoVehiculo;
+        let tiempoEstadia = response.mensaje.tiempoEstadia;
+        let tiempoRetraso = response.mensaje.tiempoRetraso;
         llenarBoletaPrint(
             datos_boleta,
             total,
             salida_vehiculo,
             datosVehiculo,
             montoRetraso,
-            montoVehiculo
+            montoVehiculo,
+            tiempoEstadia,
+            tiempoRetraso,
         );
     });
 });
@@ -257,6 +265,8 @@ $("#btn-imprimir_pago").on("click", function () {
         numeroBoleta: $("#print-num_boleta").text(),
         total: $("#print-total").text(),
         horaSalida: $("#print-salida-hora").text(),
+        estadia: $("#print-tiempo_estadia").text(),
+        retraso: $("#print-tiempo_retraso").text(),        
     };
 
     const btn = $("#btn-imprimir_pago");

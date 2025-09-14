@@ -84,7 +84,7 @@ function listar_registros() {
             },
 
             {
-                data: "atraso",
+                data: "retraso",
                 className: "table-td",
                 render: function (data) {
                     return `${data ?? "N/A"} `;
@@ -136,8 +136,8 @@ function listar_registros() {
 
                      ${
                          permissions["eliminar"]
-                             ? ` <button type="button" class="btn btn-sm btn-outline-success px-2 d-inline-flex align-items-center generar_reporte ms-1 btn-reporte" data-id="${row.id}">
-                                 <i class="fas fa-file-pdf  fs-16"></i>
+                             ? ` <button type="button" class="btn btn-sm btn-outline-info px-2 d-inline-flex align-items-center generar_reporte ms-1 btn-reporte" data-id="${row.id}">
+                                 <i class="fas fa-money-bill   fs-16"></i>
                             </button>`
                              : ``
                      }
@@ -175,3 +175,28 @@ function listar_registros() {
 function actualizarTabla() {
     tabla_historialRegistro.ajax.reload(null, false); // Recarga los datos sin resetear el paginado
 }
+
+// eliminar boleta
+$(document).on("click", ".eliminar_registro", function () {
+    
+    const idRegistro = $(this).data("id");    
+    Swal.fire({
+        title: "¿Eliminar?",
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            crud("admin/listarBoletas", "DELETE", idRegistro, null, function (error, response) {
+                if (response.tipo != "exito") {
+                    mensajeAlerta(response.mensaje, response.tipo);
+                    return;
+                }
+                mensajeAlerta(response.mensaje, response.tipo);
+                actualizarTabla();
+            });
+        }
+    });
+});

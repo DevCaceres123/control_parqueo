@@ -20,7 +20,7 @@ return new class extends Migration
             $table->datetime('entrada_veh');
             $table->datetime('salida_veh')->nullable();
             $table->datetime('salidaMax')->nullable();
-            $table->time('retraso')->nullable();            
+            $table->string('retraso',10)->nullable();            
             $table->enum('estado_parqueo',['ingreso','salida']);
             $table->enum('estado_impresion',['generado','impreso']);            
             $table->integer('total')->nullable();

@@ -317,7 +317,10 @@ class Controlador_boleta extends Controller
             $fecha_actual = Carbon::now();
             $montoRetraso = $this->calcularTotal($fecha_actual, $boleta->salidaMax, $boleta->entrada_veh);
             $vehiculo_monto = Vehiculo::select('nombre', 'tarifa')->where('id', $boleta->vehiculo_id)->first();
-            $total = $montoRetraso + $vehiculo_monto->tarifa;
+            $total = $vehiculo_monto->tarifa * ($montoRetraso['veces_pasadas'] + 1); // sumamos 1 al total para cobrar el primer dia
+            $tiempoEstadita = $montoRetraso['tiempoPasado'];
+            $tiempoRetraso = $montoRetraso['tiempoRetrasado'];
+            $montoRetraso = $montoRetraso['veces_pasadas']  * $vehiculo_monto->tarifa;
 
             $data = [
                 'datos_boleta' => $boleta,
@@ -326,6 +329,8 @@ class Controlador_boleta extends Controller
                 'datos_vehiculo' => $vehiculo_monto,
                 'montoRetraso' => $montoRetraso,
                 'montoVehiculo' => $vehiculo_monto->tarifa,
+                'tiempoEstadia' => $tiempoEstadita,
+                'tiempoRetraso' => $tiempoRetraso,
             ];
 
 
@@ -347,10 +352,8 @@ class Controlador_boleta extends Controller
     // Funcion que nos ayudara a calcular el total a cobrar
     public function calcularTotal($fecha_actual, $salida, $entrada)
     {
-        
-        
         // Precio fijo del atraso por cada bloque de 24h
-        $precioAtraso = Config_atraso::where('estado', 'activo')->first()->monto ?? 0;
+        //$precioAtraso = Config_atraso::where('estado', 'activo')->first()->monto ?? 0;
         //$fechaActual = Carbon::parse('2025-09-10 15:30:00');
         $fechaActual = Carbon::parse($fecha_actual);
         $fechaEntrada = Carbon::parse($entrada);
@@ -360,18 +363,48 @@ class Controlador_boleta extends Controller
         if ($fechaActual->lessThan($fechaEntrada)) {
             throw new Exception("Existe un error en las fechas");
         }
-        // Si está dentro del tiempo límite
+
+        $minutosPasados = $fechaEntrada->diffInMinutes($fechaActual);
+
+        // Convertir a horas y minutos
+        $horas   = floor($minutosPasados / 60);  // horas completas
+        $minutos = $minutosPasados % 60;         // minutos restantes
+
+        // Formatear como "HH:MM"
+        $tiempoPasado = sprintf('%02d:%02d', $horas, $minutos);
+
+
+        // Si está dentro del tiempo límite <=
         if ($fechaActual->lte($fechaSalida)) {
-            return 0;
+
+            return [
+                'tiempoPasado' => $tiempoPasado,
+                'tiempoRetrasado' => '00:00',
+                'veces_pasadas' => 0,
+            ];
         }
 
-        // ¿Cuántos bloques de 24h han pasado DESPUÉS de la hora límite?
-        $diasExtra = ceil($fechaSalida->diffInHours($fechaActual) / 24);
-        // ceil() redondea hacia arriba: si son 2h → se cobra 1 bloque, 25h → se cobra 2 bloques.
 
-        $total = $diasExtra * $precioAtraso;
+        $minutosPasados = $fechaSalida->diffInMinutes($fechaActual);
 
-        return $total;
+        // Convertir a horas y minutos
+        $horas   = floor($minutosPasados / 60);  // horas completas
+        $minutos = $minutosPasados % 60;         // minutos restantes
+
+        // Formatear como "HH:MM"
+        $tiempoRetraso = sprintf('%02d:%02d', $horas, $minutos);
+
+        // Diferencia en horas desde la salida
+        $horasPasadas = $fechaSalida->diffInHours($fechaActual);
+
+        // ¿Cuántos bloques de 24h completos?
+        $vecesPasadas = ceil($horasPasadas / 24);
+
+        return [
+                'tiempoPasado' => $tiempoPasado,
+                'tiempoRetrasado' => $tiempoRetraso,
+                'veces_pasadas' => $vecesPasadas,
+            ];
     }
 
     // Se genera una boleta de pago
@@ -393,16 +426,24 @@ class Controlador_boleta extends Controller
             $boleta->salida_veh = $request->horaSalida;
             $boleta->estado_parqueo = 'salida';
             $boleta->total = $request->total;
-            
+            $boleta->retraso = $request->retraso;
 
-            $reporte=$this->generarBoletaPago($boleta->reporte_json, $boleta->entrada_veh, $request->horaSalida, $request->total,
-            $boleta->salidaMax,$boleta->vehiculo_id);
+            $reporte = $this->generarBoletaPago(
+                $boleta->reporte_json,
+                $boleta->entrada_veh,
+                $request->horaSalida,
+                $request->total,
+                $boleta->salidaMax,
+                $boleta->vehiculo_id,
+                $request->retraso,
+                $request->estadia,
+            );
 
-            $boleta->reporteSalida_json=$reporte['datos'];
+            $boleta->reporteSalida_json = $reporte['datos'];
 
             $boleta->save(); // Guardar cambios en la base de datos
             DB::commit();
-            $this->mensaje('exito',$reporte['pdf']);
+            $this->mensaje('exito', $reporte['pdf']);
 
             return response()->json($this->mensaje, 200);
         } catch (Exception $e) {
@@ -417,29 +458,36 @@ class Controlador_boleta extends Controller
     }
 
 
-    public function generarBoletaPago($datos, $entradaVehi, $salidaVeh, $total,$saliMaxVechiulo,$vehiculo_id)
+    public function generarBoletaPago($datos, $entradaVehi, $salidaVeh, $total, $saliMaxVechiulo, $vehiculo_id, $retraso, $tiempoEstadia)
     {
-        $fecha_hoy=Carbon::now();
+
+        $fecha_hoy = Carbon::now();
         // Decodificar a array asociativo
         $datos = json_decode($datos, true);
-        
+
         // Agregar los otros valores al array
         $datos['entrada_vehiculo'] = $entradaVehi;
         $datos['salida_vehiculo']  = $salidaVeh;
-        $datos['total']            = $total;        
-        $datos['fecha_hoy']=$fecha_hoy;
+        $datos['total']            = $total;
+        $datos['fecha_hoy'] = $fecha_hoy;
 
-        $vehiculo_monto = Vehiculo::select('tarifa')->where('id',$vehiculo_id)->first();            
-        $totalRetraso=$this->calcularTotal($salidaVeh,$saliMaxVechiulo,$entradaVehi);
+        $vehiculo_monto = Vehiculo::select('tarifa')->where('id', $vehiculo_id)->first();
+        $totalRetraso = $this->calcularTotal($salidaVeh, $saliMaxVechiulo, $entradaVehi);
 
-        
-        $totalBoleta=$vehiculo_monto->tarifa+$totalRetraso;
-        if ($totalBoleta != $total) {            
+
+        $totalBoleta = $vehiculo_monto->tarifa * ($totalRetraso['veces_pasadas'] + 1);
+
+
+        if ($totalBoleta != $total) {
             throw new Exception("los montos no coinciden");
         }
 
-        $datos['monto_extra']=$totalRetraso;
-        $datos['monto_vehiculo_boleta']=$vehiculo_monto->tarifa;
+        $datos['monto_extra'] = $vehiculo_monto->tarifa * $totalRetraso['veces_pasadas'];
+        $datos['monto_vehiculo_boleta'] = $vehiculo_monto->tarifa;
+        $datos['tiempo_retraso'] = $this->formatearTiempo($retraso);
+        $datos['tiempo_estadia'] = $this->formatearTiempo($tiempoEstadia);
+
+
 
 
         // Pasar todo el array a la vista
@@ -452,8 +500,18 @@ class Controlador_boleta extends Controller
         // Convertir a Base64
         return [
             'pdf' => base64_encode($pdfContent),
-            'datos' =>  json_encode($datos),              
+            'datos' =>  json_encode($datos),
             ];
+    }
+
+    public function formatearTiempo($tiempo)
+    {
+        if (!$tiempo) {
+            return "0h 0m";
+        }
+
+        [$horas, $minutos] = explode(':', $tiempo);
+        return intval($horas) . "h " . intval($minutos) . "m";
     }
     /**
      * Display the specified resource.

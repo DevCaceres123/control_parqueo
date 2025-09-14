@@ -9,7 +9,8 @@ use App\Models\Vehiculo;
 use App\Models\Config_atraso;
 use App\Models\User;
 use Carbon\Carbon;
-
+use Exception;
+use Illuminate\Support\Facades\DB;
 class Controlador_listarBoletas extends Controller
 {
     /**
@@ -46,7 +47,7 @@ class Controlador_listarBoletas extends Controller
             'vehiculo' => function ($query) {
                 $query->select(['id', 'nombre', 'tarifa']);
             },
-        ])->select('id', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id','retraso')->orderBy('id', 'desc');
+        ])->select('id','retraso', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id')->orderBy('id', 'desc');
 
 
 
@@ -88,6 +89,7 @@ class Controlador_listarBoletas extends Controller
         $datos_registros = $query->get()->map(function ($boleta) {
             return [
                 'id' => $boleta->id,
+                'retraso' => $boleta->retraso,
                 'placa' => $boleta->placa,
                 'ci' => $boleta->ci,
                 'estado_parqueo' => $boleta->estado_parqueo,
@@ -169,6 +171,37 @@ class Controlador_listarBoletas extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $boleta = Boleta::find($id);
+            if (!$boleta) {
+                throw new Exception('Boleta no encontrado');
+            }
+
+            $boleta->delete();
+
+            DB::commit();
+
+            $this->mensaje("exito", "Boleta eliminada correctamente");
+
+            return response()->json($this->mensaje, 200);
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            $this->mensaje("error", "Error " . $e->getMessage());
+
+            return response()->json($this->mensaje, 200);
+        }
+    }
+
+
+
+    // Mensaje para mostrar al usuario
+    public function mensaje($titulo, $mensaje)
+    {
+        $this->mensaje = [
+            'tipo' => $titulo,
+            'mensaje' => $mensaje,
+        ];
     }
 }
