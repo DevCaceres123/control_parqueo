@@ -469,7 +469,7 @@ class Controlador_boleta extends Controller
         $datos['entrada_vehiculo'] = $entradaVehi;
         $datos['salida_vehiculo']  = $salidaVeh;
         $datos['total']            = $total;
-        $datos['fecha_hoy'] = $fecha_hoy;
+        
 
         $vehiculo_monto = Vehiculo::select('tarifa')->where('id', $vehiculo_id)->first();
         $totalRetraso = $this->calcularTotal($salidaVeh, $saliMaxVechiulo, $entradaVehi);
@@ -504,6 +504,7 @@ class Controlador_boleta extends Controller
             ];
     }
 
+    //SIRVE PARA FORMATEAR EL TIEMPO DE LA BOLETA EN HORAS Y MINUTOS
     public function formatearTiempo($tiempo)
     {
         if (!$tiempo) {

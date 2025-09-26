@@ -7,9 +7,9 @@
     <title>BOLETA DE PAGO</title>
     <style>
         :root {
-            --font-size-base: 11px;
-            --font-size-large: 14px;
-            --font-size-small: 9px;
+            --font-size-base: 8px;
+            --font-size-large: 12px;
+            --font-size-small: 7px;
         }
 
         * {
@@ -26,7 +26,7 @@
 
         .tiket {
             text-align: center;
-            font-size: var(--font-size-large);
+            font-size: var(--font-size-base);
             margin: 10px 0 0 0;
             padding: 0;
             letter-spacing: 1px;
@@ -62,14 +62,32 @@
             font-size: var(--font-size-base);
         }
 
+        .info_Boleta {
+            font-size: var(--font-size-large);
+            position: relative;
+            width: 100%;
+            height: 14px;
+            margin-bottom: 2px;
+        }
+
+        /* Usuario + Precio */
         .usuario {
-            float: left;
-            font-weight: bold;
+            position: absolute;
+            left: 0;
+
         }
 
         .precio {
-            float: right;
-            font-weight: bold;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+
+        }
+
+        .codigo {
+            position: absolute;
+            right: 0;
+
         }
 
 
@@ -83,29 +101,22 @@
         .vehiculo {
             text-align: center;
             font-size: var(--font-size-base);
-            margin: 6px 0;
-            padding: 4px 0;
-            border-top: 1px solid #333;
             border-bottom: 1px solid #333;
             text-transform: uppercase;
         }
 
-        .vehiculo .placa {
-            font-size: 16px;
-            font-weight: bold;
-            letter-spacing: 3px;
+        .vehiculo .placa,
+        .vehiculo .ci {
+            font-size: var(--font-size-large);
             display: block;
+            font-weight: bold;
+            letter-spacing: 2px;
         }
 
-        .vehiculo .ci {
-            font-size: 13px;
-            font-weight: bold;
-            display: block;
-        }
 
         /* Código único */
         .cod_unico {
-            font-size: 14px;
+            font-size: 13px;
             text-align: center;
             font-weight: bold;
             margin: 6px 0;
@@ -132,20 +143,31 @@
             text-align: right;
         }
 
+        .tiempo {
+            width: 100%;
+            text-align: center;
+            font-weight: bold;
+            font-size: var(--font-size-base);
+            margin-top: 1px;
+        }
+        .precios{
+            position: relative;
+        }
         /* Montos */
         .monto-bloque {
-            margin-top: 4px;
+            margin-top: 2px;
             font-size: var(--font-size-base);
         }
 
         .total-bloque {
-            background: #f8f9fa;
-            font-weight: bold;
+            background: #e3e8ee;            
             border-radius: 5px;
-            padding: 5px;
-            margin-top: 8px;
+            padding: 10px;            
             text-align: center;
             font-size: var(--font-size-large);
+            position: absolute;
+            top: 0px;
+            right: 0px;
         }
 
         .total-bloque h4 {
@@ -188,85 +210,86 @@
         </div>
 
         <!-- Usuario + Precio -->
-        <div class="section">
+        <div class="info_Boleta">
             <span class="usuario">
                 U.s.: {{ $usuario['nombres'][0] ?? 'N' }}. {{ $usuario['apellidos'][0] ?? '' }}
             </span>
             <span class="precio"><b>Bs.- </b>{{ $tarifa_vehiculo['tarifa'] ?? '0' }}.00</span>
+            <span class="codigo">
+                #{{ $codigoUnico }}
+            </span>
         </div>
         <!-- Datos del vehículo -->
         <div class="vehiculo">
             @if ($placa)
                 <div>
-                    <small style="font-size: 8px; font-weight: normal; display: block; color: #6c757d; font-weight: 400;">Placa</small>
-                    <span class="placa">{{ strtoupper($placa) }}</span>
+                    <small style="font-weight: normal; display: block; color: #6c757d; font-weight: 400;">Placa</small>
+                    <span class="placa cod_unico">{{ strtoupper($placa) }}</span>
                 </div>
             @endif
 
             @if ($ci)
                 <div>
-                    <small style="font-size: 8px; font-weight: normal; display: block;  color: #6c757d;  font-weight: 400;">Documento de Identidad</small>
-                    <span class="ci">{{ $ci }}</span>
+                    <small style="font-weight: normal; display: block;  color: #6c757d;  font-weight: 400;">Documento
+                        de Identidad</small>
+                    <span class="ci cod_unico">{{ $ci }}</span>
                 </div>
             @endif
 
             @if ($tarifa_vehiculo['nombre'])
-                <span>{{ $tarifa_vehiculo['nombre'] }} |</span>
+                <span style="">{{ $tarifa_vehiculo['nombre'] }} |</span>
             @endif
             @if ($nombre)
-                <span>{{ $nombre }} |</span>
+                <span style="">{{ $nombre }} |</span>
             @endif
         </div>
-
-        <!-- Código único -->
-        <div class="cod_unico">
-            {{ $codigoUnico }}
-        </div>
-
         <!-- Fechas -->
-        <div class="section">
-            <table class="tabla_fechas">
-                <tr>
-                    <td>H.Entrada</td>
-                    <td>{{ $entrada_vehiculo ?? 'N/A' }}</td>
-                </tr>
-                <tr>
-                    <td>H.Salida</td>
-                    <td>{{ $salida_vehiculo ?? 'N/A' }}</td>
-                </tr>
-            </table>
-        </div>
+
+        <table class="tabla_fechas">
+            <tr>
+                <td>H.Entrada</td>
+                <td>{{ $entrada_vehiculo ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td>H.Salida</td>
+                <td>{{ $salida_vehiculo ?? 'N/A' }}</td>
+            </tr>
+        </table>
+
         <!-- Estadía y Retraso -->
-        <div class="section">
-            <table style="width:100%; text-align:center; font-size: var(--font-size-base);">
-                <tr>
-                    <td style="font-weight: bold;">Estadía</td>
-                    <td style="font-weight: bold;">Retraso</td>
-                </tr>
-                <tr>
-                    <td style="font-size: 14px; font-weight: 600;">
-                        {{ $tiempo_estadia ?? '00:00' }}
-                    </td>
-                    <td style="font-size: 14px; font-weight: 600;">
-                        {{ $tiempo_retraso ?? '00:00' }}
-                    </td>
-                </tr>
-            </table>
-        </div>
+
+        <table class="tiempo">
+            <tr>
+                <td>Estadía</td>
+                <td>Retraso</td>
+            </tr>
+            <tr>
+                <td>
+                    {{ $tiempo_estadia ?? '00:00' }}
+                </td>
+                <td>
+                    {{ $tiempo_retraso ?? '00:00' }}
+                </td>
+            </tr>
+        </table>
+
 
         <div class="section">
-            <!-- Montos -->
-            <div class="monto-bloque">
-                <span>Monto Inicial:</span>
-                <span>Bs. {{ $monto_vehiculo_boleta ?? '0' }}</span>
+            <div class="precios">
+                <!-- Montos -->
+                <div class="monto-bloque">
+                    <span>Monto Inicial:</span>
+                    <span>Bs. {{ $monto_vehiculo_boleta ?? '0' }}</span>
+                </div>
+                <div class="monto-bloque">
+                    <span>Monto Extra (Retraso):</span>
+                    <span>Bs. {{ $monto_extra ?? '0' }}</span>
+                </div>
+                <div class="total-bloque">
+                    <h4> <b>Bs.- </b>{{ $total ?? '0' }}.00<b></b></h4>
+                </div>
             </div>
-            <div class="monto-bloque">
-                <span>Monto Extra (Retraso):</span>
-                <span>Bs. {{ $monto_extra ?? '0' }}</span>
-            </div>
-            <div class="total-bloque">
-                <h4>Total: <b>{{ $total ?? '0' }} Bs. </b></h4>
-            </div>
+
         </div>
 
         <!-- Mensaje final -->

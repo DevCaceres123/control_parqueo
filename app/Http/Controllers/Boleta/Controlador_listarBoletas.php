@@ -10,7 +10,9 @@ use App\Models\Config_atraso;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
+use Barryvdh\DomPDF\Facade\Pdf; // clase para generar pdf
 use Illuminate\Support\Facades\DB;
+
 class Controlador_listarBoletas extends Controller
 {
     /**
@@ -23,7 +25,7 @@ class Controlador_listarBoletas extends Controller
         // }
 
         $encargados_puesto = User::select('id', 'nombres', 'apellidos')
-        
+
         ->where('estado', 'activo')
         ->get();
 
@@ -47,7 +49,7 @@ class Controlador_listarBoletas extends Controller
             'vehiculo' => function ($query) {
                 $query->select(['id', 'nombre', 'tarifa']);
             },
-        ])->select('id','retraso', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id')->orderBy('id', 'desc');
+        ])->select('id', 'retraso', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id')->orderBy('id', 'desc');
 
 
 
@@ -125,6 +127,135 @@ class Controlador_listarBoletas extends Controller
         ]);
     }
 
+
+    public function generarTicketEntrada(string $id)
+    {
+
+        try {
+            $boleta = Boleta::find($id);
+
+            if (!$boleta) {
+                throw new Exception("Reporte no encontrado");
+            }
+
+            // Decodifica el campo JSON como objeto
+            $reporteJson = json_decode($boleta->reporte_json, true);
+
+
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new Exception("El campo reporte_json no contiene un JSON válido.");
+            }
+
+            // Acceso a datos del JSON como array
+            $placa = $reporteJson['placa'] ?? null;
+            $vehiculo = $reporteJson['tarifa_vehiculo'] ?? null;
+            $fechaEntrada = $boleta->entrada_veh ?? null;
+            $numeroBoleta = $boleta->num_boleta ?? null;
+            $datosUsuario = $reporteJson['usuario'] ?? null;
+            $nombre = $reporteJson['nombre'] ?? null;
+            $ci = $reporteJson['ci'] ?? null;
+            $fecha_finalizacion = $boleta->salidaMax ?? null;
+
+
+
+            // Genera el reporte en PDF
+            $reporteBase64 = $this->generarBoletaEntrada($placa, $vehiculo, $fechaEntrada, $fecha_finalizacion, $numeroBoleta, $datosUsuario, $nombre, $ci);
+
+            // Responde con éxito
+            $this->mensaje('exito', $reporteBase64);
+            return response()->json($this->mensaje, 200);
+        } catch (Exception $e) {
+            // Manejo de excepciones
+            $this->mensaje("error", "Error: " . $e->getMessage());
+            return response()->json($this->mensaje, 200);
+        }
+    }
+
+
+
+    public function generarBoletaEntrada($placa, $vehiculo, $fecha_actual, $fecha_finalizacion, $codigoUnico, $datosUsuario, $nombre, $ci)
+    {
+
+
+
+        $data = [
+            'usuario' => $datosUsuario,
+            'tarifa_vehiculo' =>  json_decode(json_encode($vehiculo)),
+            'fecha_generada' => $fecha_actual,
+            'fecha_finalizacion' => $fecha_finalizacion,
+            'placa' => $placa ?? null,
+            'nombre' => $nombre ?? null,
+            'ci' => $ci ?? null,
+            'codigoUnico' => $codigoUnico,
+        ];
+
+
+        $pdf = Pdf::loadView('administrador/boletas/boletaPago', $data)
+           ->setPaper([0, 0, 226.77, 841.89]); // 80 mm tamaño de papel
+
+        // Obtener el contenido binario del PDF
+        $pdfContent = $pdf->output();
+
+        // Convertir el contenido binario a Base64
+        return  base64_encode($pdfContent);
+
+    }
+
+
+
+    public function generarTicketSalida(string $id)
+    {
+
+        try {
+            $boleta = Boleta::find($id);
+
+            if (!$boleta) {
+                throw new Exception("Reporte no encontrado");
+            }
+
+            if (!$boleta->reporteSalida_json) {
+                throw new Exception("aun no se ha generado la boleta de salida.");
+            }
+
+
+            // Decodifica el campo JSON como objeto
+            $reporteJson = json_decode($boleta->reporteSalida_json, true);
+
+
+            
+            if (json_last_error() !== JSON_ERROR_NONE) {
+                throw new Exception("El campo reporte_json no contiene un JSON válido.");
+            }
+        
+
+            // Genera el reporte en PDF
+           $reporteBase64 = $this->generarBoletaSalida($reporteJson);
+
+            // Responde con éxito
+            $this->mensaje('exito', $reporteBase64);
+            return response()->json($this->mensaje, 200);
+        } catch (Exception $e) {
+            // Manejo de excepciones
+            $this->mensaje("error", "Error: " . $e->getMessage());
+            return response()->json($this->mensaje, 200);
+        }
+    }
+
+
+
+      public function generarBoletaSalida($datos)
+    {
+        
+        // Pasar todo el array a la vista
+        $pdf = Pdf::loadView('administrador/boletas/boletaPagada', $datos)
+            ->setPaper([0, 0, 226.77, 841.89]); // 80 mm tamaño de papel
+
+        // Obtener el contenido binario del PDF
+        $pdfContent = $pdf->output();
+
+        // Convertir a Base64
+        return base64_encode($pdfContent);
+    }
 
     /**
      * Show the form for creating a new resource.

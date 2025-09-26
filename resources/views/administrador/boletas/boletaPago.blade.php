@@ -7,9 +7,9 @@
     <title>BOLETA DE PAGO</title>
     <style>
         :root {
-            --font-size-base: 11px;
-            --font-size-large: 14px;
-            --font-size-small: 9px;
+            --font-size-base: 8px;
+            --font-size-large: 12px;
+            --font-size-small: 7px;
         }
 
         * {
@@ -26,12 +26,19 @@
 
         .tiket {
             text-align: center;
-            font-size: var(--font-size-large);
+            font-size: var(--font-size-base);
             margin: 10px 0 0 0;
             padding: 0;
             letter-spacing: 1px;
+            position: relative;
         }
-
+        .lugar{
+            position:absolute;
+            top: 0;
+            right: 0;
+            font-weight: bold;
+            margin-right: 35px;
+        }
         .container_boleta {
             padding: 10px;
             border: 2px dashed #8b5050;
@@ -60,15 +67,30 @@
             font-size: var(--font-size-base);
         }
 
+        .info_Boleta {
+            font-size: var(--font-size-large);
+            position: relative;
+            width: 100%;
+            height: 14px;
+            margin-bottom: 2px;
+        }
         /* Usuario + Precio */
         .usuario {
-            float: left;
-            font-weight: bold;
+            position: absolute;
+            left: 0; 
+            
         }
 
         .precio {
-            float: right;
-            font-weight: bold;
+           position: absolute; 
+           left: 50%; 
+           transform: translateX(-50%); 
+           
+        }
+        .codigo{
+            position: absolute; 
+            right: 0; 
+            
         }
 
         .section::after {
@@ -80,12 +102,14 @@
         /* Datos del vehículo */
         .vehiculo {
             text-align: center;
+            font-size: var(--font-size-base);         
+            border-bottom: 1px solid #333;
             text-transform: uppercase;
         }
 
         .vehiculo .placa,
         .vehiculo .ci {
-            font-size: var(--font-size-large);
+            
             display: block;
             font-weight: bold;
             letter-spacing: 2px;
@@ -93,7 +117,7 @@
 
         /* Código único */
         .cod_unico {
-            font-size: 14px;
+            font-size: 13px;
             text-align: center;
             font-weight: bold;
             margin: 6px 0;
@@ -139,6 +163,8 @@
 <body>
     <div class="tiket">
         <p>TICKET DE INGRESO</p>
+        <p class="lugar">LUGAR:</p>
+        
     </div>
     <div class="container_boleta">
         <!-- Encabezado -->
@@ -148,36 +174,43 @@
         </div>
 
         <!-- Usuario + Precio -->
-        <div class="section">
+        <div class="info_Boleta">
             <span class="usuario">
                 U.s.: {{ $usuario['nombres'][0] ?? 'N' }}. {{ $usuario['apellidos'][0] ?? '' }}.
             </span>
             <span class="precio">
                 <b>Bs.- </b>{{ $tarifa_vehiculo->tarifa ?? 'N/A' }}.00
             </span>
+            <span class="codigo">
+                #{{ $codigoUnico }}
+            </span>
         </div>
 
-        <!-- Datos vehículo -->
-        <div class="vehiculo section">
+         <div class="vehiculo">
             @if ($placa)
-                <span class="placa">{{ strtoupper($placa) }}</span>
+                <div>
+                    <small
+                        style=" font-weight: normal; display: block; color: #6c757d; font-weight: 400;">Placa</small>
+                    <span class="placa cod_unico">{{ strtoupper($placa) }}</span>
+                </div>
             @endif
+
             @if ($ci)
-                <span class="ci">D. {{ $ci }}</span>
+                <div>
+                    <small
+                        style="font-weight: normal; display: block;  color: #6c757d;  font-weight: 400;">Documento
+                        de Identidad</small>
+                    <span class="ci cod_unico">{{ $ci }}</span>
+                </div>
             @endif
+
             @if ($tarifa_vehiculo->nombre)
-                <span>{{ $tarifa_vehiculo->nombre }} |</span>
+                <span style="">{{ $tarifa_vehiculo->nombre }} |</span>
             @endif
             @if ($nombre)
-                <span>{{ $nombre }} |</span>
+                <span style="">{{ $nombre }}</span>
             @endif
-        </div>
-
-        <!-- Código único -->
-        <div class="cod_unico">
-            {{ $codigoUnico }}
-        </div>
-
+        </div>    
         <!-- Fechas -->
         <div class="section">
             <table class="tabla_fechas">
