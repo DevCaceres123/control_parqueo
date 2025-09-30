@@ -92,7 +92,7 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
       // CONTROLADOR PARA LOS REPORTES
     Route::controller(Controlador_reporte::class)->group(function () {
         Route::resource('reportes', Controlador_reporte::class);
-         
+        Route::post('generar_reporte', 'generar_reporte')->name('reporte.generar_reporte'); 
         
            
     });

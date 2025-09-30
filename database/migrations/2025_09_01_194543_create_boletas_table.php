@@ -22,7 +22,8 @@ return new class extends Migration
             $table->datetime('salidaMax')->nullable();
             $table->string('retraso',10)->nullable();            
             $table->enum('estado_parqueo',['ingreso','salida']);
-            $table->enum('estado_impresion',['generado','impreso']);            
+            $table->enum('estado_impresion',['generado','impreso']);
+            $table->integer('monto_atraso')->nullable();            
             $table->integer('total')->nullable();
             $table->json('reporte_json')->nullable();
             $table->json('reporteSalida_json')->nullable();

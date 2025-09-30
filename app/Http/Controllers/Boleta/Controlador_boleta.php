@@ -440,6 +440,7 @@ class Controlador_boleta extends Controller
             );
 
             $boleta->reporteSalida_json = $reporte['datos'];
+            $boleta->monto_atraso = $reporte['monto_extra'];
 
             $boleta->save(); // Guardar cambios en la base de datos
             DB::commit();
@@ -501,6 +502,7 @@ class Controlador_boleta extends Controller
         return [
             'pdf' => base64_encode($pdfContent),
             'datos' =>  json_encode($datos),
+            'monto_extra' =>$datos['monto_extra'] 
             ];
     }
 
