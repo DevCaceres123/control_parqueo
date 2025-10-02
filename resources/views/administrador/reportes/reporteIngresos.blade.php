@@ -50,7 +50,13 @@
         }
 
         h4 {
-            font-size: 12px;
+            font-size: 12px;            
+            color: #1a1a1a;
+            margin: 0;
+            font-weight: 300;
+        }
+        h5{
+            font-size: 11px;
             font-weight: normal;
             color: #555;
             margin: 0;
@@ -150,8 +156,10 @@
         <div class="header-container">
             <div class="header-info">
                 <h2>GOBIERNO AUTÓNOMO MUNICIPAL DE CARANAVI</h2>
-                <h4>SECRETARIA MUNICIPAL ADMINISTRATIVA FINANCIERA</h4>
-                <h4>Dirección de Recaudaciones</h4>
+                <h4>SECRETARIA MUNICIPAL ADMINISTRATIVA FINANCIERA</h4>                
+                <h5>PARQUEO MUNICIPAL</h5>
+                <h5>Dirección de Recaudaciones</h5>
+                
             </div>
             <div class="header-logo">
                 <img src="{{ public_path('assets/logo-caranavi.webp') }}" alt="Logo" class="logo">
