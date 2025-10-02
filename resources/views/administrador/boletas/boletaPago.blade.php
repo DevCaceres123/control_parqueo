@@ -162,15 +162,14 @@
 
 <body>
     <div class="tiket">
-        <p>TICKET DE INGRESO</p>
-        <p class="lugar">LUGAR:</p>
-        
+        <p>TICKET DE INGRESO</p>            
     </div>
     <div class="container_boleta">
         <!-- Encabezado -->
         <div class="info_empresa">
             <h2>GOBIERNO AUTONOMO MUNICIPAL DE CARANAVI</h2>
             <h2>DIRECCION DE RECAUDACIONES</h2>
+            <h2>PARQUEO MUNICIPAL</h2>
         </div>
 
         <!-- Usuario + Precio -->

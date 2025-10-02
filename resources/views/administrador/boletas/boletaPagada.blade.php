@@ -207,6 +207,7 @@
         <div class="info_empresa">
             <h2>GOBIERNO AUTONOMO MUNICIPAL DE CARANAVI</h2>
             <h2>DIRECCION DE RECAUDACIONES</h2>
+            <h2>PARQUEO MUNICIPAL</h2>
         </div>
 
         <!-- Usuario + Precio -->
