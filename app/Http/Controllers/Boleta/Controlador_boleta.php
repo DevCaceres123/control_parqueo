@@ -66,13 +66,13 @@ class Controlador_boleta extends Controller
                 $boleta = $this->generarBoletaDatosPersonales($request->nombre, $request->ci, $request->id_vehiculo, $fecha_actual, $codigoUnico);
             }
 
-            $fecha_finalizacion = $this->calcularSalida($fecha_actual);
+            $fecha_finalizacion = $this->calcularSalida($fecha_actual);            
 
             $data = [
                 'usuario' => auth()->user()->only(['nombres', 'apellidos']),
                 'tarifa_vehiculo' => Vehiculo::select('tarifa', 'nombre')->where('id', $request->id_vehiculo)->first(),
                 'fecha_generada' => $fecha_actual->format('Y-m-d H:i:s'),
-                'fecha_finalizacion' => $fecha_actual->copy()->addDay()->setTime(15, 0, 0)->format('Y-m-d H:i:s'),// formatear para fecha final,
+                'fecha_finalizacion' => $fecha_actual->copy()->addDay()->setTime(12, 0, 0)->format('Y-m-d H:i:s'),// formatear para fecha final,
                 'placa' => $request->placa ?? null,
                 'nombre' => $request->nombre ?? null,
                 'ci' => $request->ci ?? null,
@@ -112,7 +112,7 @@ class Controlador_boleta extends Controller
         $fecha_finalizacion = $fecha_actual
                     ->copy()              // para no modificar $fecha_actual
                     ->addDay()            // +1 día
-                    ->setTime(15, 0, 0);  // 15:00:00 (3 pm)
+                    ->setTime(12, 0, 0);  // 15:00:00 (3 pm)
 
         $data = [
             'usuario' => auth()->user()->only(['nombres', 'apellidos']),
@@ -141,7 +141,7 @@ class Controlador_boleta extends Controller
         $fecha_finalizacion = $fecha_actual
                     ->copy()              // para no modificar $fecha_actual
                     ->addDay()            // +1 día
-                    ->setTime(15, 0, 0);  // 15:00:00 (3 pm)
+                    ->setTime(12, 0, 0);  // 15:00:00 (3 pm)
 
         $data = [
             'usuario' => auth()->user()->only(['nombres', 'apellidos']),
@@ -176,7 +176,7 @@ class Controlador_boleta extends Controller
         $fecha_finalizacion = $fecha_actual
                         ->copy()
                         ->addDay()
-                        ->setTime(15, 0, 0);
+                        ->setTime(12, 0, 0);
 
 
         if ($config && $config->tiempo_extra) {
