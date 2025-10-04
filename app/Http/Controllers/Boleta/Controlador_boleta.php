@@ -359,19 +359,18 @@ class Controlador_boleta extends Controller
         $fechaEntrada = Carbon::parse($entrada);
         $fechaSalida = Carbon::parse($salida);
 
-        // Si ingresa a este if revisar las fechas
+
+        // Si la fecha actual es mayor a la fecha de entrada
         if ($fechaActual->lessThan($fechaEntrada)) {
-            throw new Exception("Existe un error en las fechas");
+            throw new Exception("Existe un error en las fechas, la fecha actual no puede ser mayor a la fecha de entrada");
         }
 
         $minutosPasados = $fechaEntrada->diffInMinutes($fechaActual);
 
-        // Convertir a horas y minutos
-        $horas   = floor($minutosPasados / 60);  // horas completas
-        $minutos = $minutosPasados % 60;         // minutos restantes
+        $horas   = floor($minutosPasados / 60);
+        $minutos = $minutosPasados % 60;
 
-        // Formatear como "HH:MM"
-        $tiempoPasado = sprintf('%02d:%02d', $horas, $minutos);
+        $tiempoPasado=$this->formtearDiasHorasMinutos($minutos);
 
 
         // Si está dentro del tiempo límite <=
@@ -379,7 +378,7 @@ class Controlador_boleta extends Controller
 
             return [
                 'tiempoPasado' => $tiempoPasado,
-                'tiempoRetrasado' => '00:00',
+                'tiempoRetrasado' => '0d 00h 00m',
                 'veces_pasadas' => 0,
             ];
         }
@@ -391,8 +390,8 @@ class Controlador_boleta extends Controller
         $horas   = floor($minutosPasados / 60);  // horas completas
         $minutos = $minutosPasados % 60;         // minutos restantes
 
-        // Formatear como "HH:MM"
-        $tiempoRetraso = sprintf('%02d:%02d', $horas, $minutos);
+        // Formatear como "0d 00h 15m"
+        $tiempoRetraso =$this->formtearDiasHorasMinutos($minutos);
 
         // Diferencia en horas desde la salida
         $horasPasadas = $fechaSalida->diffInHours($fechaActual);
@@ -405,6 +404,15 @@ class Controlador_boleta extends Controller
                 'tiempoRetrasado' => $tiempoRetraso,
                 'veces_pasadas' => $vecesPasadas,
             ];
+    }
+
+    public function formtearDiasHorasMinutos($minutosTotales)
+    {
+        $dias = floor($minutosTotales / 1440); // 1 día = 1440 minutos
+        $horas = floor(($minutosTotales % 1440) / 60);
+        $minutos = $minutosTotales % 60;
+
+        return sprintf('%dd %02dh %02dm', $dias, $horas, $minutos);
     }
 
     // Se genera una boleta de pago
@@ -470,7 +478,7 @@ class Controlador_boleta extends Controller
         $datos['entrada_vehiculo'] = $entradaVehi;
         $datos['salida_vehiculo']  = $salidaVeh;
         $datos['total']            = $total;
-        
+
 
         $vehiculo_monto = Vehiculo::select('tarifa')->where('id', $vehiculo_id)->first();
         $totalRetraso = $this->calcularTotal($salidaVeh, $saliMaxVechiulo, $entradaVehi);
@@ -502,7 +510,7 @@ class Controlador_boleta extends Controller
         return [
             'pdf' => base64_encode($pdfContent),
             'datos' =>  json_encode($datos),
-            'monto_extra' =>$datos['monto_extra'] 
+            'monto_extra' => $datos['monto_extra']
             ];
     }
 
