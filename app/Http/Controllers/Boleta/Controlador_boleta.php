@@ -370,7 +370,7 @@ class Controlador_boleta extends Controller
         $horas   = floor($minutosPasados / 60);
         $minutos = $minutosPasados % 60;
 
-        $tiempoPasado=$this->formtearDiasHorasMinutos($minutos);
+        $tiempoPasado = $this->formtearDiasHorasMinutos($minutos);
 
 
         // Si está dentro del tiempo límite <=
@@ -391,7 +391,7 @@ class Controlador_boleta extends Controller
         $minutos = $minutosPasados % 60;         // minutos restantes
 
         // Formatear como "0d 00h 15m"
-        $tiempoRetraso =$this->formtearDiasHorasMinutos($minutos);
+        $tiempoRetraso = $this->formtearDiasHorasMinutos($minutos);
 
         // Diferencia en horas desde la salida
         $horasPasadas = $fechaSalida->diffInHours($fechaActual);
@@ -422,12 +422,16 @@ class Controlador_boleta extends Controller
 
             DB::beginTransaction();
 
-            $boleta = Boleta::where('num_boleta', $request->numeroBoleta)
-                    ->where('estado_parqueo', 'ingreso')
-                    ->first();
+            // Buscar la boleta por número
+            $boleta = Boleta::where('num_boleta', $request->numeroBoleta)->first();
 
             if (!$boleta) {
-                throw new Exception("revise el estado de la boleta");
+                throw new Exception("La boleta con número {$request->numeroBoleta} no existe.");
+            }
+
+            // Verificar si está en el parqueo
+            if ($boleta->estado_parqueo !== 'ingreso') {
+                throw new Exception("El vehículo con boleta {$request->numeroBoleta} ya ha salido del parqueo.");
             }
 
 
@@ -486,17 +490,15 @@ class Controlador_boleta extends Controller
 
         $totalBoleta = $vehiculo_monto->tarifa * ($totalRetraso['veces_pasadas'] + 1);
 
-
+        // se valida que el total del frontend sea al mismo que se calcula aqui
         if ($totalBoleta != $total) {
             throw new Exception("los montos no coinciden");
         }
 
         $datos['monto_extra'] = $vehiculo_monto->tarifa * $totalRetraso['veces_pasadas'];
         $datos['monto_vehiculo_boleta'] = $vehiculo_monto->tarifa;
-        $datos['tiempo_retraso'] = $this->formatearTiempo($retraso);
-        $datos['tiempo_estadia'] = $this->formatearTiempo($tiempoEstadia);
-
-
+        $datos['tiempo_retraso'] = $retraso;
+        $datos['tiempo_estadia'] = $tiempoEstadia;
 
 
         // Pasar todo el array a la vista
@@ -513,17 +515,7 @@ class Controlador_boleta extends Controller
             'monto_extra' => $datos['monto_extra']
             ];
     }
-
-    //SIRVE PARA FORMATEAR EL TIEMPO DE LA BOLETA EN HORAS Y MINUTOS
-    public function formatearTiempo($tiempo)
-    {
-        if (!$tiempo) {
-            return "0h 0m";
-        }
-
-        [$horas, $minutos] = explode(':', $tiempo);
-        return intval($horas) . "h " . intval($minutos) . "m";
-    }
+    
     /**
      * Display the specified resource.
      */
