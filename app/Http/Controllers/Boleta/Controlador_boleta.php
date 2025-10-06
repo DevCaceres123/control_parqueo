@@ -66,7 +66,7 @@ class Controlador_boleta extends Controller
                 $boleta = $this->generarBoletaDatosPersonales($request->nombre, $request->ci, $request->id_vehiculo, $fecha_actual, $codigoUnico);
             }
 
-            $fecha_finalizacion = $this->calcularSalida($fecha_actual);            
+            $fecha_finalizacion = $this->calcularSalida($fecha_actual);
 
             $data = [
                 'usuario' => auth()->user()->only(['nombres', 'apellidos']),
@@ -287,31 +287,18 @@ class Controlador_boleta extends Controller
             ]);
 
 
-            if ($request->filtro === 'codigo') {
-                $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id')
-                        ->where('num_boleta', $request->valor)
-                        ->where('estado_parqueo', 'ingreso')   // <-- otra condición
+            $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id', 'estado_parqueo')
+                        ->where($validatedData['filtro'] === 'codigo' ? 'num_boleta' : $validatedData['filtro'], $validatedData['valor'])
                         ->first();
-
-            }
-
-
-            if ($request->filtro === 'ci') {
-                $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id')
-                        ->where('ci', $request->valor)
-                        ->where('estado_parqueo', 'ingreso')   // <-- otra condición
-                        ->first();
-            }
-
-            if ($request->filtro === 'placa') {
-                $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id')
-                        ->where('placa', $request->valor)
-                        ->where('estado_parqueo', 'ingreso')   // <-- otra condición
-                        ->first();
-            }
-
+            
+            
             if (!$boleta) {
                 throw new Exception("no se encontro boletas con ese dato");
+            }
+
+
+            if ($boleta->estado_parqueo === 'salida') {
+                throw new Exception("el vehículo con boleta {$boleta->num_boleta} ya ha salido del parqueo.");
             }
 
             $fecha_actual = Carbon::now();
@@ -360,9 +347,9 @@ class Controlador_boleta extends Controller
         $fechaSalida = Carbon::parse($salida);
 
 
-        // Si la fecha actual es mayor a la fecha de entrada
+        // Si la fecha actual es menor a la fecha de entrada
         if ($fechaActual->lessThan($fechaEntrada)) {
-            throw new Exception("Existe un error en las fechas, la fecha actual no puede ser mayor a la fecha de entrada");
+            throw new Exception("la fecha actual no puede ser menor a la fecha de entrada");
         }
 
         $minutosPasados = $fechaEntrada->diffInMinutes($fechaActual);
@@ -515,7 +502,7 @@ class Controlador_boleta extends Controller
             'monto_extra' => $datos['monto_extra']
             ];
     }
-    
+
     /**
      * Display the specified resource.
      */
