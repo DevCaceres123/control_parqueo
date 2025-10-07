@@ -15,66 +15,160 @@
     <link href="{{ asset('admin_template/css/bootstrap.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('admin_template/css/icons.min.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ asset('admin_template/css/app.min.css') }}" rel="stylesheet" type="text/css" />
+    <style>
+        body {
+            height: 100vh;
+            margin: 0;
+            background: url('{{ asset('assets/gampCaranavi.webp') }}') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Fondo más oscuro para resaltar la tarjeta */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            /* Incrementa la oscuridad del fondo general */
+            z-index: -1;
+        }
+
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            /* Cambiado de blanco transparente a un gris oscuro muy transparente */
+            background: rgba(30, 30, 45, 0.8);
+            /* Gris oscuro azulado transparente */
+            backdrop-filter: blur(12px);
+            /* Un poco más de blur para el efecto vidrioso */
+            border-radius: 20px;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.9);
+            /* Sombra más intensa */
+            /* Borde sutil en tono azulado/morado */
+            border: 1px solid rgba(100, 100, 150, 0.3);
+            color: #e0e0e0;
+            /* Color de texto general más claro pero no blanco puro */
+            padding: 2.5rem 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .login-card:hover {
+            transform: translateY(-8px);
+            /* Más movimiento al pasar el ratón */
+            box-shadow: 0 10px 60px rgba(0, 0, 0, 1);
+            /* Sombra aún más profunda al pasar el ratón */
+        }
+
+        .auth-logo {
+            height: 80px;
+            transition: all 0.3s ease;
+        }
+
+        /* Estilo del botón: gradiente vibrante azul/morado */
+        .btn-primary {
+            background: linear-gradient(135deg, #6a11cb, #2575fc);
+            /* Gradiente de morado a azul vibrante */
+            border: none;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            padding: 0.75rem 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            /* Sombra al botón */
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2575fc, #6a11cb);
+            /* Invertir gradiente al pasar el ratón */
+            box-shadow: 0 8px 20px rgba(37, 117, 252, 0.6);
+            /* Sombra de color del gradiente */
+            transform: scale(1.03);
+            /* Más énfasis en el hover */
+        }
+
+        /* Estilo de los Inputs: fondo más oscuro, texto claro */
+        input.form-control {
+            background-color: rgba(50, 50, 70, 0.7);
+            /* Fondo de input más oscuro y sólido */
+            border: 1px solid rgba(120, 120, 180, 0.4);
+            /* Borde sutil y oscuro */
+            color: #e0e0e0;
+            /* Texto claro */
+            transition: all 0.3s ease;
+        }
+
+        input.form-control:focus {
+            background-color: rgba(60, 60, 80, 0.9);
+            /* Más oscuro y opaco al enfocar */
+            border-color: #6a11cb;
+            /* Borde de enfoque morado */
+            box-shadow: 0 0 0 0.25rem rgba(106, 17, 203, 0.3);
+            /* Sombra de enfoque morada */
+            color: #fff;
+        }
+
+        input.form-control::placeholder {
+            color: rgba(180, 180, 200, 0.7);
+            /* Placeholder más visible */
+        }
+
+        label {
+            font-weight: 500;
+            color: rgba(220, 220, 230, 0.9);
+            /* Color de labels más claro */
+        }
+
+        .text-shadow {
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+            /* Sombra de texto más pronunciada */
+        }
+
+        #mensaje_error {
+            color: #ffda6a;
+            /* Amarillo/naranja más suave para el error */
+            min-height: 25px;
+        }
+    </style>
 
 </head>
 
 <!-- Top Bar Start -->
+
 <body>
-    <div class="container-xxl">
-        <div class="row vh-100 d-flex justify-content-center">
-            <div class="col-12 align-self-center">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-lg-4 mx-auto">
-                            <div class="card">
-                                <div class="card-body p-0 bg-black auth-header-box rounded-top">
-                                    <div class="text-center p-3">
-                                        <a href="index.html" class="logo logo-admin">
-                                            <img src="{{ asset('admin_template/images/logo-sm.png') }}" height="50"
-                                                alt="logo" class="auth-logo">
-                                        </a>
-                                        <h4 class="mt-3 mb-1 fw-semibold text-white fs-18">LOGIN</h4>
-                                    </div>
-                                </div>
-
-                                <div class="card-body pt-0">
-                                    <div class="text-center py-2" id="mensaje_error"></div>
-                                    <form id="formulario_login" autocomplete="off">
-                                        @csrf
-                                        <div class="form-group mb-2">
-                                            <label class="form-label" for="usuario">Usuario</label>
-                                            <input type="text" class="form-control" id="usuario" name="usuario"
-                                                placeholder="Ingrese usuario">
-                                        </div><!--end form-group-->
-
-                                        <div class="form-group">
-                                            <label class="form-label" for="password">Password</label>
-                                            <input type="password" class="form-control" name="password" id="password"
-                                                placeholder="Ingrese la contraseña">
-                                        </div><!--end form-group-->
-                                    </form>
-
-                                    <div class="form-group mb-0 row">
-                                        <div class="col-12">
-                                            <div class="d-grid mt-3">
-                                                <button class="btn btn-primary" type="button"
-                                                    id="btn_ingresar_usuario">INGRESAR <i
-                                                        class="fas fa-sign-in-alt ms-1"></i></button>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <div class="login-card text-center">
+        <div class="mb-4">
+            <img src="{{ asset('assets/logo-caranavi.webp') }}" alt="logo" class="auth-logo">
         </div>
+        <h4 class="fw-bold text-shadow mb-1">¡Bienvenido!</h4>
+        <p class="text-shadow system-title mb-4">SISTEMA DE PARQUEO</p>
+
+        <div id="mensaje_error" class="text-warning fw-semibold mb-2"></div>
+
+        <form id="formulario_login" autocomplete="off">
+            @csrf
+            <div class="form-group mb-3 text-start">
+                <label for="usuario">Usuario</label>
+                <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingrese usuario">
+            </div>
+            <div class="form-group mb-4 text-start">
+                <label for="password">Contraseña</label>
+                <input type="password" class="form-control" id="password" name="password"
+                    placeholder="Ingrese la contraseña">
+            </div>
+            <div class="d-grid">
+                <button type="submit" id="btn_ingresar_usuario" class="btn btn-primary">
+                    INGRESAR <i class="fas fa-sign-in-alt ms-1"></i>
+                </button>
+            </div>
+        </form>
     </div>
-
-
-
 </body>
 
 </html>
@@ -94,7 +188,7 @@
             <div class="d-inline-flex justify-content-center align-items-center thumb-xs bg-${color} rounded-circle mx-auto me-1">
                 <i class="fas ${iconoClase} align-self-center mb-0 text-white"></i>
             </div>
-            <strong>${mensaje}</strong>
+            <strong class='text-light'>${mensaje}</strong>
         </div>
         `;
         // Configurar el temporizador para ocultar la alerta después de 5 segundos
