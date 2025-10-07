@@ -83,10 +83,14 @@ function listar_registros() {
             },
 
             {
-                data: "retraso",
+                data: "dias_cobrados",
                 className: "table-td",
                 render: function (data) {
-                    return `${data ?? "N/A"} `;
+                    return `                    
+                    <span class="badge text-capitalize ${data != null ? "bg-primary" : "bg-danger"} fs-6">
+                        ${data != null ? `${data} ${data == 1 ? 'día' : 'días'}` : "N/A"}
+                    </span>
+                    `;
                 },
             },
             {

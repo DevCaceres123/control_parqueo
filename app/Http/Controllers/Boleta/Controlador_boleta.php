@@ -204,8 +204,7 @@ class Controlador_boleta extends Controller
 
         $boleta = new Boleta();
         $boleta->placa = $request->placa;
-        $boleta->entrada_veh = $fecha_actual;
-        $boleta->retraso = null;
+        $boleta->entrada_veh = $fecha_actual;        
         $boleta->estado_parqueo = 'ingreso';
         $boleta->estado_impresion = 'generado';
         $boleta->vehiculo_id = $request->id_vehiculo;
@@ -230,8 +229,7 @@ class Controlador_boleta extends Controller
         $boleta = new Boleta();
         $boleta->ci = $request->ci;
         $boleta->persona = $request->nombre;
-        $boleta->entrada_veh = $fecha_actual;
-        $boleta->retraso = null;
+        $boleta->entrada_veh = $fecha_actual;        
         $boleta->estado_parqueo = 'ingreso';
         $boleta->estado_impresion = 'generado';
         $boleta->vehiculo_id = $request->id_vehiculo;
@@ -305,8 +303,7 @@ class Controlador_boleta extends Controller
             $montoRetraso = $this->calcularTotal($fecha_actual, $boleta->salidaMax, $boleta->entrada_veh);
             $vehiculo_monto = Vehiculo::select('nombre', 'tarifa')->where('id', $boleta->vehiculo_id)->first();
             $total = $vehiculo_monto->tarifa * ($montoRetraso['veces_pasadas'] + 1); // sumamos 1 al total para cobrar el primer dia
-            $tiempoEstadita = $montoRetraso['tiempoPasado'];
-            $tiempoRetraso = $montoRetraso['tiempoRetrasado'];
+            $tiempoEstadita = $montoRetraso['tiempoPasado'];            
             $montoRetraso = $montoRetraso['veces_pasadas']  * $vehiculo_monto->tarifa;
 
             $data = [
@@ -317,7 +314,7 @@ class Controlador_boleta extends Controller
                 'montoRetraso' => $montoRetraso,
                 'montoVehiculo' => $vehiculo_monto->tarifa,
                 'tiempoEstadia' => $tiempoEstadita,
-                'tiempoRetraso' => $tiempoRetraso,
+                
             ];
 
 
@@ -345,56 +342,38 @@ class Controlador_boleta extends Controller
         $fechaActual = Carbon::parse($fecha_actual);
         $fechaEntrada = Carbon::parse($entrada);
         $fechaSalida = Carbon::parse($salida);
-
+        // Días cobrados
+        $diasCobrados = 1; // siempre al menos 1 dí
 
         // Si la fecha actual es menor a la fecha de entrada
         if ($fechaActual->lessThan($fechaEntrada)) {
             throw new Exception("la fecha actual no puede ser menor a la fecha de entrada");
         }
 
-        $minutosPasados = $fechaEntrada->diffInMinutes($fechaActual);
-
-        $horas   = floor($minutosPasados / 60);
-        $minutos = $minutosPasados % 60;
-
-        $tiempoPasado = $this->formtearDiasHorasMinutos($minutos);
-
-
         // Si está dentro del tiempo límite <=
         if ($fechaActual->lte($fechaSalida)) {
 
             return [
-                'tiempoPasado' => $tiempoPasado,
-                'tiempoRetrasado' => '0d 00h 00m',
+                'tiempoPasado' => $diasCobrados,                
                 'veces_pasadas' => 0,
             ];
         }
 
-
-        $minutosPasados = $fechaSalida->diffInMinutes($fechaActual);
-
-        // Convertir a horas y minutos
-        $horas   = floor($minutosPasados / 60);  // horas completas
-        $minutos = $minutosPasados % 60;         // minutos restantes
-
-        // Formatear como "0d 00h 15m"
-        $tiempoRetraso = $this->formtearDiasHorasMinutos($minutos);
-
-        // Diferencia en horas desde la salida
-        $horasPasadas = $fechaSalida->diffInHours($fechaActual);
-
-        // ¿Cuántos bloques de 24h completos?
-        $vecesPasadas = ceil($horasPasadas / 24);
+        
+        // Calcular atraso
+        $horasPasadas = $fechaSalida->diffInHours($fechaActual);        
+        $vecesPasadas= ceil($horasPasadas / 24);
+        $diasCobrados=$diasCobrados+$vecesPasadas;
 
         return [
-                'tiempoPasado' => $tiempoPasado,
-                'tiempoRetrasado' => $tiempoRetraso,
+                'tiempoPasado' => $diasCobrados,                
                 'veces_pasadas' => $vecesPasadas,
             ];
     }
 
     public function formtearDiasHorasMinutos($minutosTotales)
     {
+        
         $dias = floor($minutosTotales / 1440); // 1 día = 1440 minutos
         $horas = floor(($minutosTotales % 1440) / 60);
         $minutos = $minutosTotales % 60;
@@ -405,6 +384,7 @@ class Controlador_boleta extends Controller
     // Se genera una boleta de pago
     public function boletaPagada(Request $request)
     {
+        
         try {
 
             DB::beginTransaction();
@@ -425,7 +405,7 @@ class Controlador_boleta extends Controller
             $boleta->salida_veh = $request->horaSalida;
             $boleta->estado_parqueo = 'salida';
             $boleta->total = $request->total;
-            $boleta->retraso = $request->retraso;
+            $boleta->dias_cobrados = $request->estadia;
 
             $reporte = $this->generarBoletaPago(
                 $boleta->reporte_json,
@@ -483,8 +463,7 @@ class Controlador_boleta extends Controller
         }
 
         $datos['monto_extra'] = $vehiculo_monto->tarifa * $totalRetraso['veces_pasadas'];
-        $datos['monto_vehiculo_boleta'] = $vehiculo_monto->tarifa;
-        $datos['tiempo_retraso'] = $retraso;
+        $datos['monto_vehiculo_boleta'] = $vehiculo_monto->tarifa;        
         $datos['tiempo_estadia'] = $tiempoEstadia;
 
 

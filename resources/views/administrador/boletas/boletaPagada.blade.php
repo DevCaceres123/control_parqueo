@@ -150,9 +150,11 @@
             font-size: var(--font-size-base);
             margin-top: 1px;
         }
-        .precios{
+
+        .precios {
             position: relative;
         }
+
         /* Montos */
         .monto-bloque {
             margin-top: 2px;
@@ -160,9 +162,9 @@
         }
 
         .total-bloque {
-            background: #e3e8ee;            
+            background: #e3e8ee;
             border-radius: 5px;
-            padding: 10px;            
+            padding: 10px;
             text-align: center;
             font-size: var(--font-size-large);
             position: absolute;
@@ -261,16 +263,9 @@
 
         <table class="tiempo">
             <tr>
-                <td>Estadía</td>
-                <td>Retraso</td>
-            </tr>
-            <tr>
-                <td>
-                    {{ $tiempo_estadia ?? '00:00' }}
-                </td>
-                <td>
-                    {{ $tiempo_retraso ?? '00:00' }}
-                </td>
+                <td>Periodo cobrado:</td>
+                <td>{{ $tiempo_estadia }} Día{{ $tiempo_estadia > 1 ? 's' : '' }}</td>
+
             </tr>
         </table>
 

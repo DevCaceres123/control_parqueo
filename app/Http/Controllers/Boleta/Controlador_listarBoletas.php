@@ -49,7 +49,7 @@ class Controlador_listarBoletas extends Controller
             'vehiculo' => function ($query) {
                 $query->select(['id', 'nombre', 'tarifa']);
             },
-        ])->select('id', 'retraso', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id')->orderBy('id', 'desc');
+        ])->select('id', 'dias_cobrados', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id')->orderBy('id', 'desc');
 
 
 
@@ -95,6 +95,7 @@ class Controlador_listarBoletas extends Controller
                 'placa' => $boleta->placa,
                 'ci' => $boleta->ci,
                 'estado_parqueo' => $boleta->estado_parqueo,
+                'dias_cobrados' => $boleta->dias_cobrados,
                 'total' => $boleta->total,
                 'vehiculo' => $boleta->vehiculo ? [
                     'id' => $boleta->vehiculo->id,

@@ -158,7 +158,7 @@ function llenarBoletaPrint(
     montoRetraso,
     montoVehiculo,
     tiempoEstadia,
-    tiempoRetraso
+    
 ) {
     // Mostrar el div completo de la boleta
     document.getElementById("contendor_cobrar").classList.remove("d-none");
@@ -171,7 +171,7 @@ function llenarBoletaPrint(
     document.getElementById("print-entrada").innerText = boleta.entrada_veh;
     document.getElementById("print-salida").innerText = boleta.salidaMax;
     document.getElementById("print-tiempo_estadia").innerText = tiempoEstadia;
-    document.getElementById("print-tiempo_retraso").innerText = tiempoRetraso;
+    
 
     document.getElementById(
         "print-monto_inicial"
@@ -245,7 +245,7 @@ $("#btn-buscar").on("click", function () {
         let montoRetraso = response.mensaje.montoRetraso;
         let montoVehiculo = response.mensaje.montoVehiculo;
         let tiempoEstadia = response.mensaje.tiempoEstadia;
-        let tiempoRetraso = response.mensaje.tiempoRetraso;
+        
         llenarBoletaPrint(
             datos_boleta,
             total,
@@ -254,7 +254,7 @@ $("#btn-buscar").on("click", function () {
             montoRetraso,
             montoVehiculo,
             tiempoEstadia,
-            tiempoRetraso,
+            
         );
     });
 });

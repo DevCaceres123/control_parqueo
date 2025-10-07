@@ -57,7 +57,7 @@
                                     <th>CI</th>
                                     <th>ENTRADA</th>
                                     <th>SALIDA</th>
-                                    <th>ATRASO</th>
+                                    <th>ESTADIA</th>
                                     <th>ESTADO</th>
                                     <th>TOTAL</th>
                                     <th>ACCION</th>

@@ -138,18 +138,11 @@
                                 {{-- Tiempos --}}
                                 <p class="mb-1"><b>Entrada:</b> <span id="print-entrada"></span></p>
                                 <p class="mb-1"><b>Recoger antes de:</b> <span id="print-salida"></span></p>
+                                <p class="mb-1 fw-bold">
+                                    Dias cobrados: <span id="print-tiempo_estadia" class=" text-primary "></span>
+                                </p>
 
-                                {{-- Estadía y Retraso en una misma fila --}}
-                                <div class="d-flex justify-content-between text-center mb-2">
-                                    <div style="flex:1; font-size:13px;">
-                                        <span class="text-primary fw-bold">Estadía</span><br>
-                                        <span id="print-tiempo_estadia"></span>
-                                    </div>
-                                    <div style="flex:1; font-size:13px;">
-                                        <span class="text-danger fw-bold">Retraso</span><br>
-                                        <span id="print-tiempo_retraso"></span>
-                                    </div>
-                                </div>
+                               
 
                                 <hr class="my-2">
 

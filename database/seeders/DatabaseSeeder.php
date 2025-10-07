@@ -27,7 +27,7 @@ class DatabaseSeeder extends Seeder
             ConfAtrasoSeeder::class,
         ]);
 
-         \App\Models\Boleta::factory(100)->create();
+       //  \App\Models\Boleta::factory(100)->create();
 
 
     }
