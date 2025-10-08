@@ -30,6 +30,8 @@ return new class extends Migration
 
             $table->unsignedBigInteger('vehiculo_id');
             $table->unsignedBigInteger('usuario_id');
+            $table->unsignedBigInteger('contacto_id');
+            $table->unsignedBigInteger('color_id');
             $table->timestamp('deleted_at')->nullable();
 
             $table->foreign('vehiculo_id')
@@ -44,8 +46,20 @@ return new class extends Migration
                 ->on('users')
                 ->onDelete('restrict')
                 ->onUpdate('cascade');
-            
-            
+
+
+            $table->foreign('contacto_id')
+                ->references('id')
+                ->on('contactos')
+                ->onDelete('restrict')
+                ->onUpdate('cascade');                        
+
+
+            $table->foreign('color_id')
+                ->references('id')
+                ->on('colores')
+                ->onDelete('restrict')
+                ->onUpdate('cascade'); 
 
             $table->timestamps();
         });

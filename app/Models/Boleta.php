@@ -17,5 +17,15 @@ class Boleta extends Model
         return $this->belongsTo(Vehiculo::class, 'vehiculo_id', 'id');
     }
 
+     
+    public function contacto(){
+        return $this->belongsTo(Contacto::class, 'contacto_id', 'id');
+    }
+
+
+        
+    public function color(){
+        return $this->belongsTo(Color::class, 'contacto_id', 'id');
+    }
 
 }
