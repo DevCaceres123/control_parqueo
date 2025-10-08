@@ -13,7 +13,7 @@
                     <div class="col-md-8 border-end">
                         {{-- 1. Tipo de vehículo --}}
                         <h6 class="fw-bold mb-3 text-secondary">1️⃣ Selecciona el tipo de vehículo:</h6>
-                        <div id="tipos-vehiculo" class="row g-2 mb-4">
+                        <div id="tipos-vehiculo" class="row g-2 mb-1">
                             {{-- Auto --}}
                             @foreach ($vehiculos as $vehiculo)
                                 <div class="col-12 col-md-4">
@@ -27,46 +27,80 @@
                                 </div>
                             @endforeach
                         </div>
+                        <div class="border rounded p-4 shadow-lg formulario-entrada">
 
-                        {{-- 2. Datos a registrar --}}
-                        <h6 class="fw-bold mb-2 text-secondary">2️⃣ ¿Qué registrar?</h6>
-                        <div class="mb-3 ps-2">
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="modo" id="modo_placa" value="placa"
-                                    checked>
-                                <label class="form-check-label fw-semibold" for="modo_placa">Solo placa</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="modo" id="modo_cliente"
-                                    value="cliente">
-                                <label class="form-check-label fw-semibold" for="modo_cliente">Datos del cliente</label>
+                            <h5 class="fw-bolder mb-3 text-primary-emphasis text-uppercase text-center">
+                                📝 Registro de Ingreso 
+                            </h5>                            
+                         
+
+                            <div class="mb-2">
+                                {{-- 2. Datos a registrar --}}
+                                <h6 class="fw-bold mb-3 text-secondary-emphasis">2️⃣ ¿Qué registrar?</h6>
+                                <div class="mb-1 selector-modo">
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="modo" id="modo_placa"
+                                            value="placa" checked>
+                                        <label class="form-check-label fw-semibold" for="modo_placa">Solo Placa</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="modo" id="modo_cliente"
+                                            value="cliente">
+                                        <label class="form-check-label fw-semibold" for="modo_cliente">Datos del
+                                            Cliente</label>
+                                    </div>
+                                </div>
                             </div>
 
-                        </div>
+                            {{-- 3. Campos dinámicos y la Placa como foco principal --}}
+                            <div class="row g-4 mb-4 align-items-end">
 
-                        {{-- 3. Campos dinámicos --}}
-                        <div class="row g-3 mb-3">
-                            <div class="col-md-8 d-none" id="grupo_cliente">
-                                <label class="form-label mb-1">Datos del cliente</label>
-                                <input type="text" id="ci_cliente" name="ci_cliente" class="form-control shadow-sm mb-2"
-                                    placeholder='Ingrese el documento de Identidad del Cliente'>
-                                <input type="text" id="nombre_cliente" class="form-control shadow-sm"
-                                    placeholder="Ingrese el nombre completo del Cliente">
+                                {{-- Grupo cliente --}}
+                                <div class="col-md-12 d-none" id="grupo_cliente">                                    
+                                    <input type="text" id="ci_cliente" name="ci_cliente"
+                                        class="form-control mb-2 input-cliente" placeholder="Documento de Identidad (CI)">
+                                    <input type="text" id="nombre_cliente" name="nombre_cliente"
+                                        class="form-control input-cliente" placeholder="Nombre Completo">
+                                </div>
+
+                                {{-- Grupo placa --}}
+                                <div class="col-md-12" id="grupo_placa">
+                                    <div class="form-floating input-placa">
+                                        <input type="text" id="placa" name="placa"
+                                            class="form-control form-control-lg text-uppercase fw-bolder text-center fs-1 border-0 border-bottom border-primary rounded-0 placa-input-estilo"
+                                            placeholder="EJ. 1234-ABC">
+                                        <label for="placa">NÚMERO DE PLACA</label>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-6 " id="grupo_placa">
-                                <div class="form-floating">
-                                    <input type="text" id="placa"
-                                        class="form-control form-control-lg text-uppercase fw-bold text-center fs-1 border-0 border-bottom border-primary rounded-0"
-                                        placeholder="Ej. 1234-ABC">
-                                    <label for="placa">Número de Placa</label>
+
+                            {{-- 4. Campos comunes --}}
+                            <div class="row g-4 mb-4">
+                                <div class="col-md-6">
+                                    <label for="contacto" class="form-label mb-1 fw-semibold input-label">
+                                        <i class="fas fa-phone-alt me-1 text-primary"></i> Contacto
+                                    </label>
+                                    <input type="text" id="contacto" name="contacto" class="form-control input-comun"
+                                        placeholder="Ej. 77712345">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="color_vehiculo" class="form-label mb-1 fw-semibold input-label">
+                                        <i class="fas fa-car me-1 text-primary"></i> Color del vehículo
+                                    </label>
+                                    <input type="text" id="color_vehiculo" name="color_vehiculo"
+                                        class="form-control text-capitalize input-comun"
+                                        placeholder="Ej. Rojo, Blanco, Azul">
+                                </div>
+                                <div class="col-md-12 d-flex align-items-end">
+                                    {{-- Botón generar --}}
+                                    <button type="button" id="btn-generar"
+                                        class="btn btn-primary fw-bold w-100 btn-lg shadow-sm boton-generar">
+                                        <i class="fas fa-file-alt me-2"></i> GENERAR TICKET
+                                    </button>
                                 </div>
                             </div>
                         </div>
 
-                        {{-- Botón generar --}}
-                        <button type="button" id="btn-generar" class="btn btn-primary fw-bold shadow-sm px-4">
-                            <i class="fas fa-file-alt"></i> Generar
-                        </button>
                     </div>
 
                     {{-- COLUMNA DERECHA: Vista previa --}}
@@ -86,12 +120,12 @@
                                         autocomplete="off" checked>
                                     <label class="btn btn-outline-dark" for="filtro_placa">Placa</label>
 
-                                    <input type="radio" class="btn-check" name="filtro" id="filtro_ci" value="ci"
-                                        autocomplete="off">
+                                    <input type="radio" class="btn-check" name="filtro" id="filtro_ci"
+                                        value="ci" autocomplete="off">
                                     <label class="btn btn-outline-dark" for="filtro_ci">CI</label>
 
-                                    <input type="radio" class="btn-check" name="filtro" id="filtro_codigo" value="codigo"
-                                        autocomplete="off">
+                                    <input type="radio" class="btn-check" name="filtro" id="filtro_codigo"
+                                        value="codigo" autocomplete="off">
                                     <label class="btn btn-outline-dark" for="filtro_codigo">Código</label>
                                 </div>
                             </div>
@@ -113,7 +147,7 @@
                         </div>
 
                         {{-- Boleta oculta para impresión --}}
-                        
+
                         <div id="contendor_cobrar" class="d-none col-12">
                             <div class="p-2 border border-dark rounded fs-14"
                                 style="max-width: 360px; margin:auto; font-family: 'Courier New', monospace;">
@@ -142,7 +176,7 @@
                                     Dias cobrados: <span id="print-tiempo_estadia" class=" text-primary "></span>
                                 </p>
 
-                               
+
 
                                 <hr class="my-2">
 
