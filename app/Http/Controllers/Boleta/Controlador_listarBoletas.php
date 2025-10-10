@@ -220,7 +220,7 @@ class Controlador_listarBoletas extends Controller
             }
 
             if (!$boleta->reporteSalida_json) {
-                throw new Exception("aun no se ha generado la boleta de salida.");
+                throw new Exception("boleta de salida no generada");
             }
 
 

@@ -237,7 +237,7 @@
             <p class="titulo_creacion">TÉRMINOS Y CONDICIONES</p>
             <p>
                 El vehículo será entregado únicamente al portador de esta boleta.
-                Se recomienda cerrar bien puertas y ventanas y conservar la llave.
+                Se recomienda cerrar bien puertas,ventanas y conservar la llave.
                 La administración no se responsabiliza por robos o daños en el interior del vehículo.
             </p>
         </div>

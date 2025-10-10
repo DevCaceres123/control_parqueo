@@ -241,7 +241,7 @@ class Controlador_boleta extends Controller
     {
         $validatedData = $request->validate([
             'nombre' => 'nullable|min:3|max:50',
-            'ci' => 'required|min:3|max:30',
+            'ci' => 'required|min:3|max:20',
 
         ]);
 
