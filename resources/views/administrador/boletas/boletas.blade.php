@@ -30,9 +30,9 @@
                         <div class="border rounded p-4 shadow-lg formulario-entrada">
 
                             <h5 class="fw-bolder mb-3 text-primary-emphasis text-uppercase text-center">
-                                📝 Registro de Ingreso 
-                            </h5>                            
-                         
+                                📝 Registro de Ingreso
+                            </h5>
+
 
                             <div class="mb-2">
                                 {{-- 2. Datos a registrar --}}
@@ -56,7 +56,7 @@
                             <div class="row g-4 mb-4 align-items-end">
 
                                 {{-- Grupo cliente --}}
-                                <div class="col-md-12 d-none" id="grupo_cliente">                                    
+                                <div class="col-md-12 d-none" id="grupo_cliente">
                                     <input type="text" id="ci_cliente" name="ci_cliente"
                                         class="form-control mb-2 input-cliente" placeholder="Documento de Identidad (CI)">
                                     <input type="text" id="nombre_cliente" name="nombre_cliente"
@@ -80,16 +80,20 @@
                                     <label for="contacto" class="form-label mb-1 fw-semibold input-label">
                                         <i class="fas fa-phone-alt me-1 text-primary"></i> Contacto
                                     </label>
-                                    <input type="text" id="contacto" name="contacto" class="form-control input-comun"
+                                    <input type="number" id="contacto" name="contacto" class="form-control input-comun"
                                         placeholder="Ej. 77712345">
                                 </div>
                                 <div class="col-md-6">
                                     <label for="color_vehiculo" class="form-label mb-1 fw-semibold input-label">
                                         <i class="fas fa-car me-1 text-primary"></i> Color del vehículo
                                     </label>
-                                    <input type="text" id="color_vehiculo" name="color_vehiculo"
-                                        class="form-control text-capitalize input-comun"
-                                        placeholder="Ej. Rojo, Blanco, Azul">
+                                    <select name="color_id" id="color_id" class=" text-capitalize" required>
+                                        <option value=" " disabled selected>Seleccionar color</option>
+                                        @foreach ($colores as $color)
+                                            <option class="text-capitalize" value="{{ $color->id }}">{{ strtoupper($color->nombre) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="col-md-12 d-flex align-items-end">
                                     {{-- Botón generar --}}
@@ -211,5 +215,20 @@
 @endsection
 
 @section('scripts')
+    <script>
+        // Inicialización de Selectr
+        document.addEventListener('DOMContentLoaded', function() {
+            const selectElement = document.getElementById('color_id');
+
+
+            let selectrInstanceSede = new Selectr(selectElement, {
+                searchable: true,
+                placeholder: 'Busca o selecciona una opción...'
+            });
+
+
+
+        });
+    </script>
     <script src="{{ asset('js/modulos/boletas/boletas.js') }}" type="module"></script>
 @endsection

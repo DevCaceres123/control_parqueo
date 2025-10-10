@@ -53,8 +53,9 @@ function listar_registros() {
                 data: "placa",
                 className: "table-td text-uppercase",
                 render: function (data) {
-                    return `<span class="badge ${data != null ? "bg-success" : "bg-danger"
-                        } fs-6">${data != null ? data : "N/A"}</span>`;
+                    return `<span class="badge ${
+                        data != null ? "bg-success" : "bg-danger"
+                    } fs-6">${data != null ? data : "N/A"}</span>`;
                 },
             },
 
@@ -87,8 +88,14 @@ function listar_registros() {
                 className: "table-td",
                 render: function (data) {
                     return `                    
-                    <span class="badge text-capitalize ${data != null ? "bg-primary" : "bg-danger"} fs-6">
-                        ${data != null ? `${data} ${data == 1 ? 'día' : 'días'}` : "N/A"}
+                    <span class="badge text-capitalize ${
+                        data != null ? "bg-primary" : "bg-danger"
+                    } fs-6">
+                        ${
+                            data != null
+                                ? `${data} ${data == 1 ? "día" : "días"}`
+                                : "N/A"
+                        }
                     </span>
                     `;
                 },
@@ -97,8 +104,9 @@ function listar_registros() {
                 data: "estado_parqueo",
                 className: "table-td",
                 render: function (data) {
-                    return `<span class="badge text-capitalize ${data != "salida" ? "bg-primary" : "bg-success"
-                        } fs-6">${data != null ? data : "N/A"}</span>`;
+                    return `<span class="badge text-capitalize ${
+                        data != "salida" ? "bg-primary" : "bg-success"
+                    } fs-6">${data != null ? data : "N/A"}</span>`;
                 },
             },
 
@@ -106,8 +114,9 @@ function listar_registros() {
                 data: "total",
                 className: "table-td",
                 render: function (data) {
-                    return `<span class="p-1 pe-2 ps-2 bg-warning rounded-pill text-light ${data != null ? "bg-success" : "bg-danger"
-                        } ">${data != null ? data : "."} Bs</span>`;
+                    return `<span class="p-1 pe-2 ps-2 bg-warning rounded-pill text-light ${
+                        data != null ? "bg-success" : "bg-danger"
+                    } ">${data != null ? data : "."} Bs</span>`;
                 },
             },
 
@@ -119,26 +128,41 @@ function listar_registros() {
 
                     <div class="d-flex justify-content-center">
 
-                   ${permissions["eliminar"]
-                            ? ` <a  class="btn btn-sm btn-outline-danger px-2 d-inline-flex align-items-center eliminar_registro" data-id="${row.id}">
+                   ${
+                       permissions["eliminar"]
+                           ? ` <a  class="btn btn-sm btn-outline-danger px-2 d-inline-flex align-items-center eliminar_registro" data-id="${row.id}">
                                  <i class="fas fa-window-close fs-16"></i>
                             </a>`
-                            : ``
-                        }
+                           : ``
+                   }
 
-                     ${permissions["eliminar"]
-                            ? ` <button type="button" class="btn btn-sm btn-outline-success px-2 d-inline-flex align-items-center generar_tiket_entrada ms-1 btn-reporteEntrada" title='Genear Ticket de entrada' data-id="${row.id}">
+                     ${
+                         permissions["eliminar"]
+                             ? ` <button type="button" class="btn btn-sm btn-outline-success px-2 d-inline-flex align-items-center generar_tiket_entrada ms-1 btn-reporteEntrada" title='Genear Ticket de entrada' data-id="${row.id}">
                                  <i class="fas fa-file-pdf  fs-16"></i>
                             </button>`
-                            : ``
-                        }
+                             : ``
+                     }
 
-                     ${permissions["eliminar"]
-                            ? ` <button type="button" class="btn btn-sm btn-outline-info px-2 d-inline-flex align-items-center generar_tiket_salida ms-1 btn-reporteSalida" title='Genera Ticket de salida'data-id="${row.id}">
+                     ${
+                         permissions["eliminar"]
+                             ? ` <button type="button" class="btn btn-sm btn-outline-info px-2 d-inline-flex align-items-center generar_tiket_salida ms-1 btn-reporteSalida" title='Genera Ticket de salida'data-id="${row.id}">
                                  <i class="fas fa-money-bill   fs-16"></i>
                             </button>`
+                             : ``
+                     }
+
+                    ${
+                        permissions["eliminar"]
+                            ? `<button type="button" class="btn btn-sm btn-outline-success px-2 d-inline-flex align-items-center generar_tiket_salida ms-1 btn-reporteSalida" 
+                                    title='Escribir al Whatsapp' 
+                                    onclick="window.open('https://wa.me/${row.contacto}?text=Hola%2C%20le%20escribimos%20del%20Parqueo%20Municipal%20de%20Caranavi', '_blank')">
+                                    <i class="fab fa-whatsapp  fs-16"></i>
+                                </button>`
                             : ``
-                        }
+                    }
+
+
 
                         
                     
@@ -174,9 +198,9 @@ function actualizarTabla() {
     tabla_historialRegistro.ajax.reload(null, false); // Recarga los datos sin resetear el paginado
 }
 
+
 // eliminar boleta
 $(document).on("click", ".eliminar_registro", function () {
-
     const idRegistro = $(this).data("id");
     Swal.fire({
         title: "¿Eliminar?",
@@ -187,113 +211,88 @@ $(document).on("click", ".eliminar_registro", function () {
         cancelButtonText: "Cancelar",
     }).then((result) => {
         if (result.isConfirmed) {
-            crud("admin/listarBoletas", "DELETE", idRegistro, null, function (error, response) {
-                if (response.tipo != "exito") {
+            crud(
+                "admin/listarBoletas",
+                "DELETE",
+                idRegistro,
+                null,
+                function (error, response) {
+                    if (response.tipo != "exito") {
+                        mensajeAlerta(response.mensaje, response.tipo);
+                        return;
+                    }
                     mensajeAlerta(response.mensaje, response.tipo);
-                    return;
+                    actualizarTabla();
                 }
-                mensajeAlerta(response.mensaje, response.tipo);
-                actualizarTabla();
-            });
+            );
         }
     });
 });
-
-
-// eliminar boleta
-$(document).on("click", ".eliminar_registro", function () {
-
-    const idRegistro = $(this).data("id");
-    Swal.fire({
-        title: "¿Eliminar?",
-        text: "Esta acción no se puede deshacer.",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar",
-    }).then((result) => {
-        if (result.isConfirmed) {
-            crud("admin/listarBoletas", "DELETE", idRegistro, null, function (error, response) {
-                if (response.tipo != "exito") {
-                    mensajeAlerta(response.mensaje, response.tipo);
-                    return;
-                }
-                mensajeAlerta(response.mensaje, response.tipo);
-                actualizarTabla();
-            });
-        }
-    });
-});
-
 
 // Genear ticket de entrada
 $(document).on("click", ".generar_tiket_entrada", function () {
-
     const idRegistro = $(this).data("id");
     $(".btn-reporteEntrada").prop("disabled", true);
-    crud("admin/generarTicketEntrada", "GET", idRegistro, null, function (error, response) {
-        $(".btn-reporteEntrada").prop("disabled", false);
-        if (response.tipo != "exito") {
-            mensajeAlerta(response.mensaje, response.tipo);
-            return;
+    crud(
+        "admin/generarTicketEntrada",
+        "GET",
+        idRegistro,
+        null,
+        function (error, response) {
+            $(".btn-reporteEntrada").prop("disabled", false);
+            if (response.tipo != "exito") {
+                mensajeAlerta(response.mensaje, response.tipo);
+                return;
+            }
+            mensajeAlerta("Generando Reporte.....", "exito");
+
+            const blobUrl = generarURlBlob(response.mensaje); // Genera la URL del Blob
+
+            // espera un segundo para abrir la nueva ventana
+            setTimeout(() => {
+                window.open(blobUrl, "_blank"); // Abre en una nueva pestaña
+            }, 1500);
         }
-        mensajeAlerta("Generando Reporte.....", "exito");
-
-        const blobUrl = generarURlBlob(response.mensaje); // Genera la URL del Blob
-
-        // espera un segundo para abrir la nueva ventana
-        setTimeout(() => {
-            window.open(blobUrl, '_blank'); // Abre en una nueva pestaña
-            
-        }, 1500);
-
-        
-    });
-
+    );
 });
-
 
 // Generar ticket de salida
 $(document).on("click", ".generar_tiket_salida", function () {
-
     const idRegistro = $(this).data("id");
     $(".btn-reporteSalida").prop("disabled", true);
-    crud("admin/generarTicketSalida", "GET", idRegistro, null, function (error, response) {
-        $(".btn-reporteSalida").prop("disabled", false);
-        // console.log(response.mensaje);
-        if (response.tipo != "exito") {
-            mensajeAlerta(response.mensaje, response.tipo);
-            return;
+    crud(
+        "admin/generarTicketSalida",
+        "GET",
+        idRegistro,
+        null,
+        function (error, response) {
+            $(".btn-reporteSalida").prop("disabled", false);
+            // console.log(response.mensaje);
+            if (response.tipo != "exito") {
+                mensajeAlerta(response.mensaje, response.tipo);
+                return;
+            }
+
+            mensajeAlerta("Generando Reporte.....", "exito");
+
+            const blobUrl = generarURlBlob(response.mensaje); // Genera la URL del Blob
+
+            // espera un segundo para abrir la nueva ventana
+            setTimeout(() => {
+                window.open(blobUrl, "_blank"); // Abre en una nueva pestaña
+            }, 1500);
         }
-        
-        mensajeAlerta("Generando Reporte.....", "exito");
-
-        const blobUrl = generarURlBlob(response.mensaje); // Genera la URL del Blob
-
-        // espera un segundo para abrir la nueva ventana
-        setTimeout(() => {
-            window.open(blobUrl, '_blank'); // Abre en una nueva pestaña
-            
-        }, 1500);
-
-        
-    });
-
+    );
 });
-
-
-
 
 // PARA GENERAR UN BLOB PARA GENERAR EL REPORTE
 
-
 function generarURlBlob(pdfbase64) {
-
     // Convertir Base64 a un Blob
     const byteCharacters = atob(pdfbase64); // Decodifica el Base64
-    const byteNumbers = Array.from(byteCharacters).map(c => c.charCodeAt(0));
+    const byteNumbers = Array.from(byteCharacters).map((c) => c.charCodeAt(0));
     const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'application/pdf' });
+    const blob = new Blob([byteArray], { type: "application/pdf" });
 
     // Crear una URL para el Blob
     return URL.createObjectURL(blob);

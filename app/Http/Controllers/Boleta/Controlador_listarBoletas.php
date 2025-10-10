@@ -49,7 +49,10 @@ class Controlador_listarBoletas extends Controller
             'vehiculo' => function ($query) {
                 $query->select(['id', 'nombre', 'tarifa']);
             },
-        ])->select('id', 'dias_cobrados', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id')->orderBy('id', 'desc');
+             'contacto' => function ($query) {  // nueva relación
+                 $query->select(['id', 'telefono']); // campos que quieres traer
+             },
+        ])->select('id', 'dias_cobrados', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id','contacto_id')->orderBy('id', 'desc');
 
 
 
@@ -97,6 +100,7 @@ class Controlador_listarBoletas extends Controller
                 'estado_parqueo' => $boleta->estado_parqueo,
                 'dias_cobrados' => $boleta->dias_cobrados,
                 'total' => $boleta->total,
+                'contacto'=>$boleta->contacto ? $boleta->contacto->telefono : null,
                 'vehiculo' => $boleta->vehiculo ? [
                     'id' => $boleta->vehiculo->id,
                     'nombre' => $boleta->vehiculo->nombre,
@@ -156,11 +160,12 @@ class Controlador_listarBoletas extends Controller
             $nombre = $reporteJson['nombre'] ?? null;
             $ci = $reporteJson['ci'] ?? null;
             $fecha_finalizacion = $boleta->salidaMax ?? null;
-
+            $color = $reporteJson['color'] ?? null;
+            $contacto = $reporteJson['contacto'] ?? null;
 
 
             // Genera el reporte en PDF
-            $reporteBase64 = $this->generarBoletaEntrada($placa, $vehiculo, $fechaEntrada, $fecha_finalizacion, $numeroBoleta, $datosUsuario, $nombre, $ci);
+            $reporteBase64 = $this->generarBoletaEntrada($placa, $vehiculo, $fechaEntrada, $fecha_finalizacion, $numeroBoleta, $datosUsuario, $nombre, $ci, $color, $contacto);
 
             // Responde con éxito
             $this->mensaje('exito', $reporteBase64);
@@ -174,10 +179,8 @@ class Controlador_listarBoletas extends Controller
 
 
 
-    public function generarBoletaEntrada($placa, $vehiculo, $fecha_actual, $fecha_finalizacion, $codigoUnico, $datosUsuario, $nombre, $ci)
+    public function generarBoletaEntrada($placa, $vehiculo, $fecha_actual, $fecha_finalizacion, $codigoUnico, $datosUsuario, $nombre, $ci, $color, $contacto)
     {
-
-
 
         $data = [
             'usuario' => $datosUsuario,
@@ -188,6 +191,8 @@ class Controlador_listarBoletas extends Controller
             'nombre' => $nombre ?? null,
             'ci' => $ci ?? null,
             'codigoUnico' => $codigoUnico,
+            'color' => $color ?? null,
+            'contacto' => $contacto ?? null,
         ];
 
 
@@ -223,14 +228,14 @@ class Controlador_listarBoletas extends Controller
             $reporteJson = json_decode($boleta->reporteSalida_json, true);
 
 
-            
+
             if (json_last_error() !== JSON_ERROR_NONE) {
                 throw new Exception("El campo reporte_json no contiene un JSON válido.");
             }
-        
+
 
             // Genera el reporte en PDF
-           $reporteBase64 = $this->generarBoletaSalida($reporteJson);
+            $reporteBase64 = $this->generarBoletaSalida($reporteJson);
 
             // Responde con éxito
             $this->mensaje('exito', $reporteBase64);
@@ -244,9 +249,9 @@ class Controlador_listarBoletas extends Controller
 
 
 
-      public function generarBoletaSalida($datos)
+    public function generarBoletaSalida($datos)
     {
-        
+
         // Pasar todo el array a la vista
         $pdf = Pdf::loadView('administrador/boletas/boletaPagada', $datos)
             ->setPaper([0, 0, 226.77, 841.89]); // 80 mm tamaño de papel

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Boleta;
 use App\Models\Vehiculo;
 use App\Models\Config_atraso;
+use App\Models\Color;
+use App\Models\Contacto;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf; // clase para generar pdf
 use Carbon\Carbon;
@@ -29,7 +31,8 @@ class Controlador_boleta extends Controller
     public function index()
     {
         $vehiculos = Vehiculo::select('id', 'nombre', 'tarifa')->where('estado', 'activo')->orderBy('id', 'desc')->get();
-        return view("administrador.boletas.boletas", compact('vehiculos'));
+        $colores = Color::orderBy('id', 'desc')->get();
+        return view("administrador.boletas.boletas", compact('vehiculos','colores'));
     }
 
     /**
@@ -45,25 +48,27 @@ class Controlador_boleta extends Controller
      */
     public function store(Request $request)
     {
-
+        
         try {
             $validatedData = $request->validate([
                 'id_vehiculo' => 'required|exists:vehiculos,id',
                 'modo'        => 'required|in:placa,cliente',
+                'color_id'    => 'required|exists:colores,id',
+                'contacto'    => 'required|min:8|max:50',
             ]);
             DB::beginTransaction();
             $fecha_actual = Carbon::now();
 
             if ($request->modo === 'placa') {
-                $id_boleta = $this->guardarBoletaPlaca($request, $fecha_actual);
+                $id_boleta = $this->guardarBoletaPlaca($request, $fecha_actual,$request->color_id,$request->contacto);
                 $codigoUnico = $this->encrypt($id_boleta);
-                $boleta = $this->generarBoletaPlaca($request->placa, $request->id_vehiculo, $fecha_actual, $codigoUnico);
+                $boleta = $this->generarBoletaPlaca($request->placa, $request->id_vehiculo, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto);
             }
 
             if ($request->modo === 'cliente') {
-                $id_boleta = $this->guardarBoletaDatos($request, $fecha_actual);
+                $id_boleta = $this->guardarBoletaDatos($request, $fecha_actual,$request->color_id,$request->contacto);
                 $codigoUnico = $this->encrypt($id_boleta);
-                $boleta = $this->generarBoletaDatosPersonales($request->nombre, $request->ci, $request->id_vehiculo, $fecha_actual, $codigoUnico);
+                $boleta = $this->generarBoletaDatosPersonales($request->nombre, $request->ci, $request->id_vehiculo, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto);
             }
 
             $fecha_finalizacion = $this->calcularSalida($fecha_actual);
@@ -77,6 +82,8 @@ class Controlador_boleta extends Controller
                 'nombre' => $request->nombre ?? null,
                 'ci' => $request->ci ?? null,
                 'codigoUnico' => $codigoUnico,
+                'contacto'=>$request->contacto ?? null,
+                'color'=>Color::select('nombre')->where('id',$request->color_id)->first()->nombre ?? null,
             ];
 
             $boletaEdit = Boleta::find($id_boleta);
@@ -106,13 +113,15 @@ class Controlador_boleta extends Controller
     }
 
 
-    public function generarBoletaPlaca($placa, $id_vehiculo, $fecha_actual, $codigoUnico)
+    public function generarBoletaPlaca($placa, $id_vehiculo, $fecha_actual, $codigoUnico,$color_id,$contacto)
     {
 
         $fecha_finalizacion = $fecha_actual
                     ->copy()              // para no modificar $fecha_actual
                     ->addDay()            // +1 día
                     ->setTime(12, 0, 0);  // 15:00:00 (3 pm)
+
+        $color=Color::select('nombre','color')->where('id',$color_id)->first();
 
         $data = [
             'usuario' => auth()->user()->only(['nombres', 'apellidos']),
@@ -123,6 +132,8 @@ class Controlador_boleta extends Controller
             'nombre' => null,
             'ci' => null,
             'codigoUnico' => $codigoUnico,
+            'color'=>$color->nombre ?? null,
+            'contacto'=>$contacto ?? null,
         ];
 
         $pdf = Pdf::loadView('administrador/boletas/boletaPago', $data)
@@ -136,13 +147,14 @@ class Controlador_boleta extends Controller
 
     }
 
-    public function generarBoletaDatosPersonales($nombreCompleto, $documentoIdentidad, $id_vehiculo, $fecha_actual, $codigoUnico)
+    public function generarBoletaDatosPersonales($nombreCompleto, $documentoIdentidad, $id_vehiculo, $fecha_actual, $codigoUnico,$color_id,$contacto)
     {
         $fecha_finalizacion = $fecha_actual
                     ->copy()              // para no modificar $fecha_actual
                     ->addDay()            // +1 día
                     ->setTime(12, 0, 0);  // 15:00:00 (3 pm)
 
+        $color=Color::select('nombre','color')->where('id',$color_id)->first();
         $data = [
             'usuario' => auth()->user()->only(['nombres', 'apellidos']),
             'tarifa_vehiculo' => Vehiculo::select('tarifa', 'nombre')->where('id', $id_vehiculo)->first(),
@@ -152,7 +164,11 @@ class Controlador_boleta extends Controller
             'nombre' => $nombreCompleto ?? null,
             'ci' => $documentoIdentidad ?? null,
             'codigoUnico' => $codigoUnico,
+            'color'=>$color->nombre ?? null,
+            'contacto'=>$contacto ?? null,
         ];
+
+        
 
         $pdf = Pdf::loadView('administrador/boletas/boletaPago', $data)
            ->setPaper([0, 0, 226.77, 841.89]); // 80 mm tamaño de papel
@@ -195,7 +211,7 @@ class Controlador_boleta extends Controller
     }
 
 
-    public function guardarBoletaPlaca(Request $request, $fecha_actual)
+    public function guardarBoletaPlaca(Request $request, $fecha_actual,$color_id,$contacto)
     {
         $validatedData = $request->validate([
             'placa' => 'required|min:3|max:20',
@@ -209,7 +225,10 @@ class Controlador_boleta extends Controller
         $boleta->estado_impresion = 'generado';
         $boleta->vehiculo_id = $request->id_vehiculo;
         $boleta->usuario_id = auth()->user()->id;
+        $boleta->color_id = $color_id;
 
+        $contactoModel = Contacto::firstOrCreate(['telefono' => $contacto]);
+        $boleta->contacto_id = $contactoModel->id;
         $boleta->save();
 
 
@@ -218,7 +237,7 @@ class Controlador_boleta extends Controller
     }
 
 
-    public function guardarBoletaDatos(Request $request, $fecha_actual)
+    public function guardarBoletaDatos(Request $request, $fecha_actual,$color_id,$contacto)
     {
         $validatedData = $request->validate([
             'nombre' => 'nullable|min:3|max:50',
@@ -234,6 +253,11 @@ class Controlador_boleta extends Controller
         $boleta->estado_impresion = 'generado';
         $boleta->vehiculo_id = $request->id_vehiculo;
         $boleta->usuario_id = auth()->user()->id;
+
+        $boleta->color_id = $color_id;
+
+        $contactoModel = Contacto::firstOrCreate(['telefono' => $contacto]);
+        $boleta->contacto_id = $contactoModel->id;        
 
         $boleta->save();
 

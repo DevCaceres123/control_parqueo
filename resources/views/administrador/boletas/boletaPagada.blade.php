@@ -242,9 +242,13 @@
             @if ($tarifa_vehiculo['nombre'])
                 <span style="">{{ $tarifa_vehiculo['nombre'] }} |</span>
             @endif
+            @if ($color)
+                <span style="">{{ $color ?? 'N/A' }}|</span>
+            @endif
             @if ($nombre)
                 <span style="">{{ $nombre }} |</span>
             @endif
+
         </div>
         <!-- Fechas -->
 

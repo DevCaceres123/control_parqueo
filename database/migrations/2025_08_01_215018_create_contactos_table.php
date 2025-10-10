@@ -13,7 +13,7 @@ return new class extends Migration
     {
        Schema::create('contactos', function (Blueprint $table) {
             $table->id(); // id autoincremental
-            $table->unsignedBigInteger('telefono'); // número de teléfono
+            $table->string('telefono',20); // número de teléfono
             $table->timestamps(); // opcional, crea created_at y updated_at
         });
     }

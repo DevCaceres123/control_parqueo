@@ -32,13 +32,15 @@
             letter-spacing: 1px;
             position: relative;
         }
-        .lugar{
-            position:absolute;
+
+        .lugar {
+            position: absolute;
             top: 0;
             right: 0;
             font-weight: bold;
             margin-right: 35px;
         }
+
         .container_boleta {
             padding: 10px;
             border: 2px dashed #8b5050;
@@ -74,23 +76,25 @@
             height: 14px;
             margin-bottom: 2px;
         }
+
         /* Usuario + Precio */
         .usuario {
             position: absolute;
-            left: 0; 
-            
+            left: 0;
+
         }
 
         .precio {
-           position: absolute; 
-           left: 50%; 
-           transform: translateX(-50%); 
-           
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+
         }
-        .codigo{
-            position: absolute; 
-            right: 0; 
-            
+
+        .codigo {
+            position: absolute;
+            right: 0;
+
         }
 
         .section::after {
@@ -102,14 +106,14 @@
         /* Datos del vehículo */
         .vehiculo {
             text-align: center;
-            font-size: var(--font-size-base);         
+            font-size: var(--font-size-base);
             border-bottom: 1px solid #333;
             text-transform: uppercase;
         }
 
         .vehiculo .placa,
         .vehiculo .ci {
-            
+
             display: block;
             font-weight: bold;
             letter-spacing: 2px;
@@ -162,7 +166,7 @@
 
 <body>
     <div class="tiket">
-        <p>TICKET DE INGRESO</p>            
+        <p>TICKET DE INGRESO</p>
     </div>
     <div class="container_boleta">
         <!-- Encabezado -->
@@ -185,19 +189,17 @@
             </span>
         </div>
 
-         <div class="vehiculo">
+        <div class="vehiculo">
             @if ($placa)
                 <div>
-                    <small
-                        style=" font-weight: normal; display: block; color: #6c757d; font-weight: 400;">Placa</small>
+                    <small style=" font-weight: normal; display: block; color: #6c757d; font-weight: 400;">Placa</small>
                     <span class="placa cod_unico">{{ strtoupper($placa) }}</span>
                 </div>
             @endif
 
             @if ($ci)
                 <div>
-                    <small
-                        style="font-weight: normal; display: block;  color: #6c757d;  font-weight: 400;">Documento
+                    <small style="font-weight: normal; display: block;  color: #6c757d;  font-weight: 400;">Documento
                         de Identidad</small>
                     <span class="ci cod_unico">{{ $ci }}</span>
                 </div>
@@ -206,10 +208,16 @@
             @if ($tarifa_vehiculo->nombre)
                 <span style="">{{ $tarifa_vehiculo->nombre }} |</span>
             @endif
-            @if ($nombre)
-                <span style="">{{ $nombre }}</span>
+            @if ($color)
+                <span style="">{{ $color ?? 'N/A' }} |</span>
             @endif
-        </div>    
+            @if ($nombre)
+                <span style="">{{ $nombre }}|</span>
+            @endif
+            @if ($contacto)
+                <span style="">Contacto: {{ $contacto ?? 'N/A' }}</span>
+            @endif
+        </div>
         <!-- Fechas -->
         <div class="section">
             <table class="tabla_fechas">
@@ -230,7 +238,7 @@
             <p>
                 El vehículo será entregado únicamente al portador de esta boleta.
                 Se recomienda cerrar bien puertas y ventanas y conservar la llave.
-                La administración no se responsabiliza por robos o daños en el interior del vehículo.                
+                La administración no se responsabiliza por robos o daños en el interior del vehículo.
             </p>
         </div>
     </div>

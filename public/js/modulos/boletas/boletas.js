@@ -23,6 +23,8 @@ $("#btn-generar").on("click", function () {
         placa: $("#placa").val().trim(),
         id_vehiculo: idVehiculoSeleccionado,
         precio: precioSeleccionado,
+        color_id: $("#color_id").val(),
+        contacto: $("#contacto").val().trim(),
     };
 
     const btn = $("#btn-generar");
@@ -46,6 +48,8 @@ $("#btn-generar").on("click", function () {
         $("#nombre_cliente").val("");
         $("#ci_cliente").val("");
         $("#placa").val("");
+        // $("#color_id").prop("selectedIndex", 0).trigger("change");
+        $("#contacto").val("");
 
         // deseleccionar tarifa
         idVehiculoSeleccionado = null;

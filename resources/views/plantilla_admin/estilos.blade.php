@@ -20,6 +20,9 @@
 <link href="{{ asset('admin_template/css/icons.min.css') }}" rel="stylesheet" type="text/css">
 <link href="{{ asset('admin_template/css/app.min.css') }}" rel="stylesheet" type="text/css">
 
+{{-- Para  dar mas funcionalidad al select css --}}
+<link href="{{ asset('admin_template/libs/mobius1-selectr/selectr.min.css') }}" rel="stylesheet">
+
 <link rel="stylesheet" href="{{ asset('admin_template/css/loader.css') }}">
 <style>
     .uppercase-input {
