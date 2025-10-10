@@ -25,6 +25,7 @@ class DatabaseSeeder extends Seeder
             UsuarioSeeder::class,
             vehiculoSeeder::class,
             ConfAtrasoSeeder::class,
+            ColorSeeder::class,
         ]);
 
        //  \App\Models\Boleta::factory(100)->create();
