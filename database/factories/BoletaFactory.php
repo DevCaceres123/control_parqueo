@@ -4,6 +4,8 @@ namespace Database\Factories;
 
 use App\Models\Boleta;
 use App\Models\Vehiculo;
+use App\Models\Color;
+use App\Models\Contacto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
 use App\Helpers\HashidsHelper;
@@ -16,14 +18,20 @@ class BoletaFactory extends Factory
     {
         // Seleccionar un vehículo existente
         $vehiculo = Vehiculo::inRandomOrder()->first();
+        $color = Color::inRandomOrder()->first();
+        $contacto= Contacto::inRandomOrder()->first();
 
         // Si no hay vehículos, creamos uno temporal
         if (!$vehiculo) {
             $vehiculo = Vehiculo::factory()->create();
         }
 
-        // Fecha de entrada aleatoria dentro de los últimos 7 días
-        $entrada = Carbon::now()->subDays(rand(0, 15))->setTime(rand(6, 20), rand(0, 59));
+        if (!$contacto) {
+            $contacto = Contacto::factory()->create();
+        }
+
+        // Fecha de entrada aleatoria dentro de los últimos 15 días
+        $entrada = Carbon::now()->subDays(rand(0, 60))->setTime(rand(6, 20), rand(0, 59));
 
         // Fecha de salida máxima (al siguiente día a las 15:00)
         $salidaMax = $entrada->copy()->addDay()->setTime(15, 0);
@@ -43,7 +51,9 @@ class BoletaFactory extends Factory
             "placa" => $this->faker->regexify('[A-Z0-9]{6}'),
             "nombre" => null,
             "ci" => null,
-            "codigoUnico" => null // se llenará después
+            "codigoUnico" => null, // se llenará después
+            "color" => $color->nombre,
+            'contacto' => $contacto->telefono,
         ];
 
         // Crear la boleta (sin num_boleta todavía)
@@ -56,6 +66,8 @@ class BoletaFactory extends Factory
             'vehiculo_id' => $vehiculo->id,
             'usuario_id' => 1,
             'estado_impresion' => 'generado',
+            'color_id' => $color->id,
+            'contacto_id' => $contacto->id,
         ];
     }
 
