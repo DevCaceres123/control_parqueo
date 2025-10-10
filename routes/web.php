@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Configuracion\Controlador_vehiculo;
 use App\Http\Controllers\Configuracion\Controlador_config_atraso;
+use App\Http\Controllers\Configuracion\Controlador_color;
 use App\Http\Controllers\Boleta\Controlador_boleta;
 use App\Http\Controllers\Boleta\Controlador_listarBoletas;
 use App\Http\Controllers\Reporte\Controlador_reporte;
@@ -95,6 +96,14 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
         Route::post('generar_reporte', 'generar_reporte')->name('reporte.generar_reporte'); 
         
            
+    });
+
+
+    // CONTROLADOR PARA LOS COLORES
+    Route::controller(Controlador_color::class)->group(function () {
+        Route::resource('colores', Controlador_color::class);
+        Route::get('listarColores', 'listarColores')->name('colores.listarColores');    
+                   
     });
 
 

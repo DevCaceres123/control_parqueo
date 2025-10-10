@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('colores', function (Blueprint $table) {
             $table->id(); // id autoincremental
+            $table->string('nombre', 100); // Ej: Rojo metálico, Azul cielo
             $table->string('color', 50); // nombre del color
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps(); // opcional
         });
     }
