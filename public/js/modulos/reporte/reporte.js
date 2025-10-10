@@ -71,3 +71,10 @@ function generarURlBlob(pdfbase64) {
     // Crear una URL para el Blob
     return URL.createObjectURL(blob);
 }
+
+
+// MARCAR DESMARCAR CHECK
+$('#select_all_user').on('change', function () {
+    // Cambia el estado de todos los checkboxes dentro de #form_rol
+    $('#form-reporte_usuario input[type="checkbox"]').prop('checked', this.checked);
+});

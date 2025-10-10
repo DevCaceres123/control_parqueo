@@ -195,7 +195,7 @@
                     <th>Total Boletas</th>
                     <th class="monetary-value">Ingresos a tiempo (Bs)</th>
                     <th class="monetary-value">Ingresos por atraso (Bs)</th>
-                    <th class="monetary-value">Monto atraso (Bs)</th>
+                    {{-- <th class="monetary-value">Monto atraso (Bs)</th> --}}
                     <th class="monetary-value">Ingresos totales (Bs)</th>
                 </tr>
             </thead>
@@ -229,7 +229,7 @@
                         <td>{{ $r->total_boletas }}</td>
                         <td class="monetary-value">{{ number_format($r->ingresos_a_tiempo, 2) }}</td>
                         <td class="monetary-value">{{ number_format($r->ingresos_por_atraso, 2) }}</td>
-                        <td class="monetary-value">{{ number_format($r->monto_atraso, 2) }}</td>
+                        {{-- <td class="monetary-value">{{ number_format($r->monto_atraso, 2) }}</td> --}}
                         <td class="monetary-value">{{ number_format($r->ingresos_totales, 2) }}</td>
                     </tr>
                 @endforeach
@@ -238,8 +238,8 @@
                     <th colspan="4" style="text-align: right;">TOTALES</th>
                     <td class="monetary-value">{{ number_format($totales['total_sin'], 2) }}</td>
                     <td class="monetary-value">{{ number_format($totales['total_con'], 2) }}</td>
-                    <td class="monetary-value">{{ number_format($totales['monto_atraso'], 2) }}</td>
-                    <td class="monetary-value">{{ number_format($totales['total_general'], 2) }}</td>
+                    {{-- <td class="monetary-value">{{ number_format($totales['monto_atraso'], 2) }}</td> --}}
+                    <td class="monetary-value" style="background-color: #880000">{{ number_format($totales['total_general'], 2) }}</td>
                 </tr>
             </tbody>
 

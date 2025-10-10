@@ -54,13 +54,13 @@ class Controlador_reporte extends Controller
                 ->select(
                     'v.tarifa as tarifa_bs',
                     // Cantidades
-                    DB::raw("SUM(CASE WHEN b.retraso = '00:00' THEN 1 ELSE 0 END) as boletas_a_tiempo"),
-                    DB::raw("SUM(CASE WHEN b.retraso <> '00:00' THEN 1 ELSE 0 END) as boletas_con_atraso"),
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados = 1 THEN 1 ELSE 0 END) as boletas_a_tiempo"),
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados <> 1 THEN 1 ELSE 0 END) as boletas_con_atraso"),
                     DB::raw("COUNT(b.id) as total_boletas"),
                     // Totales monetarios
-                    DB::raw("SUM(CASE WHEN b.retraso = '00:00' THEN b.total ELSE 0 END) as ingresos_a_tiempo"),
-                    DB::raw("SUM(CASE WHEN b.retraso <> '00:00' THEN b.total ELSE 0 END) as ingresos_por_atraso"),
-                    DB::raw("SUM(CASE WHEN b.retraso <> '00:00' THEN b.monto_atraso ELSE 0 END) as monto_atraso"),
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados = 1 THEN b.total ELSE 0 END) as ingresos_a_tiempo"),
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados <> 1 THEN b.total ELSE 0 END) as ingresos_por_atraso"),
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados <> 1 THEN b.monto_atraso ELSE 0 END) as monto_atraso"),
                     DB::raw("SUM(b.total) as ingresos_totales")
                 )
                 ->whereBetween('b.salida_veh', [$fecha_inicio, $fecha_final])

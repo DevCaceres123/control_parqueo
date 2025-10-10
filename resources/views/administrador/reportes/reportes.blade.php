@@ -5,9 +5,9 @@
     <div class="row justify-content-center">
     <div class="col-12 col-md-10 col-lg-8">
         <div class="card shadow-lg border-0 rounded-4">
-            <div class="card-header bg-primary text-white text-center rounded-top-4 p-3">
+            <div class="card-header bg-dark text-white text-center rounded-top-4 p-3">
                 <h4 class="card-title mb-0 fw-bold fs-5 text-uppercase">
-                    <i class="fas fa-file-archive  me-2"></i> Reporte de Boletas
+                    <i class="fas fa-file-archive  me-1"></i> Reporte de Boletas
                 </h4>
             </div>
             <div class="card-body p-4">
@@ -51,16 +51,7 @@
                                                 </label>
                                             </div>
                                         </div>
-                                    @endforeach
-                                    <div class="col-12 col-md-6">
-                                        <div class="form-check mt-2">
-                                            <input class="form-check-input listar-turnos" type="checkbox"
-                                                name="listar_turnos" value="1" id="listar_turnos">
-                                            <label class="form-check-label text-uppercase text-danger" for="listar_turnos">
-                                                Listar Turnos
-                                            </label>
-                                        </div>
-                                    </div>
+                                    @endforeach                                    
                                 </div>
                             </div>
                         </div>
@@ -99,11 +90,7 @@
             });
 
         });
-
-
-        document.getElementById("listar_turnos").addEventListener("change", function() {
-            document.getElementById("listar_turnos_hidden").disabled = this.checked;
-        });
+      
     </script>
 
     <script src="{{ asset('js/modulos/reporte/reporte.js') }}" type="module"></script>
