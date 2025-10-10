@@ -226,7 +226,7 @@
                         <td>{{ number_format($r->tarifa_bs, 2) }}</td>
                         <td>{{ $r->boletas_a_tiempo }}</td>
                         <td>{{ $r->boletas_con_atraso }}</td>
-                        <td>{{ $r->total_boletas }}</td>
+                        <td class="monetary-value">{{ $r->total_boletas }}</td>
                         <td class="monetary-value">{{ number_format($r->ingresos_a_tiempo, 2) }}</td>
                         <td class="monetary-value">{{ number_format($r->ingresos_por_atraso, 2) }}</td>
                         {{-- <td class="monetary-value">{{ number_format($r->monto_atraso, 2) }}</td> --}}
@@ -235,7 +235,8 @@
                 @endforeach
 
                 <tr class="totales">
-                    <th colspan="4" style="text-align: right;">TOTALES</th>
+                    <th colspan="3" style="text-align: right;">TOTALES</th>
+                    <td class="monetary-value">{{ $totales['total_boletas'] }}</td>
                     <td class="monetary-value">{{ number_format($totales['total_sin'], 2) }}</td>
                     <td class="monetary-value">{{ number_format($totales['total_con'], 2) }}</td>
                     {{-- <td class="monetary-value">{{ number_format($totales['monto_atraso'], 2) }}</td> --}}
