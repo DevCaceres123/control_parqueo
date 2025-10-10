@@ -61,7 +61,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#boleta" data-bs-toggle="collapse" role="button"
                             aria-expanded="false" aria-controls="boleta">
-                            <i class="iconoir-compact-disc menu-icon"></i>
+                            <i class="fas fa-file-invoice menu-icon"></i>
                             <span>CONTROL BOLETAS</span>
                         </a>
                         <div class="collapse " id="boleta">
@@ -91,7 +91,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#reporte" data-bs-toggle="collapse" role="button"
                             aria-expanded="false" aria-controls="reporte">
-                            <i class="iconoir-compact-disc menu-icon"></i>
+                            <i class="fas fa-chart-bar menu-icon"></i>
                             <span>REPORTES</span>
                         </a>
                         <div class="collapse " id="reporte">
@@ -117,7 +117,7 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#configuracion" data-bs-toggle="collapse" role="button"
                             aria-expanded="false" aria-controls="configuracion">
-                            <i class="iconoir-compact-disc menu-icon"></i>
+                            <i class="fas fa-cog menu-icon"></i>
                             <span>CONFIGURACION</span>
                         </a>
                         <div class="collapse " id="configuracion">
