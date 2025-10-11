@@ -98,11 +98,11 @@ class Controlador_login extends Controller
         $data['menu']   = 0;
         //$data['usuario_estacion'] = User::with(['estacion'])->find(Auth::user()->id);
         $fecha_actual = Carbon::now()->format('Y-m-d');
-        $data['total_vehiculos_ingresados'] = Boleta::whereDate('created_at', $fecha_actual)->where('estado_parqueo', 'ingreso')->count();
+        $data['total_vehiculos_ingresados'] = Boleta::whereDate('entrada_veh', $fecha_actual)->where('estado_parqueo', 'ingreso')->count();
         $data['vehiculos_por_tipo'] = DB::table('boletas as b')
                 ->join('vehiculos as t', 't.id', '=', 'b.vehiculo_id')
                 ->select('t.nombre as tipo', DB::raw('COUNT(b.id) as total'))
-                ->whereDate('b.created_at', $fecha_actual)
+                ->whereDate('b.entrada_veh', $fecha_actual)
                 ->whereNull('b.deleted_at')
                 ->groupBy('t.nombre')
                 ->get();
