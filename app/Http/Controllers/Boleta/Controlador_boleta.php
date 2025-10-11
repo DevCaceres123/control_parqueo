@@ -471,8 +471,7 @@ class Controlador_boleta extends Controller
         // Decodificar a array asociativo
         $datos = json_decode($datos, true);
 
-        // Agregar los otros valores al array
-        $datos['entrada_vehiculo'] = $entradaVehi;
+        // Agregar los otros valores al array        
         $datos['salida_vehiculo']  = $salidaVeh;
         $datos['total']            = $total;
         // esta variable obtiene el precio del vehiculo al momento de la generacion de la boleta
@@ -488,8 +487,7 @@ class Controlador_boleta extends Controller
             throw new Exception("los montos no coinciden");
         }
 
-        $datos['monto_extra'] = $monto_vehiculo * $totalRetraso['veces_pasadas'];
-        $datos['monto_vehiculo_boleta'] = $monto_vehiculo; // este campo servira para saber si se cambio el precio del vehiculo
+        $datos['monto_extra'] = $monto_vehiculo * $totalRetraso['veces_pasadas'];        
         $datos['tiempo_estadia'] = $tiempoEstadia;
 
 

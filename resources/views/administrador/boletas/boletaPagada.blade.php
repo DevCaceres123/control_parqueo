@@ -255,7 +255,7 @@
         <table class="tabla_fechas">
             <tr>
                 <td>H.Entrada</td>
-                <td>{{ $entrada_vehiculo ?? 'N/A' }}</td>
+                <td>{{ $fecha_generada ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td>H.Salida</td>
@@ -279,7 +279,7 @@
                 <!-- Montos -->
                 <div class="monto-bloque">
                     <span>Monto Inicial:</span>
-                    <span>Bs. {{ $monto_vehiculo_boleta ?? '0' }}</span>
+                    <span>Bs. {{ $tarifa_vehiculo['tarifa'] ?? '0' }}</span>
                 </div>
                 <div class="monto-bloque">
                     <span>Monto Extra (Retraso):</span>
