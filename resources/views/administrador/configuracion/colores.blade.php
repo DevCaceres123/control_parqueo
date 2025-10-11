@@ -2,12 +2,14 @@
 @section('titulo', 'COLORES')
 @section('contenido')
     <div class="row">
-        <div class="col-12 col-md-8  card shadow-lg border-0 rounded-4 overflow-hidden m-auto">
+        <div class="col-12 col-md-8  card shadow-lg border-0 rounded-4 overflow-hidden m-auto mb-4">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header bg-dark border-start border-5 border-primary py-3 rounded-4">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h4 class="card-title">LISTA DE COLORES</h4>
+                             <h4  class="card-title mb-0 text-light fw-bold">
+                                 <i class="fas fa-palette  me-2"></i> LISTA DE COLORES
+                            </h4>
                         </div>
                         <div class="col-auto">
                             <button type="button" class="btn btn-primary nuevo_vehiculo" data-bs-toggle="modal"

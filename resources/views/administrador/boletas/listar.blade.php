@@ -1,17 +1,19 @@
-
 @extends('principal')
 @section('titulo', 'LISTAR BOLETAS')
 @section('contenido')
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header bg-dark border-start border-5 border-primary py-3">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h4 class="card-title">LISTAR BOLETAS</h4>
-                        </div>                        
+                            <h5 class="card-title mb-0 text-light fw-bold">
+                                <i class="fas fa-receipt me-2"></i> LISTAR BOLETAS
+                            </h5>
+                        </div>
                     </div>
                 </div>
+
                 <div class="card-body">
                     <div class="row position-relative">
 
@@ -21,16 +23,16 @@
                                 value="{{ \Carbon\Carbon::now()->toDateString() }}" />
                         </div>
 
-                         <div class="col-12 col-md-auto mb-3">
-                                    <label for="filterFecha" class="mb-2">Filtrar por encargados:</label>
-                                    <select class="form-select" aria-label="Default select example " name="encargados"
-                                        id="encargados">
-                                        <option selected disabled>Encargados</option>
-                                        @foreach ($encargados_puesto as $item)
-                                            <option value="{{ $item->id }}" class="text-capitalize">
-                                                {{ $item->nombres }} {{ $item->apellidos }}</option>
-                                        @endforeach
-                                    </select>
+                        <div class="col-12 col-md-auto mb-3">
+                            <label for="filterFecha" class="mb-2">Filtrar por encargados:</label>
+                            <select class="form-select" aria-label="Default select example " name="encargados"
+                                id="encargados">
+                                <option selected disabled>Encargados</option>
+                                @foreach ($encargados_puesto as $item)
+                                    <option value="{{ $item->id }}" class="text-capitalize">
+                                        {{ $item->nombres }} {{ $item->apellidos }}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="col-auto col-md-3 mt-3">
@@ -52,7 +54,7 @@
                             <thead class="table-light">
                                 <tr>
                                     <th>Nº</th>
-                                    <th>VEHICULO</th>                                    
+                                    <th>VEHICULO</th>
                                     <th>PLACA</th>
                                     <th>CI</th>
                                     <th>ENTRADA</th>
