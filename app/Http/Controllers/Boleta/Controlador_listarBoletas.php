@@ -159,7 +159,7 @@ class Controlador_listarBoletas extends Controller
             $datosUsuario = $reporteJson['usuario'] ?? null;
             $nombre = $reporteJson['nombre'] ?? null;
             $ci = $reporteJson['ci'] ?? null;
-            $fecha_finalizacion = $boleta->salidaMax ?? null;
+            $fecha_finalizacion =  $reporteJson['fecha_finalizacion'] ?? null;
             $color = $reporteJson['color'] ?? null;
             $contacto = $reporteJson['contacto'] ?? null;
 

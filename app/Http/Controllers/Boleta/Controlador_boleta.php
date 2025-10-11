@@ -296,7 +296,7 @@ class Controlador_boleta extends Controller
 
     }
 
-
+    // Funcion para buscar boleta por codigo, ci o placa donde se calcula el total a pagar, y tomar nota  el monto se calculara en base a la tarifa del vehiculo al momento de la generacion de la boleta
     public function buscarBoleta(Request $request)
     {
 
@@ -309,7 +309,7 @@ class Controlador_boleta extends Controller
             ]);
 
 
-            $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id', 'estado_parqueo')
+            $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id', 'estado_parqueo','reporte_json')
                         ->where($validatedData['filtro'] === 'codigo' ? 'num_boleta' : $validatedData['filtro'], $validatedData['valor'])
                         ->first();
             
@@ -323,20 +323,22 @@ class Controlador_boleta extends Controller
                 throw new Exception("el vehículo con boleta {$boleta->num_boleta} ya ha salido del parqueo.");
             }
 
+            $datosBoleta = json_decode($boleta->reporte_json);
+            $precioVehiculo=$datosBoleta->tarifa_vehiculo->tarifa;
             $fecha_actual = Carbon::now();
             $montoRetraso = $this->calcularTotal($fecha_actual, $boleta->salidaMax, $boleta->entrada_veh);
-            $vehiculo_monto = Vehiculo::select('nombre', 'tarifa')->where('id', $boleta->vehiculo_id)->first();
-            $total = $vehiculo_monto->tarifa * ($montoRetraso['veces_pasadas'] + 1); // sumamos 1 al total para cobrar el primer dia
+            $vehiculo = Vehiculo::select('nombre', 'tarifa')->where('id', $boleta->vehiculo_id)->first();
+            $total = $precioVehiculo * ($montoRetraso['veces_pasadas'] + 1); // sumamos 1 al total para cobrar el primer dia
             $tiempoEstadita = $montoRetraso['tiempoPasado'];            
-            $montoRetraso = $montoRetraso['veces_pasadas']  * $vehiculo_monto->tarifa;
+            $montoRetraso = $montoRetraso['veces_pasadas']  *  $precioVehiculo; // monto por atraso
 
             $data = [
                 'datos_boleta' => $boleta,
                 'total' => $total,
                 'salida_vehiculo' => Carbon::now()->format('Y-m-d H:i:s'),//capturamos la hora actual con la hora de salida
-                'datos_vehiculo' => $vehiculo_monto,
+                'datos_vehiculo' => $vehiculo,
                 'montoRetraso' => $montoRetraso,
-                'montoVehiculo' => $vehiculo_monto->tarifa,
+                'montoVehiculo' => $precioVehiculo,
                 'tiempoEstadia' => $tiempoEstadita,
                 
             ];
@@ -473,21 +475,21 @@ class Controlador_boleta extends Controller
         $datos['entrada_vehiculo'] = $entradaVehi;
         $datos['salida_vehiculo']  = $salidaVeh;
         $datos['total']            = $total;
-
-
-        $vehiculo_monto = Vehiculo::select('tarifa')->where('id', $vehiculo_id)->first();
+        // esta variable obtiene el precio del vehiculo al momento de la generacion de la boleta
+        $monto_vehiculo =$datos['tarifa_vehiculo']['tarifa'];
+        //$vehiculo_monto = Vehiculo::select('tarifa')->where('id', $vehiculo_id)->first();
         $totalRetraso = $this->calcularTotal($salidaVeh, $saliMaxVechiulo, $entradaVehi);
 
 
-        $totalBoleta = $vehiculo_monto->tarifa * ($totalRetraso['veces_pasadas'] + 1);
+        $totalBoleta = $monto_vehiculo * ($totalRetraso['veces_pasadas'] + 1);
 
         // se valida que el total del frontend sea al mismo que se calcula aqui
         if ($totalBoleta != $total) {
             throw new Exception("los montos no coinciden");
         }
 
-        $datos['monto_extra'] = $vehiculo_monto->tarifa * $totalRetraso['veces_pasadas'];
-        $datos['monto_vehiculo_boleta'] = $vehiculo_monto->tarifa;        
+        $datos['monto_extra'] = $monto_vehiculo * $totalRetraso['veces_pasadas'];
+        $datos['monto_vehiculo_boleta'] = $monto_vehiculo; // este campo servira para saber si se cambio el precio del vehiculo
         $datos['tiempo_estadia'] = $tiempoEstadia;
 
 
