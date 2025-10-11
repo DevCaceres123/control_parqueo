@@ -1,85 +1,74 @@
 @extends('principal')
 @section('titulo', 'INICIO')
 @section('contenido')
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-4">
-            <div class="card">
+    <div class="row g-4">
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card shadow-lg border-0 rounded-3">
                 <div class="card-body">
-                    <div class="row d-flex justify-content-center border-dashed-bottom pb-3">
-                        <div class="col-9">
-                            <p class="text-dark mb-0 fw-semibold fs-14">Sessions</p>
-                            <h3 class="mt-2 mb-0 fw-bold">24k</h3>
+                    <!-- Encabezado -->
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3">
+                        <div>
+                            <p class="text-muted mb-1 fw-semibold text-uppercase small">Monto Generado Hoy</p>
+                            <h3 class="fw-bold mb-0 text-dark">Bs. {{ $monto_generado }}</h3>
                         </div>
-                        <!--end col-->
-                        <div class="col-3 align-self-center">
-                            <div
-                                class="d-flex justify-content-center align-items-center thumb-xl bg-light rounded-circle mx-auto">
-                                <i class="iconoir-hexagon-dice h1 align-self-center mb-0 text-secondary"></i>
-                            </div>
+                        <div class="bg-dark bg-opacity-10 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width:60px; height:60px;">
+                            <i class="fas fa-money-bill-wave text-dark fs-3"></i>
                         </div>
-                        <!--end col-->
+
                     </div>
-                    <!--end row-->
-                    <p class="mb-0 text-truncate text-muted mt-3"><span class="text-success">8.5%</span>
-                        New Sessions Today</p>
+
+                    <!-- Contenido -->
+                    <div class="mt-3">
+                        <p class="mb-1 text-secondary fw-semibold">
+                            <i class="far fa-calendar-alt me-1 text-dark"></i> Fecha:
+                            <span class="text-dark fw-bold">{{ $fecha_actual }}</span>
+                        </p>
+
+                        <ul class="list-unstyled mt-2 mb-0">
+                            <li class="d-flex justify-content-between">
+                                <span><i class="fas fa-ticket-alt me-2 text-success"></i>Boletas emitidas</span>
+                                <span class="fw-semibold text-dark">{{ $boletas_emitidas }}</span>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <!--end card-body-->
             </div>
-            <!--end card-->
         </div>
-        <!--end col-->
-        <div class="col-md-6 col-lg-4">
-            <div class="card">
+
+        <div class="col-12 col-md-6 col-lg-4">
+            <div class="card shadow-lg border-0 rounded-3">
                 <div class="card-body">
-                    <div class="row d-flex justify-content-center border-dashed-bottom pb-3">
-                        <div class="col-9">
-                            <p class="text-dark mb-0 fw-semibold fs-14">Avg.Sessions</p>
-                            <h3 class="mt-2 mb-0 fw-bold">00:18</h3>
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3">
+                        <div>
+                            <p class="text-muted mb-1 fw-semibold text-uppercase small">Vehículos Ingresados</p>
+                            <h3 class="fw-bold mb-0 text-dark">{{ $total_vehiculos_ingresados }}</h3>
                         </div>
-                        <!--end col-->
-                        <div class="col-3 align-self-center">
-                            <div
-                                class="d-flex justify-content-center align-items-center thumb-xl bg-light rounded-circle mx-auto">
-                                <i class="iconoir-clock h1 align-self-center mb-0 text-secondary"></i>
-                            </div>
+                        <div class="bg-dark bg-opacity-10 rounded-circle d-flex justify-content-center align-items-center"
+                            style="width:60px; height:60px;">
+                            <i class="fas fa-car text-dark fs-3"></i>
                         </div>
-                        <!--end col-->
                     </div>
-                    <!--end row-->
-                    <p class="mb-0 text-truncate text-muted mt-3"><span class="text-success">1.5%</span>
-                        Weekly Avg.Sessions</p>
-                </div>
-                <!--end card-body-->
-            </div>
-            <!--end card-->
-        </div>
-        <!--end col-->
-        <div class="col-md-6 col-lg-4">
-            <div class="card">
-                <div class="card-body">
-                    <div class="row d-flex justify-content-center border-dashed-bottom pb-3">
-                        <div class="col-9">
-                            <p class="text-dark mb-0 fw-semibold fs-14">Bounce
-                                Rate</p>
-                            <h3 class="mt-2 mb-0 fw-bold">36.45%</h3>
-                        </div>
-                        <!--end col-->
-                        <div class="col-3 align-self-center">
-                            <div
-                                class="d-flex justify-content-center align-items-center thumb-xl bg-light rounded-circle mx-auto">
-                                <i class="iconoir-percentage-circle h1 align-self-center mb-0 text-secondary"></i>
-                            </div>
-                        </div>
-                        <!--end col-->
+
+                    <div class="mt-3">
+                        <p class="mb-1 text-secondary fw-semibold">
+                            <i class="far fa-calendar-alt me-1 text-dark"></i> Fecha:
+                            <span class="text-dark fw-bold">{{ $fecha_actual }}</span>
+                        </p>
+                        <ul class="list-unstyled mt-2 mb-0">
+                            @foreach ($vehiculos_por_tipo as $vehiculo)
+                                <li class="d-flex justify-content-between text-capitalize">
+                                    <span>{{$vehiculo->tipo}}</span>
+                                    <span class="fw-semibold text-dark">{{$vehiculo->total}}</span>
+                                </li>
+                            @endforeach
+
+
+                        </ul>
                     </div>
-                    <!--end row-->
-                    <p class="mb-0 text-truncate text-muted mt-3"><span class="text-danger">8%</span>
-                        Up Bounce Rate Weekly</p>
                 </div>
-                <!--end card-body-->
             </div>
-            <!--end card-->
         </div>
-        <!--end col-->
+
     </div>
 @endsection

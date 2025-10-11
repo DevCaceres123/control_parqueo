@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Login\UsuarioRequest;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Boleta;
+use App\Models\Vehiculo;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class Controlador_login extends Controller
 {
@@ -93,6 +97,21 @@ class Controlador_login extends Controller
     {
         $data['menu']   = 0;
         //$data['usuario_estacion'] = User::with(['estacion'])->find(Auth::user()->id);
+        $fecha_actual = Carbon::now()->format('Y-m-d');
+        $data['total_vehiculos_ingresados'] = Boleta::whereDate('created_at', $fecha_actual)->where('estado_parqueo', 'ingreso')->count();
+        $data['vehiculos_por_tipo'] = DB::table('boletas as b')
+                ->join('vehiculos as t', 't.id', '=', 'b.vehiculo_id')
+                ->select('t.nombre as tipo', DB::raw('COUNT(b.id) as total'))
+                ->whereDate('b.created_at', $fecha_actual)
+                ->whereNull('b.deleted_at')
+                ->groupBy('t.nombre')
+                ->get();
+        
+        $data['monto_generado']= Boleta::whereDate('salida_veh', $fecha_actual)->where('estado_parqueo', 'salida')->sum('total');
+        $data['boletas_emitidas']= Boleta::whereDate('salida_veh', $fecha_actual)->where('estado_parqueo', 'salida')->count();
+        $data['fecha_actual'] = Carbon::now()->translatedFormat('d \d\e F \d\e Y');
+        // return $data;
+
         return view('inicio', $data);
     }
     /**
@@ -102,7 +121,8 @@ class Controlador_login extends Controller
     /**
      * CERRAR LA SESSIÓN
      */
-    public function cerrar_session(Request $request){
+    public function cerrar_session(Request $request)
+    {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
