@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             ColorSeeder::class,
         ]);
 
-        //\App\Models\Boleta::factory(10000)->create();
+        \App\Models\Boleta::factory(10000)->create();
 
 
     }
