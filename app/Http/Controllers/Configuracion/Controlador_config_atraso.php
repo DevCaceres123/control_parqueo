@@ -15,6 +15,10 @@ class Controlador_config_atraso extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->can('config.atraso.inicio')) {
+            return redirect()->route('inicio');
+        }
+
         return view("administrador.configuracion.conf_atraso");
     }
 
@@ -56,9 +60,8 @@ class Controlador_config_atraso extends Controller
             'recordsFiltered' => $recordsTotal, // Ajustar si hay filtros
             'data' => $sedes,
             'permisos' => [
-                'editar' => auth()->user()->can('afiliado.editar'),
-                'eliminar' => true,
-                'estado' => auth()->user()->can('afiliado.estado'),
+                'editar' => auth()->user()->can('config.atraso.editar'),                
+                'estado' => auth()->user()->can('config.atraso.desactivar'),
             ],
         ]);
     }

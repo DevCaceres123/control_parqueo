@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Boleta;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Boleta;
+use App\Models\Contacto;
 use App\Models\Vehiculo;
+use App\Models\Color;
 use App\Models\Config_atraso;
 use App\Models\User;
 use Carbon\Carbon;
@@ -20,19 +22,19 @@ class Controlador_listarBoletas extends Controller
      */
     public function index()
     {
-        // if (!auth()->user()->can('control.generar.inicio')) {
-        //     return redirect()->route('inicio');
-        // }
+        if (!auth()->user()->can('control.listar_boleta.inicio')) {
+            return redirect()->route('inicio');
+        }
 
         $encargados_puesto = User::select('id', 'nombres', 'apellidos')
-
         ->where('estado', 'activo')
         ->get();
 
+        $vehiculos = Vehiculo::select('id', 'nombre', 'tarifa')->where('estado', 'activo')->get();
+        $colores = Color::select('id', 'nombre', 'color')->get();
 
 
-
-        return view("administrador.boletas.listar", compact('encargados_puesto'));
+        return view("administrador.boletas.listar", compact('encargados_puesto', 'vehiculos', 'colores'));
     }
 
 
@@ -52,7 +54,7 @@ class Controlador_listarBoletas extends Controller
              'contacto' => function ($query) {  // nueva relación
                  $query->select(['id', 'telefono']); // campos que quieres traer
              },
-        ])->select('id', 'dias_cobrados', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id','contacto_id')->orderBy('id', 'desc');
+        ])->select('id', 'dias_cobrados', 'placa', 'ci', 'entrada_veh', 'salida_veh', 'estado_parqueo', 'total', 'vehiculo_id', 'contacto_id')->orderBy('id', 'desc');
 
 
 
@@ -100,7 +102,7 @@ class Controlador_listarBoletas extends Controller
                 'estado_parqueo' => $boleta->estado_parqueo,
                 'dias_cobrados' => $boleta->dias_cobrados,
                 'total' => $boleta->total,
-                'contacto'=>$boleta->contacto ? $boleta->contacto->telefono : null,
+                'contacto' => $boleta->contacto ? $boleta->contacto->telefono : null,
                 'vehiculo' => $boleta->vehiculo ? [
                     'id' => $boleta->vehiculo->id,
                     'nombre' => $boleta->vehiculo->nombre,
@@ -125,9 +127,11 @@ class Controlador_listarBoletas extends Controller
             'recordsFiltered' => $recordsTotal, // Ajustar si hay filtros
             'data' => $datos_registros,
             'permissions' => [
-                'editar' => auth()->user()->can('afiliado.editar'),
-                'eliminar' => true,
-                'estado' => auth()->user()->can('afiliado.estado'),
+                'editar' => auth()->user()->can('control.listar_boleta.editar'),
+                'eliminar' =>auth()->user()->can('control.listar_boleta.eliminar'),
+                'entrada' => auth()->user()->can('control.listar_boleta.ticket_entrada'),
+                'salida' => auth()->user()->can('control.listar_boleta.ticket_salida'),
+                'contacto' => auth()->user()->can('control.listar_boleta.contacto'),
             ],
         ]);
     }
@@ -292,7 +296,26 @@ class Controlador_listarBoletas extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $boleta = Boleta::with([
+            'contacto' => function ($query) {  // nueva relación
+                $query->select(['id', 'telefono']); // campos que quieres traer
+            },
+        ])->select('id', 'placa', 'ci', 'vehiculo_id', 'contacto_id', 'color_id','estado_parqueo')
+          ->where('id', $id)          
+          ->first();
+
+        if($boleta->estado_parqueo == 'salida'){
+            $this->mensaje('error', 'No se puede editar una boleta pagada');
+            return response()->json($this->mensaje, 200);
+        }
+
+        if (!$boleta) {
+            $this->mensaje('error', 'boleta no encontrada');
+            return response()->json($this->mensaje, 200);
+        }
+        $this->mensaje("exito", $boleta);
+
+        return response()->json($this->mensaje, 200);
     }
 
     /**
@@ -300,7 +323,50 @@ class Controlador_listarBoletas extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        
+        DB::beginTransaction();
+        try {
+            // Encontrar el usuario por ID
+            $boleta = Boleta::find($id);
+            if (!$boleta) {
+                throw new Exception('boleta no encontrado');
+            }     
+            // actualizamos los datos de la boleta
+            $boleta->placa=$request->placa;
+            $boleta->ci=$request->ci;
+            $boleta->vehiculo_id=$request->vehiculo_id;
+            $boleta->color_id=$request->color_id;            
+            
+            $datos_voleta=json_decode($boleta->reporte_json, true);
+
+            $vehiculo = Vehiculo::find($request->vehiculo_id);
+            $color = Color::find($request->color_id);
+            // cambiamos los datos del json
+            $datos_voleta['tarifa_vehiculo']['nombre'] = $vehiculo->nombre ?? null;
+            $datos_voleta['tarifa_vehiculo']['tarifa'] = $vehiculo->tarifa ?? null;
+            $datos_voleta['color'] = $color->nombre ?? null;
+            $datos_voleta['contacto'] = $request->contacto ?? null;
+            $boleta->reporte_json = json_encode($datos_voleta);
+            
+            // actualizamos o creamos el contacto
+            $contactoModel = Contacto::firstOrCreate(['telefono' => $request->contacto]);        
+            $boleta->contacto_id = $contactoModel->id;        
+
+            // guardarmos la informacion actualizada
+            $boleta->save();
+            DB::commit();
+
+            $this->mensaje("exito", "Datos de boleta actualizados correctamente");
+
+            return response()->json($this->mensaje, 200);
+        } catch (Exception $e) {
+            // Revertir los cambios si hay algún error
+            DB::rollBack();
+
+            $this->mensaje("error", "error" . $e->getMessage());
+
+            return response()->json($this->mensaje, 200);
+        }
     }
 
     /**

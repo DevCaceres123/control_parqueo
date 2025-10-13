@@ -62,7 +62,7 @@ function listar_afiliado() {
 
                     // Aquí verificamos el permiso de desactivar
                     let desactivarContent =
-                        permisosGlobal["estado"] == false
+                        permisosGlobal["estado"] == true
                             ? `
                             <a class="cambiar_estado_vehiculo" data-id="${row.id},${row.estado}">
                                 <div class="form-check form-switch ms-3">
@@ -106,7 +106,7 @@ function listar_afiliado() {
                             : ``
                         }
                       
-                             ${permisosGlobal.eliminar
+                             ${permisosGlobal.editar
                             ? ` <a class="btn btn-sm btn-outline-warning px-2 d-inline-flex align-items-center editar_vehiculo me-1" data-id="${row.id}" title="Editar Sede">
                             <i class="fas fa-pencil-alt fs-16"></i>
                         </a>`

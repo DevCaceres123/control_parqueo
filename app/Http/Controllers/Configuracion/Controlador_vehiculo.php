@@ -15,6 +15,9 @@ class Controlador_vehiculo extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->can('config.vehiculos.inicio')) {
+            return redirect()->route('inicio');
+        }
         return view("administrador.configuracion.vehiculos");
     }
 
@@ -46,9 +49,9 @@ class Controlador_vehiculo extends Controller
             'recordsFiltered' => $recordsTotal, // Ajustar si hay filtros
             'data' => $sedes,
             'permisos' => [
-                'editar' => auth()->user()->can('afiliado.editar'),
-                'eliminar' => true,
-                'estado' => auth()->user()->can('afiliado.estado'),
+                'editar' => auth()->user()->can('config.vehiculos.editar'),
+                'eliminar' => auth()->user()->can('config.vehiculos.eliminar'),
+                'estado' => auth()->user()->can('config.vehiculos.desactivar'),
             ],
         ]);
     }

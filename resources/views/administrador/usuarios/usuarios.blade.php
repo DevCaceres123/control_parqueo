@@ -7,14 +7,16 @@
                 <div class="card-header bg-dark border-start border-5 border-primary py-3">
                     <div class="row align-items-center">
                         <div class="col">
-                            <h4  class="card-title mb-0 text-light fw-bold">
-                                 <i class="fas fa-users me-2"></i> Usuarios
+                            <h4 class="card-title mb-0 text-light fw-bold">
+                                <i class="fas fa-users me-2"></i> Usuarios
                             </h4>
                         </div>
                         <div class="col-auto">
-                            <button class="btn btn-primary" onclick="abrirModalUsuario()">
-                                <i class="fas fa-plus me-1"></i> Nuevo
-                            </button>
+                            @can('admin.usuario.crear')
+                                <button class="btn btn-primary" onclick="abrirModalUsuario()">
+                                    <i class="fas fa-plus me-1"></i> Nuevo
+                                </button>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -64,7 +66,7 @@
                         <div class="mb-3 row">
                             <label for="ci" class="col-sm-2 col-form-label">Nombres</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control uppercase-input"  id="nombres" name="nombres"
+                                <input type="text" class="form-control uppercase-input" id="nombres" name="nombres"
                                     placeholder="Ingrese nombres">
                                 <div id="_nombres"></div>
                             </div>
@@ -161,12 +163,12 @@
 
                 let data = await response.json();
                 if (data.tipo === 'success') {
-                    document.getElementById('ci').value    = data.mensaje.ci;
-                    document.getElementById('nombres').value    = data.mensaje.nombres;
-                    document.getElementById('apellidos').value  = data.mensaje.apellidos;
-                    document.getElementById('email').value      = data.mensaje.email;
-                    document.getElementById('roles').value      = data.mensaje.roles[0].id;
-                    document.getElementById('usuario').value      = data.mensaje.usuario;
+                    document.getElementById('ci').value = data.mensaje.ci;
+                    document.getElementById('nombres').value = data.mensaje.nombres;
+                    document.getElementById('apellidos').value = data.mensaje.apellidos;
+                    document.getElementById('email').value = data.mensaje.email;
+                    document.getElementById('roles').value = data.mensaje.roles[0].id;
+                    document.getElementById('usuario').value = data.mensaje.usuario;
 
                 } else {
                     alerta_top(data.tipo, data.mensaje);
@@ -186,7 +188,8 @@
         //para guardar el usuario
         btn_guardar_usuario.addEventListener('click', async () => {
             let datos = Object.fromEntries(new FormData(form_usuario).entries());
-            let url = datos.usuario_id ? `{{ route('user.update', ':id') }}`.replace(':id', datos.usuario_id) : "{{ route('user.store') }}";
+            let url = datos.usuario_id ? `{{ route('user.update', ':id') }}`.replace(':id', datos.usuario_id) :
+                "{{ route('user.store') }}";
             let metodo = datos.usuario_id ? "PUT" : "POST";
             validar_boton(true, "Validando . . . . ", btn_guardar_usuario);
 
@@ -241,18 +244,22 @@
             let i = 1;
             $('#tabla_listar_usuarios').DataTable({
                 responsive: true,
-                data: dato,
+                data: dato.usuario,
                 columns: [{
                         data: null,
                         className: 'table-td',
                         render: (data, type, row) => `
-                            <button type="button" class="btn rounded-pill btn-sm btn-warning p-0.5" onclick="abrirModalUsuario('${row.id}')">
-                                <i class="las la-pen fs-18"></i>
-                            </button>
+                            ${dato.permissions['editar'] ?
+                                `<button type="button" class="btn rounded-pill btn-sm btn-warning p-0.5" onclick="abrirModalUsuario('${row.id}')">
+                                            <i class="las la-pen fs-18"></i>
+                                        </button>` 
+                             : ``}
 
-                            <button type="button" class="btn rounded-pill btn-sm btn-danger p-0.5" onclick="eliminarUsuario('${row.id}')">
-                                <i class="las la-trash-alt fs-18"></i>
-                            </button>
+                           ${dato.permissions['eliminar'] ?
+                                `<button type="button" class="btn rounded-pill btn-sm btn-danger p-0.5" onclick="eliminarUsuario('${row.id}')">
+                                            <i class="las la-trash-alt fs-18"></i>
+                                        </button>` 
+                              : ``}
                         `
                     },
                     {
@@ -274,9 +281,11 @@
                         className: 'table-td',
                         render: function(data, type, row, meta) {
                             return `
-                                <div class="form-check form-switch form-switch-dark">
-                                    <input class="form-check-input" onclick="estado_usuario('${row.id}')" type="checkbox" id="customSwitchDark" ${row.estado === 'activo' ? 'checked' : ''} >
-                                </div>
+                                 ${dato.permissions['desactivar'] ?
+                                `<div class="form-check form-switch form-switch-dark">
+                                                <input class="form-check-input" onclick="estado_usuario('${row.id}')" type="checkbox" id="customSwitchDark" ${row.estado === 'activo' ? 'checked' : ''} >
+                                            </div>`
+                                : ``}
                             `;
                         }
                     },

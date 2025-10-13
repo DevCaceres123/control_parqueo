@@ -30,6 +30,9 @@ class Controlador_boleta extends Controller
 
     public function index()
     {
+        if (!auth()->user()->can('control.boleta.inicio')) {
+            return redirect()->route('inicio');
+        }
         $vehiculos = Vehiculo::select('id', 'nombre', 'tarifa')->where('estado', 'activo')->orderBy('id', 'desc')->get();
         $colores = Color::orderBy('id', 'desc')->get();
         return view("administrador.boletas.boletas", compact('vehiculos','colores'));

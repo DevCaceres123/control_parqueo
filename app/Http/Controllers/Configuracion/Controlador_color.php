@@ -16,6 +16,9 @@ class Controlador_color extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->can('config.colores.inicio')) {
+            return redirect()->route('inicio');
+        }
         $colores = Color::orderBy('id', 'desc')->get();
         return view("administrador.configuracion.colores", compact('colores'));
     }

@@ -7,15 +7,17 @@
                 <div class="card-header bg-dark border-start border-5 border-primary py-3 rounded-4">
                     <div class="row align-items-center">
                         <div class="col">
-                             <h4  class="card-title mb-0 text-light fw-bold">
-                                 <i class="fas fa-palette  me-2"></i> LISTA DE COLORES
+                            <h4 class="card-title mb-0 text-light fw-bold">
+                                <i class="fas fa-palette  me-2"></i> LISTA DE COLORES
                             </h4>
                         </div>
                         <div class="col-auto">
-                            <button type="button" class="btn btn-primary nuevo_vehiculo" data-bs-toggle="modal"
-                                data-bs-target="#modal_color">
-                                <i class="fas fa-plus me-1"></i> Nuevo
-                            </button>
+                            @can('config.colores.crear')
+                                <button type="button" class="btn btn-primary nuevo_vehiculo" data-bs-toggle="modal"
+                                    data-bs-target="#modal_color">
+                                    <i class="fas fa-plus me-1"></i> Nuevo
+                                </button>
+                            @endcan
                         </div>
                     </div>
                 </div>
@@ -54,23 +56,28 @@
                                             </div>
                                         </td>
                                         <td>
-                                            {{-- Botón Editar --}}
-                                            <button type="button" class="btn btn-warning btn-sm btn_editar_color"
-                                                data-id="{{ $color->id }}" data-nombre="{{ $color->nombre }}"
-                                                data-color="{{ $color->color }}" data-bs-toggle="modal"
-                                                data-bs-target="#modal_color" title="Editar">
-                                                <i class="fas fa-edit"></i>
-                                            </button>
-
-                                            {{-- Botón Eliminar --}}
-                                            <form action="{{ route('colores.destroy', $color->id) }}" method="POST"
-                                                class="d-inline form_eliminar_color">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger btn-sm btn-eliminar" title="Eliminar">
-                                                    <i class="fas fa-trash"></i>
+                                            @can('config.colores.editar')
+                                                {{-- Botón Editar --}}
+                                                <button type="button" class="btn btn-warning btn-sm btn_editar_color"
+                                                    data-id="{{ $color->id }}" data-nombre="{{ $color->nombre }}"
+                                                    data-color="{{ $color->color }}" data-bs-toggle="modal"
+                                                    data-bs-target="#modal_color" title="Editar">
+                                                    <i class="fas fa-edit"></i>
                                                 </button>
-                                            </form>
+                                            @endcan
+
+                                            @can('config.colores.eliminar')
+                                                {{-- Botón Eliminar --}}
+                                                <form action="{{ route('colores.destroy', $color->id) }}" method="POST"
+                                                    class="d-inline form_eliminar_color">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-danger btn-sm btn-eliminar"
+                                                        title="Eliminar">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endcan
                                         </td>
 
                                     </tr>

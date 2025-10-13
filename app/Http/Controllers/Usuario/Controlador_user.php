@@ -19,6 +19,10 @@ class Controlador_user extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->can('admin.usuario.inicio')) {
+            return redirect()->route('inicio');
+        }
+
         $roles = Role::get();
         return view("administrador.usuarios.usuarios", compact("roles"));
     }
@@ -172,12 +176,26 @@ class Controlador_user extends Controller
 
     //para listar usuario
     public function listar(){
+
+         // Permisos (para el frontend, si es necesario)
+        $permissions = [
+            'editar' => auth()->user()->can('admin.permiso.editar'),          
+            'eliminar' => auth()->user()->can('admin.permiso.eliminar'),            
+        ];
+
+
         //$usuario = User::where('id', '!=', 1)->get();
         $usuario = User::with(['roles'])
         ->where('id', '!=', 1)
         ->where('deleted_at', null)
         ->OrderBy('id','desc')
         ->get();
-        return response()->json($usuario);
+
+
+        $data=[
+            'usuario'=>$usuario,
+            'permissions'=>$permissions,
+        ];
+        return response()->json($data);
     }
 }

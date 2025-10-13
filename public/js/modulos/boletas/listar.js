@@ -8,8 +8,25 @@ import {
 let permissions;
 let tabla_historialRegistro;
 let valorSeleccionado;
+let colorSelect;
+let vehiculoSelect;
+let selectrColor;
+let selectrVehiculo;
 $(document).ready(function () {
     listar_registros();
+    // iniciamos el selectr para poder usarlo
+    colorSelect = document.getElementById("color");
+    vehiculoSelect = document.getElementById("tipo_vehiculo");
+
+    selectrColor = new Selectr(colorSelect, {
+        searchable: true,
+        placeholder: "Busca o selecciona un color...",
+    });
+
+    selectrVehiculo = new Selectr(vehiculoSelect, {
+        searchable: true,
+        placeholder: "Busca o selecciona un tipo de vehículo...",
+    });
 });
 
 function listar_registros() {
@@ -136,8 +153,16 @@ function listar_registros() {
                            : ``
                    }
 
+                    ${
+                        permissions["editar"]
+                            ? ` <button type="button" class="btn btn-sm btn-outline-warning px-2 d-inline-flex align-items-center  ms-1 btn-editar" title='Editar'data-id="${row.id}">
+                                 <i class="las la-pen fs-18 fs-16"></i>
+                            </button>`
+                            : ``
+                    }
+
                      ${
-                         permissions["eliminar"]
+                         permissions["entrada"]
                              ? ` <button type="button" class="btn btn-sm btn-outline-success px-2 d-inline-flex align-items-center generar_tiket_entrada ms-1 btn-reporteEntrada" title='Genear Ticket de entrada' data-id="${row.id}">
                                  <i class="fas fa-file-pdf  fs-16"></i>
                             </button>`
@@ -145,16 +170,16 @@ function listar_registros() {
                      }
 
                      ${
-                         permissions["eliminar"]
-                             ? ` <button type="button" class="btn btn-sm btn-outline-info px-2 d-inline-flex align-items-center generar_tiket_salida ms-1 btn-reporteSalida" title='Genera Ticket de salida'data-id="${row.id}">
+                         permissions["salida"]
+                             ? ` <button type="button" class="btn btn-sm btn-outline-info px-2 d-inline-flex align-items-center generar_tiket_salida ms-1" title='Genera Ticket de salida'data-id="${row.id}">
                                  <i class="fas fa-money-bill   fs-16"></i>
                             </button>`
                              : ``
                      }
 
                     ${
-                        permissions["eliminar"]
-                            ? `<button type="button" class="btn btn-sm btn-outline-success px-2 d-inline-flex align-items-center generar_tiket_salida ms-1 btn-reporteSalida" 
+                        permissions["contacto"]
+                            ? `<button type="button" class="btn btn-sm btn-outline-success px-2 d-inline-flex align-items-center ms-1" 
                                     title='Escribir al Whatsapp' 
                                     onclick="window.open('https://wa.me/${row.contacto}?text=Hola%2C%20le%20escribimos%20del%20Parqueo%20Municipal%20de%20Caranavi', '_blank')">
                                     <i class="fab fa-whatsapp  fs-16"></i>
@@ -197,7 +222,6 @@ function listar_registros() {
 function actualizarTabla() {
     tabla_historialRegistro.ajax.reload(null, false); // Recarga los datos sin resetear el paginado
 }
-
 
 // eliminar boleta
 $(document).on("click", ".eliminar_registro", function () {
@@ -285,6 +309,100 @@ $(document).on("click", ".generar_tiket_salida", function () {
     );
 });
 
+// obtener valores de los vehiculos para editar
+$(document).on("click", ".btn-editar", function () {
+    const idRegistro = $(this).data("id");
+    crud(
+        "admin/listarBoletas",
+        "GET",
+        idRegistro + ["/edit"],
+        null,
+        function (error, response) {
+            // Verificamos que no haya un error o que todos los campos sean llenados
+            if (response.tipo === "errores") {
+                mensajeAlerta(response.mensaje, "errores");
+                return;
+            }
+            if (response.tipo != "exito") {
+                mensajeAlerta(response.mensaje, response.tipo);
+                return;
+            }
+            $("#editar_registro").modal("show");
+            // //si todo esta correcto muestra el mensaje de correcto
+            $("#registro_id").val(response.mensaje.id);
+            $("#placa").val(response.mensaje.placa);
+            $("#ci").val(response.mensaje.ci);
+            $("#contacto").val(response.mensaje.contacto.telefono);
+            
+            // Si ya tienes los selectr inicializados:
+            selectrColor.setValue(response.mensaje.color_id);
+            selectrVehiculo.setValue(response.mensaje.vehiculo_id);
+        }
+    );
+});
+
+
+$("#form_editar_datos").on("submit", function (e) {
+    e.preventDefault();
+    $("#btn_guardar_datos").prop("disabled", true);
+    let id_registro = $("#registro_id").val();
+    let datos ={
+        placa: $("#placa").val(),
+        ci: $("#ci").val(),
+        color_id: $("#color").val(),
+        vehiculo_id: $("#tipo_vehiculo").val(),
+        contacto: $("#contacto").val(),
+    }
+    
+    vaciar_errores("form_editar_datos");
+
+    crud("admin/listarBoletas", "PUT", id_registro, datos, function (error, response) {
+        $("#btn_guardar_datos").prop("disabled", false);
+        // console.log(response);
+
+        // Verificamos que no haya un error o que todos los campos sean llenados
+        if (response.tipo === "errores") {
+            mensajeAlerta(response.mensaje, "errores");
+            return;
+        }
+        if (response.tipo != "exito") {
+            mensajeAlerta(response.mensaje, response.tipo);
+            return;
+        }
+
+        // //si todo esta correcto muestra el mensaje de correcto
+        $("#editar_registro").modal("hide");
+        vaciar_formulario("form_editar_datos");
+        mensajeAlerta(response.mensaje, response.tipo);
+        actualizarTabla();
+    });
+});
+
+
+// Deshabilitar un input si el otro tiene valor y viceversa
+document.addEventListener("DOMContentLoaded", function () {
+    const placaInput = document.getElementById("placa");
+    const ciInput = document.getElementById("ci");
+
+    function toggleInputs() {
+        if (placaInput.value.trim() !== "") {
+            ciInput.disabled = true;
+            ciInput.value = "";
+        } else {
+            ciInput.disabled = false;
+        }
+
+        if (ciInput.value.trim() !== "") {
+            placaInput.disabled = true;
+            placaInput.value = "";
+        } else {
+            placaInput.disabled = false;
+        }
+    }
+
+    placaInput.addEventListener("input", toggleInputs);
+    ciInput.addEventListener("input", toggleInputs);
+});
 // PARA GENERAR UN BLOB PARA GENERAR EL REPORTE
 
 function generarURlBlob(pdfbase64) {

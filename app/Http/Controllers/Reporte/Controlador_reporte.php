@@ -20,6 +20,9 @@ class Controlador_reporte extends Controller
      */
     public function index()
     {
+        if (!auth()->user()->can('reportes.inicio')) {
+            return redirect()->route('inicio');
+        }
 
         $role = Role::where('name', 'encargado_puesto')->where('guard_name', 'web')->first();
 

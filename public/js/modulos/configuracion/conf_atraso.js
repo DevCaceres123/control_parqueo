@@ -62,7 +62,7 @@ function listar_atraso() {
 
                     // Aquí verificamos el permiso de desactivar
                     let desactivarContent =
-                        permisosGlobal["estado"] == false
+                        permisosGlobal["estado"] == true
                             ? `
                             <a class="cambiar_estado_atraso" data-id="${row.id},${row.estado}">
                                 <div class="form-check form-switch ms-3">
@@ -88,7 +88,7 @@ function listar_atraso() {
                 render: function (data, type, row) {
                     return ` <div class="d-flex justify-content-center">
                       
-                             ${permisosGlobal.eliminar
+                             ${permisosGlobal.editar
                             ? ` <a class="btn btn-sm btn-outline-warning px-2 d-inline-flex align-items-center editar_atraso me-1" data-id="${row.id}" title="Editar Sede">
                             <i class="fas fa-pencil-alt fs-16"></i>
                         </a>`
