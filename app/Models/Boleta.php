@@ -6,10 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Vehiculo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use OwenIt\Auditing\Contracts\Auditable;
 
-class Boleta extends Model
+class Boleta extends Model implements Auditable
 {
     //
+    use \OwenIt\Auditing\Auditable;
     use SoftDeletes,HasFactory;
     protected $table= 'boletas';
     

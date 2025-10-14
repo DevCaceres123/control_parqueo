@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Boleta;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use OwenIt\Auditing\Contracts\Auditable;
 
-
-class Vehiculo extends Model
+class Vehiculo extends Model implements Auditable
 {
     protected $table = "vehiculos";
     use SoftDeletes;
-
+    use \OwenIt\Auditing\Auditable;
 
     /**
      * Relacion reversa con persona

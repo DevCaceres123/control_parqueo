@@ -94,14 +94,13 @@ class Controlador_boleta extends Controller
             $boletaEdit->salidaMax = $fecha_finalizacion;
             $boletaEdit->reporte_json = json_encode($data);
             $boletaEdit->save();
-
+            $boletaEdit->enableAuditing(); // opcional
             // creamos un arrary para enviar los datos de las boletas
             $repuesta = [
                 'codigoUnico' => $codigoUnico,
                 'boleta' => $boleta,
             ];
             DB::commit();
-
             $this->mensaje("exito", $repuesta);
 
             return response()->json($this->mensaje, 200);
@@ -222,6 +221,7 @@ class Controlador_boleta extends Controller
         ]);
 
         $boleta = new Boleta();
+        $boleta->disableAuditing();
         $boleta->placa = $request->placa;
         $boleta->entrada_veh = $fecha_actual;        
         $boleta->estado_parqueo = 'ingreso';
@@ -233,8 +233,6 @@ class Controlador_boleta extends Controller
         $contactoModel = Contacto::firstOrCreate(['telefono' => $contacto]);
         $boleta->contacto_id = $contactoModel->id;
         $boleta->save();
-
-
         return $boleta->id;
 
     }
@@ -249,6 +247,7 @@ class Controlador_boleta extends Controller
         ]);
 
         $boleta = new Boleta();
+        $boleta->disableAuditing();
         $boleta->ci = $request->ci;
         $boleta->persona = $request->nombre;
         $boleta->entrada_veh = $fecha_actual;        
@@ -272,11 +271,10 @@ class Controlador_boleta extends Controller
     public function marcarBoletaImpresa($CodigoQr)
     {
         try {
-
-
             DB::beginTransaction();
 
             $boleta = Boleta::where('num_boleta', $CodigoQr)->first();
+            $boleta->disableAuditing();
             if (!$boleta) {
 
                 throw new Exception("Error la Boleta no existe");
@@ -285,6 +283,7 @@ class Controlador_boleta extends Controller
             // Actualizar el estado de impresión
             $boleta->estado_impresion = "impreso";  // Cambia según tu lógica de estados
             $boleta->save(); // Guardar cambios en la base de datos
+            $boleta->enableAuditing(); // opcional
             DB::commit();
             $this->mensaje('exito', "Impreso Correctamente");
 

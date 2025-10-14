@@ -116,7 +116,7 @@ class Controlador_color extends Controller
         try {
 
             DB::beginTransaction();
-            $color = Color::where('id', $id);
+            $color = Color::find($id);
 
             if (!$color) {
                 throw new Exception('color no encontrado');

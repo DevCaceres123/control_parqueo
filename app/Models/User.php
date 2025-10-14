@@ -12,9 +12,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
-
-class User extends Authenticatable
+use OwenIt\Auditing\Contracts\Auditable;
+class User extends Authenticatable implements Auditable
 {
+     use \OwenIt\Auditing\Auditable;
     use HasFactory, Notifiable, HasRoles, SoftDeletes;
 
     /**

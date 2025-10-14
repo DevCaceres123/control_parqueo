@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-class Color extends Model
+use OwenIt\Auditing\Contracts\Auditable;
+class Color extends Model implements Auditable
 {
     use SoftDeletes;
+    use \OwenIt\Auditing\Auditable;
     protected $fillable = ['nombre', 'color'];
     protected $table='colores';
     public function boletas()
