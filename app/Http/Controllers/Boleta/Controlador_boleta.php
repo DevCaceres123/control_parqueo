@@ -460,7 +460,7 @@ class Controlador_boleta extends Controller
             $boleta->monto_atraso = $reporte['monto_extra'];
 
             $boleta->save(); // Guardar cambios en la base de datos
-            throw  new Exception("Error de prueba");
+            
             DB::commit();
             
             $this->mensaje('exito', $reporte['pdf']);
