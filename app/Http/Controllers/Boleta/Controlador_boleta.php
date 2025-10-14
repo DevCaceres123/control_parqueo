@@ -14,6 +14,8 @@ use Barryvdh\DomPDF\Facade\Pdf; // clase para generar pdf
 use Carbon\Carbon;
 use Hashids\Hashids;// clase para generar clave unica
 use Exception;
+use Illuminate\Support\Facades\Log; // clase para registrar logs
+
 
 class Controlador_boleta extends Controller
 {
@@ -99,7 +101,7 @@ class Controlador_boleta extends Controller
             $repuesta = [
                 'codigoUnico' => $codigoUnico,
                 'boleta' => $boleta,
-            ];
+            ];            
             DB::commit();
             $this->mensaje("exito", $repuesta);
 
@@ -108,6 +110,14 @@ class Controlador_boleta extends Controller
             // Revertir los cambios si hay algún error
             DB::rollBack();
 
+            Log::error('Error el generar boleta ingreso'.$e->getMessage(), [
+                'mensaje' => $e->getMessage(),                
+                'linea' => $e->getLine(),
+                'input' => $request->all(),
+                'usuario' => auth()->user()->id ?? null,
+                'fecha' => now()->toDateTimeString(),
+            ]);
+    
             $this->mensaje("error", "Error" . $e->getMessage());
 
             return response()->json($this->mensaje, 200);
@@ -450,13 +460,23 @@ class Controlador_boleta extends Controller
             $boleta->monto_atraso = $reporte['monto_extra'];
 
             $boleta->save(); // Guardar cambios en la base de datos
+            throw  new Exception("Error de prueba");
             DB::commit();
+            
             $this->mensaje('exito', $reporte['pdf']);
 
             return response()->json($this->mensaje, 200);
         } catch (Exception $e) {
 
             DB::rollBack();
+
+            Log::error('Error el generar boleta salida '.$e->getMessage(), [
+                'mensaje' => $e->getMessage(),                
+                'linea' => $e->getLine(),
+                'input' => $request->all(),
+                'usuario' => auth()->user()->id ?? null,
+                'fecha' => now()->toDateTimeString(),
+            ]);
             $this->mensaje("error", "Error " . $e->getMessage());
 
             return response()->json($this->mensaje, 200);
