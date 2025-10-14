@@ -346,6 +346,8 @@ class Controlador_listarBoletas extends Controller
             $datos_voleta['tarifa_vehiculo']['tarifa'] = $vehiculo->tarifa ?? null;
             $datos_voleta['color'] = $color->nombre ?? null;
             $datos_voleta['contacto'] = $request->contacto ?? null;
+            $datos_voleta['placa'] = $request->placa ?? null;
+            $datos_voleta['ci'] = $request->ci ?? null;
             $boleta->reporte_json = json_encode($datos_voleta);
             
             // actualizamos o creamos el contacto
