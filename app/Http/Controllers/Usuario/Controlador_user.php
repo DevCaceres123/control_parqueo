@@ -186,7 +186,7 @@ class Controlador_user extends Controller
 
         //$usuario = User::where('id', '!=', 1)->get();
         $usuario = User::with(['roles'])
-        ->where('id', '!=', 1)
+        //->where('id', '!=', 1)
         ->where('deleted_at', null)
         ->OrderBy('id','desc')
         ->get();
