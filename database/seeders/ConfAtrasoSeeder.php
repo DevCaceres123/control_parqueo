@@ -14,7 +14,7 @@ class ConfAtrasoSeeder extends Seeder
     public function run(): void
     {
         $conf_atraso = new Config_atraso();
-        $conf_atraso->tiempo_extra = '01:00:00';
+        $conf_atraso->tiempo_extra = '03:00:00';
         $conf_atraso->estado = 'activo';
         $conf_atraso->monto = 20;
         $conf_atraso->save();

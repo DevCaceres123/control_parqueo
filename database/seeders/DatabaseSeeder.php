@@ -23,12 +23,12 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             UsuarioSeeder::class,
-            vehiculoSeeder::class,
+            //vehiculoSeeder::class,
             ConfAtrasoSeeder::class,
             ColorSeeder::class,
         ]);
 
-        \App\Models\Boleta::factory(10000)->create();
+        //\App\Models\Boleta::factory(10000)->create();
 
 
     }

@@ -179,8 +179,9 @@ class Controlador_user extends Controller
 
          // Permisos (para el frontend, si es necesario)
         $permissions = [
-            'editar' => auth()->user()->can('admin.permiso.editar'),          
-            'eliminar' => auth()->user()->can('admin.permiso.eliminar'),            
+            'editar' => auth()->user()->can('admin.usuario.editar'),          
+            'eliminar' => auth()->user()->can('admin.usuario.eliminar'),            
+            'desactivar' => auth()->user()->can('admin.usuario.desactivar'),
         ];
 
 
