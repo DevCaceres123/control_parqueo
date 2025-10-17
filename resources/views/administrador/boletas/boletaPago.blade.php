@@ -7,9 +7,9 @@
     <title>BOLETA DE PAGO</title>
     <style>
         :root {
-            --font-size-base: 8px;
-            --font-size-large: 12px;
-            --font-size-small: 7px;
+            --font-size-base: 10px;
+            --font-size-large: 14px;
+            --font-size-small: 9px;
         }
 
         * {
@@ -26,11 +26,9 @@
 
         .tiket {
             text-align: center;
-            font-size: var(--font-size-base);
-            margin: 10px 0 0 0;
+            font-size: var(--font-size-base);            
             padding: 0;
-            letter-spacing: 1px;
-            position: relative;
+            letter-spacing: 1px;            
         }
 
         .lugar {
@@ -70,7 +68,7 @@
         }
 
         .info_Boleta {
-            font-size: var(--font-size-large);
+            font-size: var(--font-size-base);
             position: relative;
             width: 100%;
             height: 14px;
@@ -223,11 +221,11 @@
             <table class="tabla_fechas">
                 <tr>
                     <td>H. Entrada</td>
-                    <td>{{ $fecha_generada ?? 'N/A' }}</td>
+                    <td>{{ $fecha_generada ? \Carbon\Carbon::parse($fecha_generada)->format('H:i:s d-m-Y') : 'N/A' }}</td>
                 </tr>
                 <tr>
                     <td>H. Recoger antes de:</td>
-                    <td>{{ $fecha_finalizacion ?? 'N/A' }}</td>
+                    <td>{{ $fecha_finalizacion ? \Carbon\Carbon::parse($fecha_finalizacion)->format('H:i:s d-m-Y') : 'N/A' }}</td>
                 </tr>
             </table>
         </div>

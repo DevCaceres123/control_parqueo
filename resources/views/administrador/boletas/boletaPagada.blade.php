@@ -7,9 +7,9 @@
     <title>BOLETA DE PAGO</title>
     <style>
         :root {
-            --font-size-base: 8px;
-            --font-size-large: 12px;
-            --font-size-small: 7px;
+            --font-size-base: 10px;
+            --font-size-large: 14px;
+            --font-size-small: 9px;
         }
 
         * {
@@ -26,8 +26,7 @@
 
         .tiket {
             text-align: center;
-            font-size: var(--font-size-base);
-            margin: 10px 0 0 0;
+            font-size: var(--font-size-base);            
             padding: 0;
             letter-spacing: 1px;
         }
@@ -63,7 +62,7 @@
         }
 
         .info_Boleta {
-            font-size: var(--font-size-large);
+            font-size: var(--font-size-base);
             position: relative;
             width: 100%;
             height: 14px;
@@ -166,7 +165,7 @@
             border-radius: 5px;
             padding: 10px;
             text-align: center;
-            font-size: var(--font-size-large);
+            font-size: var(--font-size-base);
             position: absolute;
             top: 0px;
             right: 0px;
@@ -246,7 +245,7 @@
                 <span style="">{{ $color ?? 'N/A' }}|</span>
             @endif
             @if ($nombre)
-                <span style="">{{ $nombre }} |</span>
+                <span style="">{{ $nombre }} </span>
             @endif
 
         </div>
@@ -255,11 +254,11 @@
         <table class="tabla_fechas">
             <tr>
                 <td>H.Entrada</td>
-                <td>{{ $fecha_generada ?? 'N/A' }}</td>
+                <td>{{ $fecha_generada ? \Carbon\Carbon::parse($fecha_generada)->format('H:i:s d-m-Y') : 'N/A' }}</td>
             </tr>
             <tr>
                 <td>H.Salida</td>
-                <td>{{ $salida_vehiculo ?? 'N/A' }}</td>
+                <td>{{ $salida_vehiculo ? \Carbon\Carbon::parse($fecha_finalizacion)->format('H:i:s d-m-Y') : 'N/A' }}</td>                
             </tr>
         </table>
 
