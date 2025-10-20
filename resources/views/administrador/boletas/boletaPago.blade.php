@@ -221,11 +221,11 @@
             <table class="tabla_fechas">
                 <tr>
                     <td>H. Entrada</td>
-                    <td>{{ $fecha_generada ? \Carbon\Carbon::parse($fecha_generada)->format('H:i:s d-m-Y') : 'N/A' }}</td>
+                    <td>{{ $fecha_generada ? \Carbon\Carbon::parse($fecha_generada)->format('d-m-Y H:i:s') : 'N/A' }}</td>
                 </tr>
                 <tr>
                     <td>H. Recoger antes de:</td>
-                    <td>{{ $fecha_finalizacion ? \Carbon\Carbon::parse($fecha_finalizacion)->format('H:i:s d-m-Y') : 'N/A' }}</td>
+                    <td>{{ $fecha_finalizacion ? \Carbon\Carbon::parse($fecha_finalizacion)->format('d-m-Y H:i:s') : 'N/A' }}</td>
                 </tr>
             </table>
         </div>
