@@ -65,12 +65,14 @@ class Controlador_boleta extends Controller
             $fecha_actual = Carbon::now();
 
             if ($request->modo === 'placa') {
+                $this->verificarPlaca($request->placa);
                 $id_boleta = $this->guardarBoletaPlaca($request, $fecha_actual,$request->color_id,$request->contacto);
                 $codigoUnico = $this->encrypt($id_boleta);
                 $boleta = $this->generarBoletaPlaca($request->placa, $request->id_vehiculo, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto);
             }
 
             if ($request->modo === 'cliente') {
+                $this->verificarCi($request->ci);
                 $id_boleta = $this->guardarBoletaDatos($request, $fecha_actual,$request->color_id,$request->contacto);
                 $codigoUnico = $this->encrypt($id_boleta);
                 $boleta = $this->generarBoletaDatosPersonales($request->nombre, $request->ci, $request->id_vehiculo, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto);
@@ -530,6 +532,25 @@ class Controlador_boleta extends Controller
             ];
     }
 
+
+    // esta funcion me  servira para verificar si existe ese vehiculo con esa placa y esta en estado de ingreso
+    public function verificarPlaca($placa){
+
+        $boleta=Boleta::where('estado_parqueo','ingreso')->where('placa',$placa)->first();
+        if($boleta){
+            throw new Exception(" no se puede registrar el ingreso: el vehículo con la misma placa ya se encuentra dentro del parqueo");
+            
+        }
+    }
+
+    // esta funcion me  servira para verificar si existe ese vehiculo con esa placa y esta en estado de ingreso
+    public function  verificarCi($ci){
+
+        $boleta=Boleta::where('estado_parqueo','ingreso')->where('ci',$ci)->first();
+        if($boleta){
+            throw new Exception(" no se puede registrar el ingreso: el vehículo con el mismo documento de indentidad ya se encuentra dentro del parqueo");       
+        }
+    }
     /**
      * Display the specified resource.
      */

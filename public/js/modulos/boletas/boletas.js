@@ -19,8 +19,8 @@ $("#btn-generar").on("click", function () {
     let datos = {
         modo: $('input[name="modo"]:checked').val(), // "cliente" o "placa"
         nombre: $("#nombre_cliente").val().trim(),
-        ci: $("#ci_cliente").val().trim(),
-        placa: $("#placa").val().trim(),
+        ci: $("#ci_cliente").val().replace(/\s+/g, ''),
+        placa: $("#placa").val().replace(/\s+/g, ''),
         id_vehiculo: idVehiculoSeleccionado,
         precio: precioSeleccionado,
         color_id: $("#color_id").val(),
