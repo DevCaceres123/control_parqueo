@@ -258,7 +258,7 @@
             </tr>
             <tr>
                 <td>H.Salida</td>
-                <td>{{ $salida_vehiculo ? \Carbon\Carbon::parse($fecha_finalizacion)->format('d-m-Y H:i:s') : 'N/A' }}</td>                
+                <td>{{ $salida_vehiculo ? \Carbon\Carbon::parse($salida_vehiculo)->format('d-m-Y H:i:s') : 'N/A' }}</td>                
             </tr>
         </table>
 
