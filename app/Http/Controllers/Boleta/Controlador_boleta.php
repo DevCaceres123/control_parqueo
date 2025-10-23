@@ -323,6 +323,8 @@ class Controlador_boleta extends Controller
 
             $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id', 'estado_parqueo','reporte_json')
                         ->where($validatedData['filtro'] === 'codigo' ? 'num_boleta' : $validatedData['filtro'], $validatedData['valor'])
+                        ->where('estado_parqueo', 'ingreso')
+                        ->orderBy('id', 'desc') // 👈 Trae el último registrado
                         ->first();
             
             
