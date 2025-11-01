@@ -115,6 +115,8 @@ class UsuarioSeeder extends Seeder
         Permission::create(['name' => 'config.vehiculos.editar'])->syncRoles([$rol1]);
         Permission::create(['name' => 'config.vehiculos.desactivar'])->syncRoles([$rol1]);
 
+        //tarfas
+        Permission::create(['name' => 'config.tarifas.inicio'])->syncRoles([$rol1]);
 
         // conf.atraso
         Permission::create(['name' => 'config.atraso.inicio'])->syncRoles([$rol1]);

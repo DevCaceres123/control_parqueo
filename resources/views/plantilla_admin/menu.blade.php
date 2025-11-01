@@ -157,6 +157,12 @@
                                     </li>
                                 @endcan
 
+                                @can('config.tarifas.inicio')
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('vehiculos.index') }}">Tarifas</a>
+                                    </li>
+                                @endcan
+
                                 @can('config.atraso.inicio')
                                     <li class="nav-item">
                                         <a class="nav-link" href="{{ route('atraso.index') }}">Conf. Atraso</a>
