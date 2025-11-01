@@ -12,6 +12,7 @@ use App\Models\Contacto;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf; // clase para generar pdf
 use Carbon\Carbon;
+use App\Models\Tarifas;
 use Hashids\Hashids;// clase para generar clave unica
 use Exception;
 use Illuminate\Support\Facades\Log; // clase para registrar logs
@@ -35,9 +36,10 @@ class Controlador_boleta extends Controller
         if (!auth()->user()->can('control.boleta.inicio')) {
             return redirect()->route('inicio');
         }
-        $vehiculos = Vehiculo::select('id', 'nombre', 'tarifa')->where('estado', 'activo')->orderBy('id', 'desc')->get();
+        $vehiculos = Vehiculo::select('id', 'nombre')->where('estado', 'activo')->orderBy('id', 'desc')->get();
+        $tarifas = Tarifas::select('id', 'nombre','precio')->where('estado', 'activo')->orderBy('id', 'desc')->get();
         $colores = Color::orderBy('id', 'desc')->get();
-        return view("administrador.boletas.boletas", compact('vehiculos','colores'));
+        return view("administrador.boletas.boletas", compact('vehiculos','colores', 'tarifas'));
     }
 
     /**

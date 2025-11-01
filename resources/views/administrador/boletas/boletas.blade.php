@@ -13,16 +13,16 @@
                     <div class="col-md-8 border-end">
                         {{-- 1. Tipo de vehículo --}}
                         <h6 class="fw-bold mb-3 text-secondary">1️⃣ Selecciona el tipo de vehículo:</h6>
-                        <div id="tipos-vehiculo" class="row g-2 mb-1">
+                        <div id="precios" class="row g-2 mb-1">
                             {{-- Auto --}}
-                            @foreach ($vehiculos as $vehiculo)
+                            @foreach ($tarifas as $tarifa)
                                 <div class="col-12 col-md-4">
-                                    <div class="card tipo-card bg-white text-dark text-center p-3 shadow-sm border border-2 rounded-3"
-                                        data-id="{{ $vehiculo->id }}" data-vehiculo="{{ $vehiculo->nombre }}"
-                                        data-precio="{{ $vehiculo->tarifa }}" style="cursor:pointer">
+                                    <div class="card tipo-precios bg-white text-dark text-center p-3 shadow-sm border border-2 rounded-3"
+                                        data-id="{{ $tarifa->id }}" data-tipo="{{ $tarifa->nombre }}"
+                                        data-precio="{{ $tarifa->precio }}" style="cursor:pointer">
                                         <i class="fas fa-car-side fa-2x text-dark mb-2"></i>
-                                        <h6 class="fw-semibold mb-1 text-uppercase">{{ $vehiculo->nombre }}</h6>
-                                        <span class="badge bg-light text-dark fs-16">Bs. {{ $vehiculo->tarifa }}</span>
+                                        <h6 class="fw-semibold mb-1 text-uppercase">{{ $tarifa->nombre }}</h6>
+                                        <span class="badge bg-light text-dark fs-16">Bs. {{ $tarifa->precio }}</span>
                                     </div>
                                 </div>
                             @endforeach
@@ -77,12 +77,17 @@
                             {{-- 4. Campos comunes --}}
                             <div class="row g-4 mb-4">
                                 <div class="col-md-6">
-                                    <label for="contacto" class="form-label mb-1 fw-semibold input-label">
-                                        <i class="fas fa-phone-alt me-1 text-primary"></i> Contacto
+                                    <label for="tipo_vehiculo" class="form-label mb-1 fw-semibold input-label">
+                                        <i class="fas fa-car me-1 text-primary"></i> Tipo de vehículo
                                     </label>
-                                    <input type="number" id="contacto" name="contacto" class="form-control input-comun"
-                                        placeholder="Ej. 77712345">
-                                </div>
+                                    <select name="vehiculo_id" id="vehiculo_id" class=" text-capitalize" required>
+                                        <option value=" " disabled selected>Seleccionar Vehiculo</option>
+                                        @foreach ($vehiculos as $vehiculo)
+                                            <option class="text-capitalize" value="{{ $vehiculo->id }}">{{ strtoupper($vehiculo->nombre) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>                               
                                 <div class="col-md-6">
                                     <label for="color_vehiculo" class="form-label mb-1 fw-semibold input-label">
                                         <i class="fas fa-car me-1 text-primary"></i> Color del vehículo
@@ -95,6 +100,14 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                 <div class="col-md-12">
+                                    <label for="contacto" class="form-label mb-1 fw-semibold input-label">
+                                        <i class="fas fa-phone-alt me-1 text-primary"></i> Contacto
+                                    </label>
+                                    <input type="number" id="contacto" name="contacto" class="form-control input-comun"
+                                        placeholder="Ej. 77712345">
+                                </div>
+                                 
                                 <div class="col-md-12 d-flex align-items-end">
                                     {{-- Botón generar --}}
                                     <button type="button" id="btn-generar"
@@ -219,9 +232,15 @@
         // Inicialización de Selectr
         document.addEventListener('DOMContentLoaded', function() {
             const selectElement = document.getElementById('color_id');
+            const selectElement2 = document.getElementById('vehiculo_id');
 
 
             let selectrInstanceSede = new Selectr(selectElement, {
+                searchable: true,
+                placeholder: 'Busca o selecciona una opción...'
+            });
+
+            let selectrInstanceVehiculo= new Selectr(selectElement2, {
                 searchable: true,
                 placeholder: 'Busca o selecciona una opción...'
             });

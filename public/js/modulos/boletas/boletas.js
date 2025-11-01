@@ -7,11 +7,11 @@ import {
 
 let tipoSeleccionado = null;
 let precioSeleccionado = null;
-let idVehiculoSeleccionado = null;
+let idPrecio = null;
 
 $("#btn-generar").on("click", function () {
     // validamos vehículo
-    if (!idVehiculoSeleccionado) {
+    if (!idPrecio) {
         mensajeAlerta("Selecciona una tarifa", "error");
         return;
     }
@@ -21,9 +21,10 @@ $("#btn-generar").on("click", function () {
         nombre: $("#nombre_cliente").val().trim(),
         ci: $("#ci_cliente").val().replace(/\s+/g, ''),
         placa: $("#placa").val().replace(/\s+/g, ''),
-        id_vehiculo: idVehiculoSeleccionado,
+        precio_id: idPrecio,
         precio: precioSeleccionado,
         color_id: $("#color_id").val(),
+        vehiculo_id: $("#vehiculo_id").val(),
         contacto: $("#contacto").val().trim(),
     };
 
@@ -52,7 +53,7 @@ $("#btn-generar").on("click", function () {
         $("#contacto").val("");
 
         // deseleccionar tarifa
-        idVehiculoSeleccionado = null;
+        idPrecio = null;
         precioSeleccionado = null;
         $("#tipos-vehiculo .tipo-card").removeClass(
             "bg-success text-white shadow-lg"
@@ -120,11 +121,11 @@ window.addEventListener("online", async () => {
     }
 });
 
-// FUNCION PARA PONER EL VALOR Y MARCAR LA CASILLA DE VEHICULO
+// FUNCION PARA PONER EL VALOR DEL PRECIO
 $(function () {
     // Selección de tipo (solo uno activo)
-    $("#tipos-vehiculo .tipo-card").on("click", function () {
-        $("#tipos-vehiculo .tipo-card")
+    $("#precios .tipo-precios").on("click", function () {
+        $("#precios .tipo-precios")
             .removeClass("bg-primary text-white shadow-lg")
             .addClass("bg-white text-dark");
 
@@ -132,9 +133,9 @@ $(function () {
             .removeClass("bg-white text-dark")
             .addClass("bg-success text-white shadow-lg");
 
-        tipoSeleccionado = $(this).data("vehiculo");
+        tipoSeleccionado = $(this).data("precios");
         precioSeleccionado = $(this).data("precio");
-        idVehiculoSeleccionado = $(this).data("id"); // <- Aquí obtienes el ID
+        idPrecio = $(this).data("id"); // <- Aquí obtienes el ID
     });
 
     // Mostrar/Ocultar campos según radio
