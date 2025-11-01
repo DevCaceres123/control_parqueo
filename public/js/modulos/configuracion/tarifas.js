@@ -259,3 +259,26 @@ $("#tarifas").on("submit", function (e) {
     });
 });
 
+
+// obtener valores de los vehiculos para editar
+$(document).on("click", ".editar_tarifa", function () {
+    const idDato = $(this).data("id");    
+      crud("admin/tarifas", "GET", idDato+['/edit'], null, function (error, response) {        
+
+        // Verificamos que no haya un error o que todos los campos sean llenados
+        if (response.tipo === "errores") {
+            mensajeAlerta(response.mensaje, "errores");
+            return;
+        }
+        if (response.tipo != "exito") {
+            mensajeAlerta(response.mensaje, response.tipo);
+            return;
+        }
+   
+
+        $('#tarifa_id').val(response.mensaje.id);
+        $('#nombre').val(response.mensaje.nombre);
+        $('#tarifa').val(response.mensaje.precio);
+    });
+});
+

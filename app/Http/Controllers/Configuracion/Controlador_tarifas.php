@@ -65,22 +65,22 @@ class Controlador_tarifas extends Controller
      */
     public function store(TarifaRequest $request)
     {
-        
+
         DB::beginTransaction();
         try {
-            $tarifa= new Tarifas();
+            $tarifa = new Tarifas();
             $tarifa->nombre = $request->nombre;
             $tarifa->precio = $request->tarifa;
             $tarifa->estado = 'activo';
             $tarifa->save();
             DB::commit();
-        
+
             $this->mensaje("exito", "Tarifa creada correctamente");
             return response()->json($this->mensaje, 200);
-        
+
         } catch (Exception $e) {
             DB::rollBack();
-        
+
             $this->mensaje("error", "error" . $e->getMessage());
             return response()->json($this->mensaje, 200);
         }
@@ -99,15 +99,45 @@ class Controlador_tarifas extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $tarifas = Tarifas::Find($id);
+        if (!$tarifas) {
+            $this->mensaje('error', 'Tarifa no encontrada');
+            return response()->json($this->mensaje, 200);
+        }
+        $this->mensaje("exito", $tarifas);
+
+        return response()->json($this->mensaje, 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(TarifaRequest $request, string $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $tarifas = Tarifas::Find($id);
+            if (!$tarifas) {
+                $this->mensaje('error', 'Tarifa no encontrada');
+                return response()->json($this->mensaje, 200);
+            }
+
+            $tarifas->nombre=$request->nombre;
+            $tarifas->precio=$request->tarifa;
+            $tarifas->save();
+
+            DB::commit();
+
+            $this->mensaje("exito", "Tarifa editada correctamente");
+            return response()->json($this->mensaje, 200);
+
+        } catch (Exception $e) {
+            DB::rollBack();
+
+            $this->mensaje("error", "error" . $e->getMessage());
+            return response()->json($this->mensaje, 200);
+        }
     }
 
 

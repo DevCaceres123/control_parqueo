@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('tarifas', function (Blueprint $table) {
             $table->id();
             $table->string('nombre');
-            $table->decimal('precio', 10, 2);
+            $table->integer('precio');
             $table->enum('estado', ['activo', 'inactivo'])->default('activo');
             $table->timestamp('deleted_at')->nullable();
             $table->timestamps();
