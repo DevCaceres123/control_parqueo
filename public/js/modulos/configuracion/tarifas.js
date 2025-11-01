@@ -94,7 +94,7 @@ function listar_datos() {
                          ${
                              permisosGlobal.eliminar
                                  ? `
-                        <a class="btn btn-sm btn-outline-danger px-2 d-inline-flex align-items-center eliminar_vehiculo me-1" data-id="${row.id}" title="Eliminar Sede">
+                        <a class="btn btn-sm btn-outline-danger px-2 d-inline-flex align-items-center eliminar_tarifa me-1" data-id="${row.id}" title="Eliminar Sede">
                             <i class="fas fa-window-close fs-16"></i>
                         </a>
                             `
@@ -121,3 +121,28 @@ function listar_datos() {
 function actualizarTabla() {
     tabla.ajax.reload(null, false); // Recarga los datos sin resetear el paginado
 }
+
+
+//Eliminar vehiculo
+$(document).on("click", ".eliminar_tarifa", function () {
+    const idDato = $(this).data("id");    
+    Swal.fire({
+        title: "¿Eliminar?",
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            crud("admin/tarifas", "DELETE", idDato, null, function (error, response) {
+                if (response.tipo != "exito") {
+                    mensajeAlerta(response.mensaje, response.tipo);
+                    return;
+                }
+                mensajeAlerta(response.mensaje, response.tipo);
+                actualizarTabla();
+            });
+        }
+    });
+});

@@ -95,6 +95,34 @@ class Controlador_tarifas extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            
+            $tarifa = Tarifas::find($id);
+            if (!$tarifa) {
+                throw new Exception('tarifa no encontrado');
+            }
+
+            $tarifa->delete();
+            DB::commit();
+        
+            $this->mensaje("exito", "tarifa eliminada correctamente");
+            return response()->json($this->mensaje, 200);
+        
+        } catch (Exception $e) {
+            DB::rollBack();
+        
+            $this->mensaje("error", "error" . $e->getMessage());
+            return response()->json($this->mensaje, 200);
+        }
+    }
+
+    // Mensaje para mostrar al usuario
+    public function mensaje($titulo, $mensaje)
+    {
+        $this->mensaje = [
+            'tipo' => $titulo,
+            'mensaje' => $mensaje,
+        ];
     }
 }
