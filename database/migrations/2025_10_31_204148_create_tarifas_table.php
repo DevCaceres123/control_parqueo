@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('nombre');
             $table->decimal('precio', 10, 2);
             $table->enum('estado', ['activo', 'inactivo'])->default('activo');
-            $table->timestamps();
+            $table->timestamp('deleted_at')->nullable();
         });
     }
 

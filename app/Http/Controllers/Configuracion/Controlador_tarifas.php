@@ -4,6 +4,9 @@ namespace App\Http\Controllers\Configuracion;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Tarifas;
+use Exception;
+use Illuminate\Support\Facades\DB;
 
 class Controlador_tarifas extends Controller
 {
@@ -15,6 +18,38 @@ class Controlador_tarifas extends Controller
         return view("administrador.configuracion.tarifas");
     }
 
+
+    public function listarTarifas(Request $request){
+
+        $query = Tarifas::select('id', 'nombre', 'precio','estado')->orderBy('id', 'desc');
+
+        if (!empty($request->search['value'])) {
+            $query->where(function ($q) use ($request) {
+                $q->where('nombre', 'like', '%' . $request->search['value'] . '%')
+                ->orWhere('precio', 'like', '%' . $request->search['value'] . '%')                
+                ;
+            });
+        }
+
+        // Total de registros antes del filtrado
+        $recordsTotal = $query->count();
+
+        // Paginación y orden
+        $sedes = $query->skip($request->start)->take($request->length)->get();
+
+        // Respuesta
+        return response()->json([
+            'draw' => $request->draw,
+            'recordsTotal' => $recordsTotal,
+            'recordsFiltered' => $recordsTotal, // Ajustar si hay filtros
+            'data' => $sedes,
+            'permisos' => [
+                'editar' => auth()->user()->can('config.vehiculos.editar'),
+                'eliminar' => auth()->user()->can('config.vehiculos.eliminar'),
+                'estado' => auth()->user()->can('config.vehiculos.desactivar'),
+            ],
+        ]);
+    }
     /**
      * Show the form for creating a new resource.
      */

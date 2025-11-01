@@ -107,9 +107,10 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
                    
     });
 
-    // CONTROLADOR PARA LOS VEHICULOS
+    // CONTROLADOR PARA LAS TARIFAS
     Route::controller(Controlador_tarifas::class)->group(function () {
         Route::resource('tarifas', Controlador_tarifas::class);  
+        Route::get('listarTarifas', 'listarTarifas')->name('tarifas.listarTarifas');  
         
     });
 

@@ -27,7 +27,7 @@
                                 <tr>
                                     <th>Nº</th>
                                     <th>NOMBRE</th>
-                                    <th>PRECIO (Bs)</th>
+                                    <th>PRECIO</th>
                                     <th>ESTADO</th>                                    
                                     <th>ACCION</th>
                                 </tr>
@@ -92,6 +92,6 @@
 
 @section('scripts')
 
-    <script src="{{ asset('js/modulos/configuracion/vehiculos.js') }}" type="module"></script>
+    <script src="{{ asset('js/modulos/configuracion/tarifas.js') }}" type="module"></script>
 
 @endsection
