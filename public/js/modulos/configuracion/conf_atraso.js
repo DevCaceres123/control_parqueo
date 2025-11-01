@@ -44,15 +44,15 @@ function listar_atraso() {
                     `;
                 },
             },
-            {
-                data: "monto",
-                className: "table-td text-uppercase",
-                render: function (data) {
-                   return `                            
-                        <span  class='p-1 pe-3 ps-3 bg-warning rounded-pill text-light fs-15'>${data} <b>Bs</b></span>
-                    `;
-                },
-            },
+            // {
+            //     data: "monto",
+            //     className: "table-td text-uppercase",
+            //     render: function (data) {
+            //        return `                            
+            //             <span  class='p-1 pe-3 ps-3 bg-warning rounded-pill text-light fs-15'>${data} <b>Bs</b></span>
+            //         `;
+            //     },
+            // },
             {
                 data: null,
                 className: "table-td",
@@ -209,7 +209,7 @@ $(document).on("click", ".editar_atraso", function () {
         // //si todo esta correcto muestra el mensaje de correcto    
         $('#atraso_id').val(response.mensaje.id);
         $('#tiempo_extra').val(response.mensaje.tiempo_extra);
-        $('#monto').val(response.mensaje.monto);
+        // $('#monto').val(response.mensaje.monto);
     });
 });
 
@@ -229,8 +229,4 @@ $(document).on("click", ".editar_atraso", function () {
     $("#modal_atraso").modal("show");
     // editamos el titulo del modal
     $("#titulo_modal").html('<i class="fas fa-car me-1"></i>CONFIGURAR ATRASO');
-});
-
-$(document).on("click", ".limpiar_modal", function () {
-    vaciar_formulario('form_atrasos');
 });

@@ -23,7 +23,7 @@
                                 <tr>
                                     <th>Nº</th>
                                     <th>TIEMPO EXTRA</th>
-                                    <th>TARIFA</th>
+                                    {{-- <th>TARIFA</th> --}}
                                     <th>ESTADO</th>                                    
                                     <th>ACCION</th>
                                 </tr>
@@ -62,12 +62,12 @@
 
                             </div>
 
-                            <div class="col-12 col-md-12">
+                            {{-- <div class="col-12 col-md-12">
                                 <label for="nombre" class="col-form-label">Tarifa <strong
                                         class="text-danger">(*)</strong></label>
                                 <input type="number" class="form-control uppercase-input" id="monto" name="monto" required placeholder="Ingrese el monto a cobrar por el atraso">
                                 <div id="_monto"></div>
-                            </div>
+                            </div> --}}
 
                             
                         </div>

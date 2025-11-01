@@ -117,7 +117,7 @@ class Controlador_config_atraso extends Controller
                 throw new Exception('atraso no encontrado');
             }
             $atraso->tiempo_extra=$request->tiempo_extra;
-            $atraso->monto=$request->monto;
+            // $atraso->monto=$request->monto;
             $atraso->save();
             DB::commit();
 

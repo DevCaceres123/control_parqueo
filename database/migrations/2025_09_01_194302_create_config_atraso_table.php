@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('config_atraso', function (Blueprint $table) {
             $table->id();
             $table->time('tiempo_extra');
-            $table->integer('monto');
+            $table->integer('monto')->nullable();
             $table->enum('estado',['activo','inactivo']);
             $table->timestamps();
         });
