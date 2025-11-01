@@ -30,13 +30,13 @@ class VehiculoRequest extends BasePrincipalRequest
                 return [
                     'nombre' => 'required|max:50|min:3',
                     'descripcion_vehiculo' => 'required|max:100|min:5',
-                    'tarifa' => 'required|integer|digits_between:1,2|min:1',
+                    
                 ];
             case 'vehiculos.update':
                 return [
                     'nombre' => 'required|max:50|min:3',
                     'descripcion_vehiculo' => 'required|max:100|min:5',
-                    'tarifa' => 'required|integer|digits_between:1,2|min:1',
+                    
                 ];
             default:
                 return [];

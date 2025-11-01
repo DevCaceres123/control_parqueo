@@ -25,13 +25,12 @@ class Controlador_vehiculo extends Controller
 
     public function listarVehiculos(Request $request)
     {
-        $query = Vehiculo::select('id', 'nombre', 'descripcion', 'estado', 'tarifa')->orderBy('id', 'desc');
+        $query = Vehiculo::select('id', 'nombre', 'descripcion', 'estado')->orderBy('id', 'desc');
 
         if (!empty($request->search['value'])) {
             $query->where(function ($q) use ($request) {
                 $q->where('nombre', 'like', '%' . $request->search['value'] . '%')
-                ->orWhere('estado', 'like', '%' . $request->search['value'] . '%')
-                ->orWhere('tarifa', 'like', '%' . $request->search['value'] . '%')
+                ->orWhere('estado', 'like', '%' . $request->search['value'] . '%')                
                 ;
             });
         }
@@ -79,8 +78,7 @@ class Controlador_vehiculo extends Controller
             $vehiculo = new Vehiculo();
             $vehiculo->nombre = $request->nombre;
             $vehiculo->descripcion = $request->descripcion_vehiculo;
-            $vehiculo->estado = 'activo';        
-            $vehiculo->tarifa = $request->tarifa;
+            $vehiculo->estado = 'activo';                    
             $vehiculo->usuario_id = auth()->user()->id;    
             $vehiculo->save();
             DB::commit();
@@ -132,8 +130,7 @@ class Controlador_vehiculo extends Controller
                 throw new Exception('Vehiculo no encontrado');
             }
             $vehiculo->nombre = $request->nombre;
-            $vehiculo->descripcion = $request->descripcion_vehiculo;                   
-            $vehiculo->tarifa = $request->tarifa;            
+            $vehiculo->descripcion = $request->descripcion_vehiculo;                                       
             $vehiculo->save();          
             DB::commit();
 

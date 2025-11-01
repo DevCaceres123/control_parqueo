@@ -28,8 +28,7 @@
                                     <th>Nº</th>
                                     <th>NOMBRE</th>
                                     <th>DESCRIPCION</th>
-                                    <th>ESTADO</th>
-                                    <th>TARIFA (Bs)</th>
+                                    <th>ESTADO</th>                                    
                                     <th>ACCION</th>
                                 </tr>
                             </thead>
@@ -76,16 +75,7 @@
                                     style="height: 100px" name="descripcion_vehiculo"></textarea>
                                 <div id="_descripcion_vehiculo"></div>
                             </div>
-
-
-                            <div class="col-12 col-md-12">
-                                <label for="nombre" class="col-sm-2 col-form-label">Tarifa <strong
-                                        class="text-danger">(*)</strong></label>
-                                <input type="number" class="form-control uppercase-input" id="tarifa" name="tarifa"
-                                    placeholder="Ingrese tarifa del vehiculo" required>
-
-                                <div id="_tarifa"></div>
-                            </div>
+                           
 
                         </div>
                 </div>

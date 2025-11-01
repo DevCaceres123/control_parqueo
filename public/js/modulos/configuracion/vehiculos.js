@@ -80,16 +80,7 @@ function listar_afiliado() {
                             </div>`;
                 },
             },
-            {
-                data: "tarifa",
-                className: "table-td ",
-                render: function (data) {
-                    return `                            
-                        <span  class='p-1 pe-3 ps-3 bg-warning rounded-pill text-light fs-15'>${data} <b>Bs</b></span>
-                    `;
-                },
-            },
-
+           
 
             {
                 data: null,
@@ -220,8 +211,7 @@ $(document).on("click", ".editar_vehiculo", function () {
 
         $('#vehiculo_id').val(response.mensaje.id);
         $('#nombre').val(response.mensaje.nombre);
-        $('#descripcion_vehiculo').val(response.mensaje.descripcion);
-        $('#tarifa').val(response.mensaje.tarifa);
+        $('#descripcion_vehiculo').val(response.mensaje.descripcion);        
     });
 });
 
@@ -236,7 +226,7 @@ $("#tabla_vehiculo").on("click", ".cambiar_estado_vehiculo", function (e) {
     // Separar el id y el estado
     var values = dataId.split(",");
 
-    console.log(dataId);
+    //console.log(dataId);
     let datos = {
         estado: values[1],
     };
