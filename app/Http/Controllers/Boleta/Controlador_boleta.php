@@ -58,11 +58,13 @@ class Controlador_boleta extends Controller
         
         try {
             $validatedData = $request->validate([
-                'id_vehiculo' => 'required|exists:vehiculos,id',
+                'vehiculo_id' => 'required|exists:vehiculos,id',
                 'modo'        => 'required|in:placa,cliente',
                 'color_id'    => 'required|exists:colores,id',
+                'precio_id'   => 'required|exists:tarifas,id',
                 'contacto'    => 'required|min:8|max:50',
             ]);
+            
             DB::beginTransaction();
             $fecha_actual = Carbon::now();
 
@@ -70,21 +72,22 @@ class Controlador_boleta extends Controller
                 $this->verificarPlaca($request->placa);
                 $id_boleta = $this->guardarBoletaPlaca($request, $fecha_actual,$request->color_id,$request->contacto);
                 $codigoUnico = $this->encrypt($id_boleta);
-                $boleta = $this->generarBoletaPlaca($request->placa, $request->id_vehiculo, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto);
+                $boleta = $this->generarBoletaPlaca($request->placa, $request->vehiculo_id, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto, $request->precio_id);
             }
 
             if ($request->modo === 'cliente') {
                 $this->verificarCi($request->ci);
                 $id_boleta = $this->guardarBoletaDatos($request, $fecha_actual,$request->color_id,$request->contacto);
                 $codigoUnico = $this->encrypt($id_boleta);
-                $boleta = $this->generarBoletaDatosPersonales($request->nombre, $request->ci, $request->id_vehiculo, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto);
+                $boleta = $this->generarBoletaDatosPersonales($request->nombre, $request->ci, $request->vehiculo_id, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto);
             }
 
             $fecha_finalizacion = $this->calcularSalida($fecha_actual);
 
             $data = [
                 'usuario' => auth()->user()->only(['nombres', 'apellidos']),
-                'tarifa_vehiculo' => Vehiculo::select('tarifa', 'nombre')->where('id', $request->id_vehiculo)->first(),
+                'tarifa_vehiculo' => Tarifas::select('precio', 'nombre')->where('id', $request->precio_id)->first(),
+                'tipo_vehiculo' => Vehiculo::select('nombre')->where('id', $request->vehiculo_id)->first(),
                 'fecha_generada' => $fecha_actual->format('Y-m-d H:i:s'),
                 'fecha_finalizacion' => $fecha_actual->copy()->addDay()->setTime(12, 0, 0)->format('Y-m-d H:i:s'),// formatear para fecha final,
                 'placa' => $request->placa ?? null,
@@ -129,7 +132,7 @@ class Controlador_boleta extends Controller
     }
 
 
-    public function generarBoletaPlaca($placa, $id_vehiculo, $fecha_actual, $codigoUnico,$color_id,$contacto)
+    public function generarBoletaPlaca($placa, $id_vehiculo, $fecha_actual, $codigoUnico,$color_id,$contacto,$tarifa_id)
     {
 
         $fecha_finalizacion = $fecha_actual
@@ -138,10 +141,12 @@ class Controlador_boleta extends Controller
                     ->setTime(12, 0, 0);  // 15:00:00 (3 pm)
 
         $color=Color::select('nombre','color')->where('id',$color_id)->first();
+        $tarifa=Tarifas::select('nombre','precio')->where('id',$tarifa_id)->first();
 
         $data = [
             'usuario' => auth()->user()->only(['nombres', 'apellidos']),
-            'tarifa_vehiculo' => Vehiculo::select('tarifa', 'nombre')->where('id', $id_vehiculo)->first(),
+            'tipo_vehiculo' => Vehiculo::select('nombre')->where('id', $id_vehiculo)->first(),
+            'tarifa_vehiculo' => $tarifa,
             'fecha_generada' => $fecha_actual,
             'fecha_finalizacion' => $fecha_finalizacion,
             'placa' => $placa ?? null,
@@ -171,9 +176,11 @@ class Controlador_boleta extends Controller
                     ->setTime(12, 0, 0);  // 15:00:00 (3 pm)
 
         $color=Color::select('nombre','color')->where('id',$color_id)->first();
+        $tarifa=Tarifas::select('nombre','precio')->where('id',$tarifa_id)->first();
         $data = [
             'usuario' => auth()->user()->only(['nombres', 'apellidos']),
-            'tarifa_vehiculo' => Vehiculo::select('tarifa', 'nombre')->where('id', $id_vehiculo)->first(),
+            'tipo_vehiculo' => Vehiculo::select('tarifa', 'nombre')->where('id', $id_vehiculo)->first(),
+            'tarifa_vehiculo' => $tarifa,
             'fecha_generada' => $fecha_actual,
             'fecha_finalizacion' => $fecha_finalizacion,
             'placa' => $placa ?? null,
@@ -240,9 +247,10 @@ class Controlador_boleta extends Controller
         $boleta->entrada_veh = $fecha_actual;        
         $boleta->estado_parqueo = 'ingreso';
         $boleta->estado_impresion = 'generado';
-        $boleta->vehiculo_id = $request->id_vehiculo;
+        $boleta->vehiculo_id = $request->vehiculo_id;
         $boleta->usuario_id = auth()->user()->id;
         $boleta->color_id = $color_id;
+        $boleta->tarifa_id = $request->precio_id;
 
         $contactoModel = Contacto::firstOrCreate(['telefono' => $contacto]);
         $boleta->contacto_id = $contactoModel->id;
@@ -267,10 +275,11 @@ class Controlador_boleta extends Controller
         $boleta->entrada_veh = $fecha_actual;        
         $boleta->estado_parqueo = 'ingreso';
         $boleta->estado_impresion = 'generado';
-        $boleta->vehiculo_id = $request->id_vehiculo;
+        $boleta->vehiculo_id = $request->vehiculo_id;
         $boleta->usuario_id = auth()->user()->id;
 
         $boleta->color_id = $color_id;
+        $boleta->tarifa_id = $request->precio_id;
 
         $contactoModel = Contacto::firstOrCreate(['telefono' => $contacto]);
         $boleta->contacto_id = $contactoModel->id;        

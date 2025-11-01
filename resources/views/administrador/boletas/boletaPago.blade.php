@@ -180,7 +180,7 @@
                 U.s.: {{ $usuario['nombres'][0] ?? 'N' }}. {{ $usuario['apellidos'][0] ?? '' }}.
             </span>
             <span class="precio">
-                <b>Bs.- </b>{{ $tarifa_vehiculo->tarifa ?? 'N/A' }}.00
+                <b>Bs.- </b>{{ $tarifa_vehiculo->precio ?? 'N/A' }}.00
             </span>
             <span class="codigo">
                 #{{ $codigoUnico }}
@@ -203,8 +203,8 @@
                 </div>
             @endif
 
-            @if ($tarifa_vehiculo->nombre)
-                <span style="">{{ $tarifa_vehiculo->nombre }} |</span>
+            @if ($tipo_vehiculo->nombre)
+                <span style="">{{ $tipo_vehiculo->nombre }} |</span>
             @endif
             @if ($color)
                 <span style="">{{ $color ?? 'N/A' }} |</span>

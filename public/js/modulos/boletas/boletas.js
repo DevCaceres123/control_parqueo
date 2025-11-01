@@ -55,7 +55,7 @@ $("#btn-generar").on("click", function () {
         // deseleccionar tarifa
         idPrecio = null;
         precioSeleccionado = null;
-        $("#tipos-vehiculo .tipo-card").removeClass(
+        $("#precios .tipo-precios").removeClass(
             "bg-success text-white shadow-lg"
         );
 
