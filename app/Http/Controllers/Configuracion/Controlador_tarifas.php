@@ -19,14 +19,15 @@ class Controlador_tarifas extends Controller
     }
 
 
-    public function listarTarifas(Request $request){
+    public function listarTarifas(Request $request)
+    {
 
-        $query = Tarifas::select('id', 'nombre', 'precio','estado')->orderBy('id', 'desc');
+        $query = Tarifas::select('id', 'nombre', 'precio', 'estado')->orderBy('id', 'desc');
 
         if (!empty($request->search['value'])) {
             $query->where(function ($q) use ($request) {
                 $q->where('nombre', 'like', '%' . $request->search['value'] . '%')
-                ->orWhere('precio', 'like', '%' . $request->search['value'] . '%')                
+                ->orWhere('precio', 'like', '%' . $request->search['value'] . '%')
                 ;
             });
         }
@@ -90,6 +91,41 @@ class Controlador_tarifas extends Controller
         //
     }
 
+
+    public function cambiar_estado_tarifa(String $id_tarifa, request $request)
+    {
+
+        DB::beginTransaction();
+        try {
+
+            // Encontrar el usuario por ID
+            $tarifas = Tarifas::Find($id_tarifa);
+
+            if (!$tarifas) {
+                throw new Exception('tarifa no encontrado');
+            }
+            if ($request->estado == "activo") {
+                $tarifas->estado = "inactivo";
+            }
+            if ($request->estado == "inactivo") {
+                $tarifas->estado = "activo";
+            }
+
+            $tarifas->save();
+            DB::commit();
+
+            $this->mensaje("exito", "Estado combiado Correctamente");
+
+            return response()->json($this->mensaje, 200);
+        } catch (Exception $e) {
+            // Revertir los cambios si hay algún error
+            DB::rollBack();
+
+            $this->mensaje("error", "error" . $e->getMessage());
+
+            return response()->json($this->mensaje, 200);
+        }
+    }
     /**
      * Remove the specified resource from storage.
      */
@@ -97,7 +133,7 @@ class Controlador_tarifas extends Controller
     {
         DB::beginTransaction();
         try {
-            
+
             $tarifa = Tarifas::find($id);
             if (!$tarifa) {
                 throw new Exception('tarifa no encontrado');
@@ -105,13 +141,13 @@ class Controlador_tarifas extends Controller
 
             $tarifa->delete();
             DB::commit();
-        
+
             $this->mensaje("exito", "tarifa eliminada correctamente");
             return response()->json($this->mensaje, 200);
-        
+
         } catch (Exception $e) {
             DB::rollBack();
-        
+
             $this->mensaje("error", "error" . $e->getMessage());
             return response()->json($this->mensaje, 200);
         }

@@ -68,7 +68,7 @@ function listar_datos() {
                     let desactivarContent =
                         permisosGlobal["estado"] == true
                             ? `
-                            <a class="cambiar_estado_vehiculo" data-id="${row.id},${row.estado}">
+                            <a class="cambiar_estado_tarifa" data-id="${row.id},${row.estado}">
                                 <div class="form-check form-switch ms-3">
                                     <input class="form-check-input" type="checkbox" 
                                            ${estadoChecked} style="transform: scale(2.0);">
@@ -145,4 +145,36 @@ $(document).on("click", ".eliminar_tarifa", function () {
             });
         }
     });
+});
+
+
+// cambiar estado
+$("#tabla_tarifas").on("click", ".cambiar_estado_tarifa", function (e) {
+    e.preventDefault(); // Evitar que el enlace recargue la página
+
+    // Obtener el valor de data-id
+    var dataId = $(this).data("id");
+
+    // Separar el id y el estado
+    var values = dataId.split(",");
+
+    //console.log(dataId);
+    let datos = {
+        estado: values[1],
+    };
+
+    crud("admin/cambiar_estado_tarifa", "PUT", values[0], datos, function (error, response) {
+        if (response.tipo === "errores") {
+            mensajeAlerta(response.mensaje, "errores");
+            return;
+        }
+        if (response.tipo != "exito") {
+            mensajeAlerta(response.mensaje, response.tipo);
+            return;
+        }
+
+        mensajeAlerta(response.mensaje, response.tipo);
+
+        actualizarTabla();
+   });
 });

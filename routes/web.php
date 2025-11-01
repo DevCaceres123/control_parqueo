@@ -111,7 +111,7 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
     Route::controller(Controlador_tarifas::class)->group(function () {
         Route::resource('tarifas', Controlador_tarifas::class);  
         Route::get('listarTarifas', 'listarTarifas')->name('tarifas.listarTarifas');  
-        
+        Route::put('cambiar_estado_tarifa/{id_tarifa}', 'cambiar_estado_tarifa')->name('tarifas.cambiar_estado_tarifa');
     });
 
 
