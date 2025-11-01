@@ -11,6 +11,7 @@ use App\Http\Controllers\Usuario\Controlador_permisos;
 use App\Http\Controllers\Usuario\Controlador_rol;
 use App\Http\Controllers\Usuario\Controlador_user;
 use App\Http\Controllers\Usuario\Controlador_usuario;
+use App\Http\Controllers\Configuracion\Controlador_tarifas;
 use App\Http\Middleware\Autenticados;
 use App\Http\Middleware\No_autenticados;
 use Illuminate\Support\Facades\Route;
@@ -57,7 +58,7 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
 
     //PARA LA ADMINISTRACION DE VEHICULO
 
-        // CONTROLADOR PARA LOS VEHICULOS
+    // CONTROLADOR PARA LOS VEHICULOS
     Route::controller(Controlador_vehiculo::class)->group(function () {
         Route::resource('vehiculos', Controlador_vehiculo::class);  
         Route::get('listarVehiculos', 'listarVehiculos')->name('vehiculos.listarVehiculos');     
@@ -65,7 +66,7 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
     });
 
 
-         // CONTROLADOR PARA LOS VEHICULOS
+         // CONTROLADOR PARA LA CONFIGURACION DE ATRASO
     Route::controller(Controlador_config_atraso::class)->group(function () {
         Route::resource('atraso', Controlador_config_atraso::class);  
         Route::get('listarConfAtraso', 'listarConfAtraso')->name('atraso.listarConfAtraso');    
@@ -104,6 +105,12 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
         Route::resource('colores', Controlador_color::class);
         Route::get('listarColores', 'listarColores')->name('colores.listarColores');    
                    
+    });
+
+    // CONTROLADOR PARA LOS VEHICULOS
+    Route::controller(Controlador_tarifas::class)->group(function () {
+        Route::resource('tarifas', Controlador_tarifas::class);  
+        
     });
 
 

@@ -159,7 +159,7 @@
 
                                 @can('config.tarifas.inicio')
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ route('vehiculos.index') }}">Tarifas</a>
+                                        <a class="nav-link" href="{{ route('tarifas.index') }}">Tarifas</a>
                                     </li>
                                 @endcan
 
