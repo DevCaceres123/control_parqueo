@@ -13,7 +13,7 @@
                         </div>
                         <div class="col-auto">
                             @can('config.vehiculos.crear')
-                                <button type="button" class="btn btn-primary nuevo_vehiculo">
+                                <button type="button" class="btn btn-primary nueva_tarifa">
                                     <i class="fas fa-plus me-1"></i> Nuevo
                                 </button>
                             @endcan
@@ -55,7 +55,7 @@
                         aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="vehiculos">
+                    <form id="tarifas">
                         <input type="hidden" id="tarifa_id" name="tarifa_id">
                         <div class=" row p-1">
                             <div class="col-12 col-md-12">

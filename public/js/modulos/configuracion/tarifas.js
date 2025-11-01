@@ -103,7 +103,7 @@ function listar_datos() {
                       
                              ${
                                  permisosGlobal.editar
-                                     ? ` <a class="btn btn-sm btn-outline-warning px-2 d-inline-flex align-items-center editar_vehiculo me-1" data-id="${row.id}" title="Editar Sede">
+                                     ? ` <a class="btn btn-sm btn-outline-warning px-2 d-inline-flex align-items-center editar_tarifa me-1" data-id="${row.id}" title="Editar Sede">
                             <i class="fas fa-pencil-alt fs-16"></i>
                         </a>`
                                      : ``
@@ -178,3 +178,84 @@ $("#tabla_tarifas").on("click", ".cambiar_estado_tarifa", function (e) {
         actualizarTabla();
    });
 });
+
+
+
+//crear nueva tarifa
+
+//mostrar el modal para ingresar nuevo vehiculo
+$(document).on("click", ".nueva_tarifa", function () {
+    // le asignas el data-id al botón guardar
+    $("#btn_guardar_tarifa").attr("data-id", "nuevo");
+    vaciar_errores("tarifas");
+    // luego muestras el modal
+    $("#modal_tarifa").modal("show");
+
+    // editamos el titulo del modal
+    $("#titulo_modal").html('<i class="fas fa-money-bill-wave me-1"></i> NUEVA TARIFA');
+});
+
+
+//mostrar el modal para editar un vehiculo
+$(document).on("click", ".editar_tarifa", function () {
+    // le asignas el data-id al botón guardar
+    $("#btn_guardar_tarifa").attr("data-id", "editar");
+    vaciar_errores("tarifas");
+    // luego muestras el modal
+    $("#modal_tarifa").modal("show");
+    // editamos el titulo del modal
+    $("#titulo_modal").html('<i class="fas fa-money-bill-wave me-1"></i> EDITAR TARIFA');
+
+});
+
+
+
+
+// Agregar nuevos vehiculos y sus tarifas;
+$("#tarifas").on("submit", function (e) {
+
+    e.preventDefault();
+    let ruta = $("#btn_guardar_tarifa").attr("data-id");
+    let idEditar = null;
+    let metodo = null;
+    let formData = new FormData(this);
+    if (ruta == 'nuevo') {
+        ruta = 'admin/tarifas';
+        metodo = 'POST';
+    }
+
+    if (ruta == 'editar') {
+        ruta = 'admin/tarifas';
+        metodo = 'PUT';
+        idEditar = $("#tarifa_id").val();      
+        formData = Object.fromEntries(new FormData(this));  
+    }
+    
+    vaciar_errores("tarifas");
+    // Opcional: Desactivar botón para evitar doble clic    
+
+    const btn = $("#btn_guardar_tarifa");
+    btn.prop("disabled", true).html('<i class="ri-loader-4-line spin"></i> Subiendo...');
+
+    crud(ruta, metodo, idEditar, formData, function (error, response) {
+        btn.prop("disabled", false).html('<i class="ri-upload-cloud-line me-1"></i>Guardar');
+
+        // Verificamos que no haya un error o que todos los campos sean llenados
+        if (response.tipo === "errores") {
+            mensajeAlerta(response.mensaje, "errores");
+            return;
+        }
+        if (response.tipo != "exito") {
+            mensajeAlerta(response.mensaje, response.tipo);
+            return;
+        }
+
+        // //si todo esta correcto muestra el mensaje de correcto
+        $("#modal_tarifa").modal("hide");
+
+        mensajeAlerta(response.mensaje, response.tipo);
+        vaciar_formulario('tarifas');
+        actualizarTabla();
+    });
+});
+

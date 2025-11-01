@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Tarifas;
 use Exception;
+use App\Http\Requests\Configuracion\TarifaRequest;
 use Illuminate\Support\Facades\DB;
 
 class Controlador_tarifas extends Controller
@@ -62,9 +63,27 @@ class Controlador_tarifas extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(TarifaRequest $request)
     {
-        //
+        
+        DB::beginTransaction();
+        try {
+            $tarifa= new Tarifas();
+            $tarifa->nombre = $request->nombre;
+            $tarifa->precio = $request->tarifa;
+            $tarifa->estado = 'activo';
+            $tarifa->save();
+            DB::commit();
+        
+            $this->mensaje("exito", "Tarifa creada correctamente");
+            return response()->json($this->mensaje, 200);
+        
+        } catch (Exception $e) {
+            DB::rollBack();
+        
+            $this->mensaje("error", "error" . $e->getMessage());
+            return response()->json($this->mensaje, 200);
+        }
     }
 
     /**
