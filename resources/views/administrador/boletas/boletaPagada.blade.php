@@ -216,7 +216,7 @@
             <span class="usuario">
                 U.s.: {{ $usuario['nombres'][0] ?? 'N' }}. {{ $usuario['apellidos'][0] ?? '' }}
             </span>
-            <span class="precio"><b>Bs.- </b>{{ $tarifa_vehiculo['tarifa'] ?? '0' }}.00</span>
+            <span class="precio"><b>Bs.- </b>{{ $tarifa_vehiculo['precio'] ?? '0' }}.00</span>
             <span class="codigo">
                 #{{ $codigoUnico }}
             </span>
@@ -238,8 +238,8 @@
                 </div>
             @endif
 
-            @if ($tarifa_vehiculo['nombre'])
-                <span style="">{{ $tarifa_vehiculo['nombre'] }} |</span>
+            @if ($tipo_vehiculo['nombre'])
+                <span style="">{{ $tipo_vehiculo['nombre'] }} |</span>
             @endif
             @if ($color)
                 <span style="">{{ $color ?? 'N/A' }}|</span>
@@ -278,7 +278,7 @@
                 <!-- Montos -->
                 <div class="monto-bloque">
                     <span>Monto Inicial:</span>
-                    <span>Bs. {{ $tarifa_vehiculo['tarifa'] ?? '0' }}</span>
+                    <span>Bs. {{ $tarifa_vehiculo['precio'] ?? '0' }}</span>
                 </div>
                 <div class="monto-bloque">
                     <span>Monto Extra (Retraso):</span>

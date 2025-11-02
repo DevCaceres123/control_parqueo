@@ -511,7 +511,7 @@ class Controlador_boleta extends Controller
         $datos['salida_vehiculo']  = $salidaVeh;
         $datos['total']            = $total;
         // esta variable obtiene el precio del vehiculo al momento de la generacion de la boleta
-        $monto_vehiculo =$datos['tarifa_vehiculo']['tarifa'];
+        $monto_vehiculo =$datos['tarifa_vehiculo']['precio'];
         //$vehiculo_monto = Vehiculo::select('tarifa')->where('id', $vehiculo_id)->first();
         $totalRetraso = $this->calcularTotal($salidaVeh, $saliMaxVechiulo, $entradaVehi);
 
