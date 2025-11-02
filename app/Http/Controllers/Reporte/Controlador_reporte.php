@@ -53,9 +53,9 @@ class Controlador_reporte extends Controller
             $fecha_inicio = $request->fecha_inicio . " 00:00:00";
             $fecha_final  = $request->fecha_final  . " 23:59:59";
             $reporte = DB::table('boletas as b')
-                ->join('vehiculos as v', 'b.vehiculo_id', '=', 'v.id')
+                ->join('tarifas as t', 'b.tarifa_id', '=', 't.id')
                 ->select(
-                    'v.tarifa as tarifa_bs',
+                    't.precio as tarifa_bs',
                     // Cantidades
                     DB::raw("SUM(CASE WHEN b.dias_cobrados = 1 THEN 1 ELSE 0 END) as boletas_a_tiempo"),
                     DB::raw("SUM(CASE WHEN b.dias_cobrados <> 1 THEN 1 ELSE 0 END) as boletas_con_atraso"),
@@ -72,8 +72,8 @@ class Controlador_reporte extends Controller
                 ->when(!empty($request->usuario), function ($query) use ($request) {
                     $query->whereIn('b.usuario_id', $request->usuario);
                 })
-                ->groupBy('v.tarifa')
-                ->orderBy('v.tarifa')
+                ->groupBy('t.precio')
+                ->orderBy('t.precio')
                 ->get();
 
           $reporteBase64 = $this->generarReporte($reporte, $request->fecha_inicio, $request->fecha_final,$request);
