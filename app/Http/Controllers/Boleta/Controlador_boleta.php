@@ -323,8 +323,7 @@ class Controlador_boleta extends Controller
 
     // Funcion para buscar boleta por codigo, ci o placa donde se calcula el total a pagar, y tomar nota  el monto se calculara en base a la tarifa del vehiculo al momento de la generacion de la boleta
     public function buscarBoleta(Request $request)
-    {
-
+    {        
 
         try {
 
@@ -336,7 +335,7 @@ class Controlador_boleta extends Controller
 
             $boleta = Boleta::select('id', 'num_boleta', 'placa', 'ci', 'persona', 'entrada_veh', 'salidaMax', 'vehiculo_id', 'estado_parqueo','reporte_json')
                         ->where($validatedData['filtro'] === 'codigo' ? 'num_boleta' : $validatedData['filtro'], $validatedData['valor'])
-                        ->where('estado_parqueo', 'ingreso')
+                        //->where('estado_parqueo', 'ingreso')
                         ->orderBy('id', 'desc') // 👈 Trae el último registrado
                         ->first();
             
@@ -347,14 +346,14 @@ class Controlador_boleta extends Controller
 
 
             if ($boleta->estado_parqueo === 'salida') {
-                throw new Exception("el vehículo con boleta {$boleta->num_boleta} ya ha salido del parqueo.");
+                throw new Exception("el vehículo con boleta {$validatedData['valor']} ya ha salido del parqueo.");
             }
 
             $datosBoleta = json_decode($boleta->reporte_json);
-            $precioVehiculo=$datosBoleta->tarifa_vehiculo->tarifa;
+            $precioVehiculo=$datosBoleta->tarifa_vehiculo->precio;
             $fecha_actual = Carbon::now();
             $montoRetraso = $this->calcularTotal($fecha_actual, $boleta->salidaMax, $boleta->entrada_veh);
-            $vehiculo = Vehiculo::select('nombre', 'tarifa')->where('id', $boleta->vehiculo_id)->first();
+            $vehiculo = Vehiculo::select('nombre')->where('id', $boleta->vehiculo_id)->first();
             $total = $precioVehiculo * ($montoRetraso['veces_pasadas'] + 1); // sumamos 1 al total para cobrar el primer dia
             $tiempoEstadita = $montoRetraso['tiempoPasado'];            
             $montoRetraso = $montoRetraso['veces_pasadas']  *  $precioVehiculo; // monto por atraso
