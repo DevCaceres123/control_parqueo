@@ -30,7 +30,7 @@ class Controlador_listarBoletas extends Controller
         ->where('estado', 'activo')
         ->get();
 
-        $vehiculos = Vehiculo::select('id', 'nombre', 'tarifa')->where('estado', 'activo')->get();
+        $vehiculos = Vehiculo::select('id', 'nombre')->where('estado', 'activo')->get();
         $colores = Color::select('id', 'nombre', 'color')->get();
 
 
@@ -49,7 +49,7 @@ class Controlador_listarBoletas extends Controller
 
         $query = Boleta::with([
             'vehiculo' => function ($query) {
-                $query->select(['id', 'nombre', 'tarifa']);
+                $query->select(['id', 'nombre']);
             },
              'contacto' => function ($query) {  // nueva relación
                  $query->select(['id', 'telefono']); // campos que quieres traer
@@ -157,7 +157,8 @@ class Controlador_listarBoletas extends Controller
 
             // Acceso a datos del JSON como array
             $placa = $reporteJson['placa'] ?? null;
-            $vehiculo = $reporteJson['tarifa_vehiculo'] ?? null;
+            $tarifa = $reporteJson['tarifa_vehiculo'] ?? null;
+            $tipo_vehiculo = $reporteJson['tipo_vehiculo'] ?? null;
             $fechaEntrada = $boleta->entrada_veh ?? null;
             $numeroBoleta = $boleta->num_boleta ?? null;
             $datosUsuario = $reporteJson['usuario'] ?? null;
@@ -169,7 +170,7 @@ class Controlador_listarBoletas extends Controller
 
 
             // Genera el reporte en PDF
-            $reporteBase64 = $this->generarBoletaEntrada($placa, $vehiculo, $fechaEntrada, $fecha_finalizacion, $numeroBoleta, $datosUsuario, $nombre, $ci, $color, $contacto);
+            $reporteBase64 = $this->generarBoletaEntrada($placa, $tarifa, $fechaEntrada, $fecha_finalizacion, $numeroBoleta, $datosUsuario, $nombre, $ci, $color, $contacto,$tipo_vehiculo);
 
             // Responde con éxito
             $this->mensaje('exito', $reporteBase64);
@@ -183,12 +184,14 @@ class Controlador_listarBoletas extends Controller
 
 
 
-    public function generarBoletaEntrada($placa, $vehiculo, $fecha_actual, $fecha_finalizacion, $codigoUnico, $datosUsuario, $nombre, $ci, $color, $contacto)
+    public function generarBoletaEntrada($placa, $tarifa, $fecha_actual, $fecha_finalizacion, $codigoUnico, $datosUsuario, $nombre, $ci, $color, $contacto,$tipo_vehiculo)
     {
+        
 
         $data = [
             'usuario' => $datosUsuario,
-            'tarifa_vehiculo' =>  json_decode(json_encode($vehiculo)),
+            'tarifa_vehiculo' =>  json_decode(json_encode($tarifa)),
+            'tipo_vehiculo' =>  json_decode(json_encode($tipo_vehiculo)),
             'fecha_generada' => $fecha_actual,
             'fecha_finalizacion' => $fecha_finalizacion,
             'placa' => $placa ?? null,
@@ -217,7 +220,7 @@ class Controlador_listarBoletas extends Controller
     {
 
         try {
-            $boleta = Boleta::find($id);
+           $boleta = Boleta::find($id);
 
             if (!$boleta) {
                 throw new Exception("Reporte no encontrado");

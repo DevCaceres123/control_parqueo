@@ -125,7 +125,7 @@ class Controlador_boleta extends Controller
                 'fecha' => now()->toDateTimeString(),
             ]);
     
-            $this->mensaje("error", "Error" . $e->getMessage());
+            $this->mensaje("error", "Error " . $e->getMessage());
 
             return response()->json($this->mensaje, 200);
         }
@@ -238,7 +238,13 @@ class Controlador_boleta extends Controller
     {
         $validatedData = $request->validate([
             'placa' => 'required|min:3|max:20',
-
+            'ci' => 'prohibited',
+            'nombre' => 'prohibited',            
+        ], 
+        [   
+            'ci.prohibited' => 'El campo documento de indentidad no debe de ser enviado.',
+            'nombre.prohibited' => 'El campo nombre no debe ser llenado ni enviado.',
+            
         ]);
 
         $boleta = new Boleta();
@@ -265,8 +271,12 @@ class Controlador_boleta extends Controller
         $validatedData = $request->validate([
             'nombre' => 'nullable|min:3|max:50',
             'ci' => 'required|min:3|max:20',
+            'placa' => 'prohibited',
 
+        ],[   
+            'placa.prohibited' => 'El campo placa no debe de ser enviado.',                    
         ]);
+
 
         $boleta = new Boleta();
         $boleta->disableAuditing();
