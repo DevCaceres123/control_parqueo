@@ -57,6 +57,7 @@ class UsuarioSeeder extends Seeder
 
 
         Permission::create(['name' => 'inicio'])->syncRoles([$rol1]);
+        Permission::create(['name' => 'inicio.vehiculos_en_parqueo'])->syncRoles([$rol1,$rol2]);
         Permission::create(['name' => 'inicio.monto_generado'])->syncRoles([$rol1]);
         Permission::create(['name' => 'inicio.vehiculos_ingresados'])->syncRoles([$rol1]);
 
