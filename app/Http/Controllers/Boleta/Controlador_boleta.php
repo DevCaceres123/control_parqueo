@@ -79,7 +79,7 @@ class Controlador_boleta extends Controller
                 $this->verificarCi($request->ci);
                 $id_boleta = $this->guardarBoletaDatos($request, $fecha_actual,$request->color_id,$request->contacto);
                 $codigoUnico = $this->encrypt($id_boleta);
-                $boleta = $this->generarBoletaDatosPersonales($request->nombre, $request->ci, $request->vehiculo_id, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto);
+                $boleta = $this->generarBoletaDatosPersonales($request->nombre, $request->ci, $request->vehiculo_id, $fecha_actual, $codigoUnico,$request->color_id,$request->contacto, $request->precio_id);
             }
 
             $fecha_finalizacion = $this->calcularSalida($fecha_actual);
@@ -168,7 +168,7 @@ class Controlador_boleta extends Controller
 
     }
 
-    public function generarBoletaDatosPersonales($nombreCompleto, $documentoIdentidad, $id_vehiculo, $fecha_actual, $codigoUnico,$color_id,$contacto)
+    public function generarBoletaDatosPersonales($nombreCompleto, $documentoIdentidad, $id_vehiculo, $fecha_actual, $codigoUnico,$color_id,$contacto,$tarifa_id)
     {
         $fecha_finalizacion = $fecha_actual
                     ->copy()              // para no modificar $fecha_actual
@@ -179,7 +179,7 @@ class Controlador_boleta extends Controller
         $tarifa=Tarifas::select('nombre','precio')->where('id',$tarifa_id)->first();
         $data = [
             'usuario' => auth()->user()->only(['nombres', 'apellidos']),
-            'tipo_vehiculo' => Vehiculo::select('tarifa', 'nombre')->where('id', $id_vehiculo)->first(),
+            'tipo_vehiculo' => Vehiculo::select('nombre')->where('id', $id_vehiculo)->first(),
             'tarifa_vehiculo' => $tarifa,
             'fecha_generada' => $fecha_actual,
             'fecha_finalizacion' => $fecha_finalizacion,
