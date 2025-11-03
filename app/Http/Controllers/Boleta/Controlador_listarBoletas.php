@@ -128,7 +128,7 @@ class Controlador_listarBoletas extends Controller
             'data' => $datos_registros,
             'permissions' => [
                 'editar' => auth()->user()->can('control.listar_boleta.editar'),
-                'eliminar' =>auth()->user()->can('control.listar_boleta.eliminar'),
+                'eliminar' => auth()->user()->can('control.listar_boleta.eliminar'),
                 'entrada' => auth()->user()->can('control.listar_boleta.ticket_entrada'),
                 'salida' => auth()->user()->can('control.listar_boleta.ticket_salida'),
                 'contacto' => auth()->user()->can('control.listar_boleta.contacto'),
@@ -170,7 +170,7 @@ class Controlador_listarBoletas extends Controller
 
 
             // Genera el reporte en PDF
-            $reporteBase64 = $this->generarBoletaEntrada($placa, $tarifa, $fechaEntrada, $fecha_finalizacion, $numeroBoleta, $datosUsuario, $nombre, $ci, $color, $contacto,$tipo_vehiculo);
+            $reporteBase64 = $this->generarBoletaEntrada($placa, $tarifa, $fechaEntrada, $fecha_finalizacion, $numeroBoleta, $datosUsuario, $nombre, $ci, $color, $contacto, $tipo_vehiculo);
 
             // Responde con éxito
             $this->mensaje('exito', $reporteBase64);
@@ -184,9 +184,9 @@ class Controlador_listarBoletas extends Controller
 
 
 
-    public function generarBoletaEntrada($placa, $tarifa, $fecha_actual, $fecha_finalizacion, $codigoUnico, $datosUsuario, $nombre, $ci, $color, $contacto,$tipo_vehiculo)
+    public function generarBoletaEntrada($placa, $tarifa, $fecha_actual, $fecha_finalizacion, $codigoUnico, $datosUsuario, $nombre, $ci, $color, $contacto, $tipo_vehiculo)
     {
-        
+
 
         $data = [
             'usuario' => $datosUsuario,
@@ -220,7 +220,7 @@ class Controlador_listarBoletas extends Controller
     {
 
         try {
-           $boleta = Boleta::find($id);
+            $boleta = Boleta::find($id);
 
             if (!$boleta) {
                 throw new Exception("Reporte no encontrado");
@@ -270,6 +270,53 @@ class Controlador_listarBoletas extends Controller
         return base64_encode($pdfContent);
     }
 
+    public function reporteDiario(Request $request)
+    {
+
+
+        try {
+
+            $usuarioActual = auth()->user()->id;
+            $reporte = DB::table('boletas as b')
+                ->join('tarifas as t', 'b.tarifa_id', '=', 't.id')
+                ->select(
+                    't.precio as tarifa_bs',
+                    // Cantidades
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados = 1 THEN 1 ELSE 0 END) as boletas_a_tiempo"),
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados <> 1 THEN 1 ELSE 0 END) as boletas_con_atraso"),
+                    DB::raw("COUNT(b.id) as total_boletas"),
+                    // Totales monetarios
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados = 1 THEN b.total ELSE 0 END) as ingresos_a_tiempo"),
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados <> 1 THEN b.total ELSE 0 END) as ingresos_por_atraso"),
+                    DB::raw("SUM(CASE WHEN b.dias_cobrados <> 1 THEN b.monto_atraso ELSE 0 END) as monto_atraso"),
+                    DB::raw("SUM(b.total) as ingresos_totales")
+                )
+                ->whereDate('b.salida_veh', $request->fecha)
+                ->whereNull('b.deleted_at')
+                ->where('b.usuario_id', $usuarioActual)
+                ->groupBy('t.precio')
+                ->orderBy('t.precio')
+                ->get();
+            
+
+                $pdf = PDF::loadView('administrador/boletas/reporteUsuario', [
+                    'reporte' => $reporte,
+                    'fecha' => Carbon::parse($request->fecha)->format('d-m-Y'),                    
+                    'usuario_generador' => auth()->user()->only(['nombres', 'apellidos']),                    
+                ]);
+
+            $pdfContent = $pdf->output();
+           
+            $this->mensaje("exito",  base64_encode($pdfContent));
+            return response()->json($this->mensaje, 200);
+
+        } catch (Exception $e) {
+
+
+            $this->mensaje("error", "error" . $e->getMessage());
+            return response()->json($this->mensaje, 200);
+        }
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -303,11 +350,11 @@ class Controlador_listarBoletas extends Controller
             'contacto' => function ($query) {  // nueva relación
                 $query->select(['id', 'telefono']); // campos que quieres traer
             },
-        ])->select('id', 'placa', 'ci', 'vehiculo_id', 'contacto_id', 'color_id','estado_parqueo')
-          ->where('id', $id)          
+        ])->select('id', 'placa', 'ci', 'vehiculo_id', 'contacto_id', 'color_id', 'estado_parqueo')
+          ->where('id', $id)
           ->first();
 
-        if($boleta->estado_parqueo == 'salida'){
+        if ($boleta->estado_parqueo == 'salida') {
             $this->mensaje('error', 'No se puede editar una boleta pagada');
             return response()->json($this->mensaje, 200);
         }
@@ -326,21 +373,21 @@ class Controlador_listarBoletas extends Controller
      */
     public function update(Request $request, string $id)
     {
-        
+
         DB::beginTransaction();
         try {
             // Encontrar el usuario por ID
             $boleta = Boleta::find($id);
             if (!$boleta) {
                 throw new Exception('boleta no encontrado');
-            }     
+            }
             // actualizamos los datos de la boleta
-            $boleta->placa=$request->placa;
-            $boleta->ci=$request->ci;
-            $boleta->vehiculo_id=$request->vehiculo_id;
-            $boleta->color_id=$request->color_id;            
-            
-            $datos_voleta=json_decode($boleta->reporte_json, true);
+            $boleta->placa = $request->placa;
+            $boleta->ci = $request->ci;
+            $boleta->vehiculo_id = $request->vehiculo_id;
+            $boleta->color_id = $request->color_id;
+
+            $datos_voleta = json_decode($boleta->reporte_json, true);
 
             $vehiculo = Vehiculo::find($request->vehiculo_id);
             $color = Color::find($request->color_id);
@@ -352,10 +399,10 @@ class Controlador_listarBoletas extends Controller
             $datos_voleta['placa'] = $request->placa ?? null;
             $datos_voleta['ci'] = $request->ci ?? null;
             $boleta->reporte_json = json_encode($datos_voleta);
-            
+
             // actualizamos o creamos el contacto
-            $contactoModel = Contacto::firstOrCreate(['telefono' => $request->contacto]);        
-            $boleta->contacto_id = $contactoModel->id;        
+            $contactoModel = Contacto::firstOrCreate(['telefono' => $request->contacto]);
+            $boleta->contacto_id = $contactoModel->id;
 
             // guardarmos la informacion actualizada
             $boleta->save();

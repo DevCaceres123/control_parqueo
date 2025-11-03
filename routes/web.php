@@ -88,6 +88,7 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
         Route::get('listarTodasBoletas', 'listarTodasBoletas')->name('listar.listarTodasBoletas');    
         Route::get('generarTicketEntrada/{id_boleta}', 'generarTicketEntrada')->name('listar.generarTicketEntrada');           
         Route::get('generarTicketSalida/{id_boleta}', 'generarTicketSalida')->name('listar.generarTicketSalida'); 
+        Route::post('reporteDiario', 'reporteDiario')->name('listar.reporteDiario');  
     });
 
 

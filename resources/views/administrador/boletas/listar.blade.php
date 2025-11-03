@@ -44,12 +44,13 @@
                             </div>
                         @endcan
 
-
-                        {{-- <div class="col-auto mt-3  ms-1 position-absolute end-0 top-0">
-                                    <a href="" id="reporte_diario"
-                                        class="btn btn-primary mt-1" target="_blank">
-                                        <i class="fas fa-file-pdf me-1"></i>Reporte Diario</a>
-                                </div>                         --}}
+                        @can('control.listar_boleta.reporte_diario')
+                            <div class="col-auto mt-3  ms-1 position-absolute end-0 top-0">
+                                <button id="reporte_diario" class="btn btn-primary mt-1" target="_blank">
+                                    <i class="fas fa-file-pdf me-1"></i>Reporte Diario
+                                </button>
+                            </div>
+                        @endcan
                     </div>
 
                     <div class="table-responsive">

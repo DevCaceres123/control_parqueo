@@ -56,10 +56,10 @@ class UsuarioSeeder extends Seeder
 
 
 
-        Permission::create(['name' => 'inicio'])->syncRoles([$rol1]);
+        Permission::create(['name' => 'inicio'])->syncRoles([$rol1,$rol2]);
         Permission::create(['name' => 'inicio.vehiculos_en_parqueo'])->syncRoles([$rol1,$rol2]);
-        Permission::create(['name' => 'inicio.monto_generado'])->syncRoles([$rol1]);
-        Permission::create(['name' => 'inicio.vehiculos_ingresados'])->syncRoles([$rol1]);
+        Permission::create(['name' => 'inicio.monto_generado'])->syncRoles([$rol1,$rol2]);
+        Permission::create(['name' => 'inicio.vehiculos_ingresados'])->syncRoles([$rol1,$rol2]);
 
         Permission::create(['name' => 'admin'])->syncRoles([$rol1]);
 
@@ -100,6 +100,7 @@ class UsuarioSeeder extends Seeder
         Permission::create(['name' => 'control.listar_boleta.fecha'])->syncRoles([$rol1,$rol2]);
         Permission::create(['name' => 'control.listar_boleta.usuario'])->syncRoles([$rol1]);
         Permission::create(['name' => 'control.listar_boleta.listar_todo'])->syncRoles([$rol1]);
+        Permission::create(['name' => 'control.listar_boleta.reporte_diario'])->syncRoles([$rol1,$rol2]);
 
         //REPORTES
         Permission::create(['name' => 'reportes'])->syncRoles([$rol1]);

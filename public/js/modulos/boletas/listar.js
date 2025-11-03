@@ -333,7 +333,7 @@ $(document).on("click", ".btn-editar", function () {
             $("#placa").val(response.mensaje.placa);
             $("#ci").val(response.mensaje.ci);
             $("#contacto").val(response.mensaje.contacto.telefono);
-            
+
             // Si ya tienes los selectr inicializados:
             selectrColor.setValue(response.mensaje.color_id);
             selectrVehiculo.setValue(response.mensaje.vehiculo_id);
@@ -341,43 +341,47 @@ $(document).on("click", ".btn-editar", function () {
     );
 });
 
-
 $("#form_editar_datos").on("submit", function (e) {
     e.preventDefault();
     $("#btn_guardar_datos").prop("disabled", true);
     let id_registro = $("#registro_id").val();
-    let datos ={
+    let datos = {
         placa: $("#placa").val(),
         ci: $("#ci").val(),
         color_id: $("#color").val(),
         vehiculo_id: $("#tipo_vehiculo").val(),
         contacto: $("#contacto").val(),
-    }
-    
+    };
+
     vaciar_errores("form_editar_datos");
 
-    crud("admin/listarBoletas", "PUT", id_registro, datos, function (error, response) {
-        $("#btn_guardar_datos").prop("disabled", false);
-        // console.log(response);
+    crud(
+        "admin/listarBoletas",
+        "PUT",
+        id_registro,
+        datos,
+        function (error, response) {
+            $("#btn_guardar_datos").prop("disabled", false);
+            // console.log(response);
 
-        // Verificamos que no haya un error o que todos los campos sean llenados
-        if (response.tipo === "errores") {
-            mensajeAlerta(response.mensaje, "errores");
-            return;
-        }
-        if (response.tipo != "exito") {
+            // Verificamos que no haya un error o que todos los campos sean llenados
+            if (response.tipo === "errores") {
+                mensajeAlerta(response.mensaje, "errores");
+                return;
+            }
+            if (response.tipo != "exito") {
+                mensajeAlerta(response.mensaje, response.tipo);
+                return;
+            }
+
+            // //si todo esta correcto muestra el mensaje de correcto
+            $("#editar_registro").modal("hide");
+            vaciar_formulario("form_editar_datos");
             mensajeAlerta(response.mensaje, response.tipo);
-            return;
+            actualizarTabla();
         }
-
-        // //si todo esta correcto muestra el mensaje de correcto
-        $("#editar_registro").modal("hide");
-        vaciar_formulario("form_editar_datos");
-        mensajeAlerta(response.mensaje, response.tipo);
-        actualizarTabla();
-    });
+    );
 });
-
 
 // Deshabilitar un input si el otro tiene valor y viceversa
 document.addEventListener("DOMContentLoaded", function () {
@@ -415,3 +419,42 @@ function generarURlBlob(pdfbase64) {
     // Crear una URL para el Blob
     return URL.createObjectURL(blob);
 }
+
+// generar reporte diario
+
+// obtener valores de los vehiculos para editar
+$(document).on("click", "#reporte_diario", function (e) {
+    
+    e.preventDefault();
+   
+    let datos = {
+        fecha:$("#filterFecha").val(), // Agrega la fecha al request      
+    };
+    crud(
+        "admin/reporteDiario",
+        "POST",
+        null,
+        datos,
+        function (error, response) {
+            // Verificamos que no haya un error o que todos los campos sean llenados
+            if (response.tipo === "errores") {
+                mensajeAlerta(response.mensaje, "errores");
+                return;
+            }
+            if (response.tipo != "exito") {
+                mensajeAlerta(response.mensaje, response.tipo);
+                return;
+            }
+
+            mensajeAlerta("Generando Reporte.....", "exito");
+
+            const blobUrl = generarURlBlob(response.mensaje); // Genera la URL del Blob
+
+            // espera un segundo para abrir la nueva ventana
+            setTimeout(() => {
+                window.open(blobUrl, "_blank"); // Abre en una nueva pestaña
+            }, 1500);
+          
+        }
+    );
+});
