@@ -10,13 +10,16 @@ let tabla_historialRegistro;
 let valorSeleccionado;
 let colorSelect;
 let vehiculoSelect;
+let precioSelect;
 let selectrColor;
 let selectrVehiculo;
+let selectrprecio;
 $(document).ready(function () {
     listar_registros();
     // iniciamos el selectr para poder usarlo
     colorSelect = document.getElementById("color");
     vehiculoSelect = document.getElementById("tipo_vehiculo");
+    precioSelect = document.getElementById("tipo_precio");
 
     selectrColor = new Selectr(colorSelect, {
         searchable: true,
@@ -26,6 +29,11 @@ $(document).ready(function () {
     selectrVehiculo = new Selectr(vehiculoSelect, {
         searchable: true,
         placeholder: "Busca o selecciona un tipo de vehículo...",
+    });
+
+    selectrprecio = new Selectr(precioSelect, {
+        searchable: true,
+        placeholder: "Busca o selecciona un precio...",
     });
 });
 
@@ -337,6 +345,7 @@ $(document).on("click", ".btn-editar", function () {
             // Si ya tienes los selectr inicializados:
             selectrColor.setValue(response.mensaje.color_id);
             selectrVehiculo.setValue(response.mensaje.vehiculo_id);
+            selectrprecio.setValue(response.mensaje.tarifa_id);
         }
     );
 });
@@ -350,6 +359,7 @@ $("#form_editar_datos").on("submit", function (e) {
         ci: $("#ci").val(),
         color_id: $("#color").val(),
         vehiculo_id: $("#tipo_vehiculo").val(),
+        tarifa_id:$("#tipo_precio").val(),
         contacto: $("#contacto").val(),
     };
 

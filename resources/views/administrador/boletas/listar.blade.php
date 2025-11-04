@@ -145,14 +145,28 @@
                                 <label for="tipo_vehiculo" class="form-label">Vehículo <strong
                                         class="text-danger">*</strong></label>
                                 <select class="form-select" id="tipo_vehiculo" name="tipo_vehiculo" required>
-                                    <option value="" disabled>Seleccione un color</option>
+                                    <option value="" disabled>Seleccione un vehiculo</option>
                                     @foreach ($vehiculos as $vehiculo)
                                         <option value="{{ $vehiculo->id }}">
-                                            {{ strtoupper($vehiculo->nombre) }} <----> {{ strtoupper($vehiculo->tarifa) }}
+                                            {{ strtoupper($vehiculo->nombre) }}
                                         </option>
                                     @endforeach
                                 </select>
                                 <div id="_tipo_vehiculo"></div>
+                            </div>
+
+                             <div class="col-12">
+                                <label for="tipo_precio" class="form-label">Seleccionar Tarifa <strong
+                                        class="text-danger">*</strong></label>
+                                <select class="form-select" id="tipo_precio" name="tipo_precio" required>
+                                    <option value="" disabled>Seleccione una tarifa</option>
+                                    @foreach ($tarifas as $tarifa)
+                                        <option value="{{ $tarifa->id }}">
+                                            {{ strtoupper($tarifa->nombre) }} <----> {{ strtoupper($tarifa->precio)}}Bs
+                                        </option>
+                                    @endforeach
+                                </select>
+                                <div id="_tipo_precio"></div>
                             </div>
                         </div>
                     </div>

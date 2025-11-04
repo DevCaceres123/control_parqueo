@@ -10,6 +10,7 @@ use App\Models\Vehiculo;
 use App\Models\Color;
 use App\Models\Config_atraso;
 use App\Models\User;
+use App\Models\Tarifas;
 use Carbon\Carbon;
 use Exception;
 use Barryvdh\DomPDF\Facade\Pdf; // clase para generar pdf
@@ -32,9 +33,10 @@ class Controlador_listarBoletas extends Controller
 
         $vehiculos = Vehiculo::select('id', 'nombre')->where('estado', 'activo')->get();
         $colores = Color::select('id', 'nombre', 'color')->get();
+        $tarifas = Tarifas::select('id','nombre','precio')->where('estado', 'activo')->get();
 
 
-        return view("administrador.boletas.listar", compact('encargados_puesto', 'vehiculos', 'colores'));
+        return view("administrador.boletas.listar", compact('encargados_puesto', 'vehiculos', 'colores','tarifas'));
     }
 
 
@@ -383,7 +385,7 @@ class Controlador_listarBoletas extends Controller
             'contacto' => function ($query) {  // nueva relación
                 $query->select(['id', 'telefono']); // campos que quieres traer
             },
-        ])->select('id', 'placa', 'ci', 'vehiculo_id', 'contacto_id', 'color_id', 'estado_parqueo')
+        ])->select('id', 'placa', 'ci', 'vehiculo_id', 'contacto_id', 'color_id', 'estado_parqueo','tarifa_id')
           ->where('id', $id)
           ->first();
 
@@ -406,7 +408,7 @@ class Controlador_listarBoletas extends Controller
      */
     public function update(Request $request, string $id)
     {
-
+        
         DB::beginTransaction();
         try {
             // Encontrar el usuario por ID
@@ -419,14 +421,17 @@ class Controlador_listarBoletas extends Controller
             $boleta->ci = $request->ci;
             $boleta->vehiculo_id = $request->vehiculo_id;
             $boleta->color_id = $request->color_id;
+            $boleta->tarifa_id = $request->tarifa_id;
 
             $datos_voleta = json_decode($boleta->reporte_json, true);
 
             $vehiculo = Vehiculo::find($request->vehiculo_id);
+            $tarifa = Tarifas::find($request->tarifa_id);
             $color = Color::find($request->color_id);
             // cambiamos los datos del json
-            $datos_voleta['tarifa_vehiculo']['nombre'] = $vehiculo->nombre ?? null;
-            $datos_voleta['tarifa_vehiculo']['tarifa'] = $vehiculo->tarifa ?? null;
+            $datos_voleta['tarifa_vehiculo']['nombre'] = $tarifa->nombre ?? null;
+            $datos_voleta['tarifa_vehiculo']['precio'] = $tarifa->precio ?? null;
+            $datos_voleta['tipo_vehiculo']['nombre'] = $vehiculo->nombre ?? null;
             $datos_voleta['color'] = $color->nombre ?? null;
             $datos_voleta['contacto'] = $request->contacto ?? null;
             $datos_voleta['placa'] = $request->placa ?? null;
