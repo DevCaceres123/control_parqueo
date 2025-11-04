@@ -102,7 +102,7 @@ function listar_registros() {
 
                     
                     ${
-                        permissions["contacto"]
+                        permissions["entrada"]
                             ? `<button type="button" class="btn btn-sm btn-outline-success px-2 d-inline-flex align-items-center ms-1" 
                                     title='Escribir al Whatsapp' 
                                     onclick="window.open('https://wa.me/${row.contacto}?text=Hola%2C%20le%20escribimos%20del%20Parqueo%20Municipal%20de%20Caranavi', '_blank')">
@@ -113,7 +113,7 @@ function listar_registros() {
                     
                     
                     ${
-                        permissions["contacto"]
+                        permissions["entrada"]
                             ? ` <button type="button" class="btn btn-sm btn-outline-success px-2 d-inline-flex align-items-center generar_tiket_entrada ms-1 btn-reporteEntrada" title='Genear Ticket de entrada' data-id="${row.id}">
                                  <i class="fas fa-file-pdf  fs-16"></i>
                             </button>`

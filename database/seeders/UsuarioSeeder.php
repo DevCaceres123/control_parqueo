@@ -102,6 +102,13 @@ class UsuarioSeeder extends Seeder
         Permission::create(['name' => 'control.listar_boleta.listar_todo'])->syncRoles([$rol1]);
         Permission::create(['name' => 'control.listar_boleta.reporte_diario'])->syncRoles([$rol1,$rol2]);
 
+        // LISTAR BOLETAS OBSERVADAS
+
+        Permission::create(['name' => 'control.boletas_observadas.inicio'])->syncRoles([$rol1,$rol2]);      
+        Permission::create(['name' => 'control.boletas_observadas.ticket_entrada'])->syncRoles([$rol1,$rol2]);        
+        Permission::create(['name' => 'control.boletas_observadas.contacto'])->syncRoles([$rol1,$rol2]);
+
+
         //REPORTES
         Permission::create(['name' => 'reportes'])->syncRoles([$rol1]);
         Permission::create(['name' => 'reportes.inicio'])->syncRoles([$rol1]);

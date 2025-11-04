@@ -16,7 +16,7 @@ class Controlador_boletasObservadas extends Controller
      */
     public function index()
     {
-        if (!auth()->user()->can('control.listar_boleta.inicio')) {
+        if (!auth()->user()->can('control.boletas_observadas.inicio')) {
             return redirect()->route('inicio');
         }
 
@@ -81,9 +81,8 @@ class Controlador_boletasObservadas extends Controller
             'recordsFiltered' => $recordsTotal,
             'data' => $datos_registros,
             'permissions' => [
-                'contacto' => auth()->user()->can('config.vehiculos.editar'),
-                'eliminar' => auth()->user()->can('config.vehiculos.eliminar'),
-                'estado' => auth()->user()->can('config.vehiculos.desactivar'),
+                'contacto' => auth()->user()->can('control.boletas_observadas.contacto'),
+                'entrada' => auth()->user()->can('control.boletas_observadas.ticket_entrada'),                
             ],
         ]);
     }
