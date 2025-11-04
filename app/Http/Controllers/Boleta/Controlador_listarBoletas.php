@@ -297,17 +297,17 @@ class Controlador_listarBoletas extends Controller
                 ->groupBy('t.precio')
                 ->orderBy('t.precio')
                 ->get();
-            
 
-                $pdf = PDF::loadView('administrador/boletas/reporteUsuario', [
-                    'reporte' => $reporte,
-                    'fecha' => Carbon::parse($request->fecha)->format('d-m-Y'),                    
-                    'usuario_generador' => auth()->user()->only(['nombres', 'apellidos']),                    
-                ]);
+
+            $pdf = PDF::loadView('administrador/boletas/reporteUsuario', [
+                'reporte' => $reporte,
+                'fecha' => Carbon::parse($request->fecha)->format('d-m-Y'),
+                'usuario_generador' => auth()->user()->only(['nombres', 'apellidos']),
+            ]);
 
             $pdfContent = $pdf->output();
-           
-            $this->mensaje("exito",  base64_encode($pdfContent));
+
+            $this->mensaje("exito", base64_encode($pdfContent));
             return response()->json($this->mensaje, 200);
 
         } catch (Exception $e) {
@@ -317,6 +317,39 @@ class Controlador_listarBoletas extends Controller
             return response()->json($this->mensaje, 200);
         }
     }
+    public function VerificarRegistrosPasados()
+    {
+        
+        try {
+            // ✅ Solo ejecutamos si la sesión indica que acaba de iniciar sesión
+            if (!session()->pull('mostrar_alerta_boletas_vencidas', false)) {
+                // Si no hay bandera, devolvemos que no se muestre nada
+                $this->mensaje("vacio", "No hay alerta pendiente");
+                return response()->json($this->mensaje, 200);
+            }
+
+            $hoy = Carbon::now();
+
+            // Boletas con más de 30 días
+            $boletasVencidas = Boleta::whereDate('entrada_veh', '<', $hoy->copy()->subDays(30))->count();
+            $listaBoletas = Boleta::select('placa', 'ci')
+                ->whereDate('entrada_veh', '<', now()->subDays(30))
+                ->get();
+
+            $data = [
+                'cantidad' => $boletasVencidas,
+                'boletas'  => $listaBoletas,
+            ];
+
+            $this->mensaje("exito", $data);
+            return response()->json($this->mensaje, 200);
+
+        } catch (Exception $e) {
+            $this->mensaje("error", "error: " . $e->getMessage());
+            return response()->json($this->mensaje, 200);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      */

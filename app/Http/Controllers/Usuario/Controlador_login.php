@@ -42,6 +42,8 @@ class Controlador_login extends Controller
         }
 
         if ($this->autenticarUsuario($request)) {
+            session(['mostrar_alerta_boletas_vencidas' => true]);
+
             return $this->respuestaExitosa('Inicio de sesión con éxito');
         }
 
@@ -106,21 +108,21 @@ class Controlador_login extends Controller
                 ->whereNull('b.deleted_at')
                 ->groupBy('t.nombre')
                 ->get();
-        
-        $data['monto_generado']= Boleta::whereDate('salida_veh', $fecha_actual)->where('estado_parqueo', 'salida')->sum('total');
-        $data['boletas_emitidas']= Boleta::whereDate('salida_veh', $fecha_actual)->where('estado_parqueo', 'salida')->count();
+
+        $data['monto_generado'] = Boleta::whereDate('salida_veh', $fecha_actual)->where('estado_parqueo', 'salida')->sum('total');
+        $data['boletas_emitidas'] = Boleta::whereDate('salida_veh', $fecha_actual)->where('estado_parqueo', 'salida')->count();
         $data['fecha_actual'] = Carbon::now()->translatedFormat('d \d\e F \d\e Y');
 
-        $data['vehiculos_en_parqueo']=DB::table('boletas as b')
+        $data['vehiculos_en_parqueo'] = DB::table('boletas as b')
                 ->join('vehiculos as t', 't.id', '=', 'b.vehiculo_id')
                 ->select('t.nombre as tipo', DB::raw('COUNT(b.id) as total'))
-                ->where('b.estado_parqueo','ingreso')
+                ->where('b.estado_parqueo', 'ingreso')
                 ->whereDate('b.entrada_veh', $fecha_actual)
                 ->whereNull('b.deleted_at')
                 ->groupBy('t.nombre')
                 ->get();
 
-        
+
         // return $data;
 
         return view('inicio', $data);
