@@ -8,7 +8,7 @@
                     <div class="row align-items-center">
                         <div class="col">
                             <h5 class="card-title mb-0 text-light fw-bold">
-                                <i class="fas fa-receipt me-2"></i> LISTAR BOLETAS
+                                <i class="fas fa-receipt me-2"></i> BOLETAS OBSERVADAS
                             </h5>
                         </div>
                     </div>
