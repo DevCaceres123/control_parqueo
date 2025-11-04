@@ -93,6 +93,12 @@
                                     </li>
                                 @endcan
 
+                                @can('control.listar_boleta.inicio')
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ route('boletasObservadas.index') }}">Boletas Observadas</a>
+                                    </li>
+                                @endcan
+
                             </ul>
                         </div>
                     </li>

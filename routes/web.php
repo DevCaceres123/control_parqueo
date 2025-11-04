@@ -5,6 +5,7 @@ use App\Http\Controllers\Configuracion\Controlador_config_atraso;
 use App\Http\Controllers\Configuracion\Controlador_color;
 use App\Http\Controllers\Boleta\Controlador_boleta;
 use App\Http\Controllers\Boleta\Controlador_listarBoletas;
+use App\Http\Controllers\Boleta\Controlador_boletasObservadas;
 use App\Http\Controllers\Reporte\Controlador_reporte;
 use App\Http\Controllers\Usuario\Controlador_login;
 use App\Http\Controllers\Usuario\Controlador_permisos;
@@ -90,6 +91,13 @@ Route::prefix('/admin')->middleware([Autenticados::class])->group(function(){
         Route::get('generarTicketSalida/{id_boleta}', 'generarTicketSalida')->name('listar.generarTicketSalida'); 
         Route::post('reporteDiario', 'reporteDiario')->name('listar.reporteDiario'); 
         Route::get('VerificarRegistrosPasados', 'VerificarRegistrosPasados')->name('listar.VerificarRegistrosPasados'); 
+    });
+
+
+     // CONTROLADOR PARA LAS LISTAR BOLETAS
+    Route::controller(Controlador_boletasObservadas::class)->group(function () {
+        Route::resource('boletasObservadas', Controlador_boletasObservadas::class);
+        Route::get('listarBoletasObservadas', 'listarBoletasObservadas')->name('boletasObservadas.listarBoletasObservadas');   
     });
 
 
